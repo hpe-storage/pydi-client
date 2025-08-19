@@ -1,0 +1,24 @@
+site_name: Python SDK for Data Intelligence
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - navigation.top
+
+nav:
+  - Home: index.md
+  - Concepts: concepts.md
+  - Installation: installation.md
+  - Tutorial: tutorial.md
+  - API Reference:
+      - Client: api/reference.md
+      - Data Model: api/model.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            members_order: source
