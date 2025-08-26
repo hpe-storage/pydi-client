@@ -1,7 +1,10 @@
 name: Publish to TestPyPI
 
 on:
-  workflow_dispatch:   # allows the workflow to be triggered manually
+  #workflow_dispatch:   # allows the workflow to be triggered manually
+  push:
+    branches:
+      - pydi/publish-package
 
 permissions:
   contents: read
