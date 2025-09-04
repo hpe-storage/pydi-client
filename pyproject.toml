@@ -3,6 +3,11 @@ name = "pydi-client"
 version = "1.0.0"
 description = "Python client for data intelligence API"
 authors = ["HPE"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/hpe-storage/pydi-client"
+repository = "https://github.com/hpe-storage/pydi-client"
+documentation = "https://scod.hpedev.io/"
 
 [tool.poetry.dependencies]
 python = ">=3.11.2"

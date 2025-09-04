@@ -2,7 +2,7 @@
 
 
 ## Documentation
-<https://hpe-storage.github.io/pydi-client/>
+<https://scod.hpedev.io/>
 
 
 ## Installation
@@ -77,7 +77,7 @@ print(result)
 
 ## Community
 
-Please file any issues, questions or feature requests you may have [here](https://hpe-storage.github.io/pydi-client/) (do not use this facility for support inquiries of your HPE storage product)
+Please file any issues, questions or feature requests you may have [here](https://scod.hpedev.io/) (do not use this facility for support inquiries of your HPE storage product)
 
 ## Contributing
 
