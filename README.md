@@ -4,6 +4,9 @@
 ## Documentation
 <https://scod.hpedev.io/>
 
+## API reference
+<https://hpe-storage.github.io/pydi-client/api/reference/>
+
 
 ## Installation
 
