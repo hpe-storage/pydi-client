@@ -1,10 +1,16 @@
 site_name: Python SDK for Data Intelligence
+site_description: 'Reference documentation for Python SDK for Data Intelligence solution provided by HPE storage'
+site_author: Hewlett Packard Enterprise
 theme:
-  name: material
-  features:
-    - content.code.copy
-    - navigation.top
-
+  name: readthedocs
+  custom_dir: hpe_theme/
+  analytics:
+    gtag: G-PC28RTKKTW
+repo_name: hpe-storage/pydi-client
+repo_url: https://github.com/hpe-storage/pydi-client
+copyright: Copyright Hewlett Packard Enterprise Development LP
+extra_css:
+  - css/hpedev.css
 nav:
   - Home: index.md
   - Concepts: concepts.md
