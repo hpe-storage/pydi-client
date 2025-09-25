@@ -7,7 +7,7 @@ license = "Apache-2.0"
 readme = "README.md"
 homepage = "https://github.com/hpe-storage/pydi-client"
 repository = "https://github.com/hpe-storage/pydi-client"
-documentation = "https://scod.hpedev.io/"
+documentation = "https://hpe-storage.github.io/pydi-client/"
 
 [tool.poetry.dependencies]
 python = ">=3.11.2"
