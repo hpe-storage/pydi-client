@@ -1,952 +1,170 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="Hewlett Packard Enterprise" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <meta property="og:title" content="Python SDK for Data Intelligence"/>
+    <meta property="og:description" content="Reference documentation for Python SDK for Data Intelligence solution provided by HPE storage."/>
+    <meta property="og:locale" content="en_US"/>
+    <meta property="og:url" content="https://hpe-storage.github.io/pydi-client/"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+    
+    <title>Client - Python SDK for Data Intelligence</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../../css/hpedev.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Client";
+        var mkdocs_page_input_path = "api/reference.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-PC28RTKKTW"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-<!doctype html>
-<html lang="en" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-      
-      
-      
-        <link rel="prev" href="../../tutorial/">
-      
-      
-        <link rel="next" href="../model/">
-      
-      
-      <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
-    
-    
-      
-        <title>Client - Python SDK for Data Intelligence</title>
-      
-    
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
-      
-      
+        gtag('config', "G-PC28RTKKTW");
+      </script>
+</head>
 
+<body class="wy-body-for-nav" role="document">
 
-    
-    
-      
-    
-    
-      
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
-    
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
-
-    
-    
-    
-  </head>
-  
-  
-    <body dir="ltr">
-  
-    
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#api-reference" class="md-skip">
-          Skip to content
-        </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
-
-  
-
-<header class="md-header md-header--shadow" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Python SDK for Data Intelligence" class="md-header__button md-logo" aria-label="Python SDK for Data Intelligence" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
-
-    </a>
-    <label class="md-header__button md-icon" for="__drawer">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
-    </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
-            Python SDK for Data Intelligence
-          </span>
-        </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
-            
-              Client
-            
-          </span>
-        </div>
-      </div>
-    </div>
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
-    
-    
-    
-      
-      
-        <label class="md-header__button md-icon" for="__search">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        </label>
-        <div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
-      <label class="md-search__icon md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-      </label>
-      <nav class="md-search__options" aria-label="Search">
-        
-        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-        </button>
-      </nav>
-      
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
-            Initializing search
-          </div>
-          <ol class="md-search-result__list" role="presentation"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Python SDK for Data Intelligence
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
 </div>
-      
-    
-    
-  </nav>
-  
-</header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
-        
-          
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
-            
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
+      </div>
 
-
-
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Python SDK for Data Intelligence" class="md-nav__button md-logo" aria-label="Python SDK for Data Intelligence" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
-
-    </a>
-    Python SDK for Data Intelligence
-  </label>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Home
-    
-  </span>
-  
-
-      </a>
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../concepts/">Concepts</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../tutorial/">Tutorial</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Client</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#pydi_client.di_client">di_client</a>
     </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../concepts/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Concepts
-    
-  </span>
-  
-
-      </a>
+    <li class="toctree-l2"><a class="reference internal" href="#pydi_client.di_client.DIClient">DIClient</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIClient--purpose">Purpose:</a>
     </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../installation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Installation
-    
-  </span>
-  
-
-      </a>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIClient--key-features">Key Features:</a>
     </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../tutorial/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Tutorial
-    
-  </span>
-  
-
-      </a>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIClient--usage">Usage:</a>
     </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    API Reference
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            API Reference
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Client
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    Client
-    
-  </span>
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#pydi_client.di_client" class="md-nav__link">
-    <span class="md-ellipsis">
-      di_client
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient" class="md-nav__link">
-    <span class="md-ellipsis">
-      DIClient
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="DIClient">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient--purpose" class="md-nav__link">
-    <span class="md-ellipsis">
-      Purpose:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient--key-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      Key Features:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient--usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      Usage:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.session" class="md-nav__link">
-    <span class="md-ellipsis">
-      session
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.get_collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_collection
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.get_all_collections" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_all_collections
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.get_pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_pipeline
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.get_all_pipelines" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_all_pipelines
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.similarity_search" class="md-nav__link">
-    <span class="md-ellipsis">
-      similarity_search
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient" class="md-nav__link">
-    <span class="md-ellipsis">
-      DIAdminClient
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="DIAdminClient">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient--purpose" class="md-nav__link">
-    <span class="md-ellipsis">
-      Purpose:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient--when-to-use" class="md-nav__link">
-    <span class="md-ellipsis">
-      When to Use:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient--initialization" class="md-nav__link">
-    <span class="md-ellipsis">
-      Initialization:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.authenticated_session" class="md-nav__link">
-    <span class="md-ellipsis">
-      authenticated_session
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.create_collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      create_collection
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.delete_collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      delete_collection
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.assign_buckets_to_collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      assign_buckets_to_collection
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.unassign_buckets_from_collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      unassign_buckets_from_collection
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.create_pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      create_pipeline
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.delete_pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      delete_pipeline
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.get_schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_schema
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.get_all_schemas" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_all_schemas
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.get_embedding_model" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_embedding_model
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.get_all_embedding_models" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_all_embedding_models
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIClient.session">session</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIClient.get_collection">get_collection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIClient.get_all_collections">get_all_collections</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIClient.get_pipeline">get_pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIClient.get_all_pipelines">get_all_pipelines</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIClient.similarity_search">similarity_search</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient">DIAdminClient</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient--purpose">Purpose:</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient--when-to-use">When to Use:</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient--initialization">Initialization:</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient.authenticated_session">authenticated_session</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient.create_collection">create_collection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient.delete_collection">delete_collection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient.assign_buckets_to_collection">assign_buckets_to_collection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient.unassign_buckets_from_collection">unassign_buckets_from_collection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient.create_pipeline">create_pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient.delete_pipeline">delete_pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient.get_schema">get_schema</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient.get_all_schemas">get_all_schemas</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient.get_embedding_model">get_embedding_model</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pydi_client.di_client.DIAdminClient.get_all_embedding_models">get_all_embedding_models</a>
+    </li>
+        </ul>
+    </li>
     </ul>
-  
-</nav>
-      
-    </li>
-  
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../model/">Data Model</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
 
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../model/" class="md-nav__link">
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Python SDK for Data Intelligence</a>
         
-  
-  
-  <span class="md-ellipsis">
-    Data Model
-    
-  </span>
-  
-
-      </a>
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">API Reference</li>
+      <li class="breadcrumb-item active">Client</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/hpe-storage/pydi-client/edit/master/docs/api/reference.md">Edit on hpe-storage/pydi-client</a>
     </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
   </ul>
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-            
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
               
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#pydi_client.di_client" class="md-nav__link">
-    <span class="md-ellipsis">
-      di_client
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient" class="md-nav__link">
-    <span class="md-ellipsis">
-      DIClient
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="DIClient">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient--purpose" class="md-nav__link">
-    <span class="md-ellipsis">
-      Purpose:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient--key-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      Key Features:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient--usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      Usage:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.session" class="md-nav__link">
-    <span class="md-ellipsis">
-      session
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.get_collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_collection
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.get_all_collections" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_all_collections
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.get_pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_pipeline
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.get_all_pipelines" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_all_pipelines
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIClient.similarity_search" class="md-nav__link">
-    <span class="md-ellipsis">
-      similarity_search
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient" class="md-nav__link">
-    <span class="md-ellipsis">
-      DIAdminClient
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="DIAdminClient">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient--purpose" class="md-nav__link">
-    <span class="md-ellipsis">
-      Purpose:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient--when-to-use" class="md-nav__link">
-    <span class="md-ellipsis">
-      When to Use:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient--initialization" class="md-nav__link">
-    <span class="md-ellipsis">
-      Initialization:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.authenticated_session" class="md-nav__link">
-    <span class="md-ellipsis">
-      authenticated_session
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.create_collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      create_collection
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.delete_collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      delete_collection
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.assign_buckets_to_collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      assign_buckets_to_collection
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.unassign_buckets_from_collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      unassign_buckets_from_collection
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.create_pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      create_pipeline
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.delete_pipeline" class="md-nav__link">
-    <span class="md-ellipsis">
-      delete_pipeline
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.get_schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_schema
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.get_all_schemas" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_all_schemas
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.get_embedding_model" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_embedding_model
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pydi_client.di_client.DIAdminClient.get_all_embedding_models" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_all_embedding_models
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-          
-          
-            <div class="md-content" data-md-component="content">
-              <article class="md-content__inner md-typeset">
-                
-                  
-
-
-
-<h1 id="api-reference">API reference</h1>
+                <h1 id="api-reference">API reference</h1>
 
 
 <div class="doc doc-object doc-module">
@@ -1474,28 +692,28 @@ scientists who need to work with DI collections, pipelines, schemas, and embeddi
         <p>Property to get the session object.</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>Session</code></td>            <td>
-                  <code><span title="pydi_client.sessions.session.Session">Session</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>Session</code></b>(                  <code><span title="pydi_client.sessions.session.Session">Session</span></code>
+)              –
               <div class="doc-md-description">
                 <p>The session object used for making API requests. This session is initialized with the provided URI.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
     </div>
 
 </div>
@@ -1516,69 +734,59 @@ scientists who need to work with DI collections, pipelines, schemas, and embeddi
         <p>Retrieve a collection by its name.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the collection to retrieve. This is a required keyword-only argument.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>V1CollectionResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="V1CollectionResponse (pydi_client.data.collection_manager.V1CollectionResponse)" href="../model/#pydi_client.data.collection_manager.V1CollectionResponse">V1CollectionResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>V1CollectionResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="V1CollectionResponse (pydi_client.data.collection_manager.V1CollectionResponse)" href="../model/#pydi_client.data.collection_manager.V1CollectionResponse">V1CollectionResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>The collection object corresponding to the</p>
               </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-<td></td>            <td>
+            </li>
+            <li>
                   <code><a class="autorefs autorefs-internal" title="V1CollectionResponse (pydi_client.data.collection_manager.V1CollectionResponse)" href="../model/#pydi_client.data.collection_manager.V1CollectionResponse">V1CollectionResponse</a></code>
-            </td>
-            <td>
+              –
               <div class="doc-md-description">
                 <p>specified name.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -1662,38 +870,35 @@ scientists who need to work with DI collections, pipelines, schemas, and embeddi
         <p>Retrieves all collections available in the system.</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>V1ListCollectionsResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="ListCollection (pydi_client.data.collection_manager.ListCollection)" href="../model/#pydi_client.data.collection_manager.ListCollection">ListCollection</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>V1ListCollectionsResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="ListCollection (pydi_client.data.collection_manager.ListCollection)" href="../model/#pydi_client.data.collection_manager.ListCollection">ListCollection</a></code>
+)              –
               <div class="doc-md-description">
                 <p>A response object containing a list of</p>
               </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-<td></td>            <td>
+            </li>
+            <li>
                   <code><a class="autorefs autorefs-internal" title="ListCollection (pydi_client.data.collection_manager.ListCollection)" href="../model/#pydi_client.data.collection_manager.ListCollection">ListCollection</a></code>
-            </td>
-            <td>
+              –
               <div class="doc-md-description">
                 <p>collections available in the system.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -1783,59 +988,52 @@ ListCollection(
 This method fetches a pipeline object from the PipelineAPI using the provided name.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the pipeline to retrieve. This is a required keyword-only argument.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>DescribePipelineRecordResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="V1PipelineResponse (pydi_client.data.collection_manager.V1PipelineResponse)" href="../model/#pydi_client.data.collection_manager.V1PipelineResponse">V1PipelineResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>DescribePipelineRecordResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="V1PipelineResponse (pydi_client.data.collection_manager.V1PipelineResponse)" href="../model/#pydi_client.data.collection_manager.V1PipelineResponse">V1PipelineResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>The response object containing details about the pipeline.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -1931,38 +1129,35 @@ print(pipeline)
         <p>Retrieves all pipelines available in the system.</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>ListPipelineRecordsResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="ListPipelines (pydi_client.data.collection_manager.ListPipelines)" href="../model/#pydi_client.data.collection_manager.ListPipelines">ListPipelines</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>ListPipelineRecordsResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="ListPipelines (pydi_client.data.collection_manager.ListPipelines)" href="../model/#pydi_client.data.collection_manager.ListPipelines">ListPipelines</a></code>
+)              –
               <div class="doc-md-description">
                 <p>A response object containing a list of</p>
               </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-<td></td>            <td>
+            </li>
+            <li>
                   <code><a class="autorefs autorefs-internal" title="ListPipelines (pydi_client.data.collection_manager.ListPipelines)" href="../model/#pydi_client.data.collection_manager.ListPipelines">ListPipelines</a></code>
-            </td>
-            <td>
+              –
               <div class="doc-md-description">
                 <p>pipelines available in the system.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -2052,140 +1247,95 @@ results from a collection based on the given query. The results are ranked by
 similarity, and the top <code>k</code> results are returned.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>query</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>query</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The search query string used to find similar items in the collection.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>collection_name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>collection_name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the collection to search within.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>top_k</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>top_k</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The number of top similar results to retrieve.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>access_key</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>access_key</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The access key for authentication with the API.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>secret_key</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>secret_key</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The secret key for authentication with the API.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>search_parameters</code>
-            </td>
-            <td>
-                  <code><span title="typing.Optional">Optional</span>[<span title="typing.Union">Union</span>[<span title="typing.Any">Any</span>, <span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]]</code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>search_parameters</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[<span title="typing.Union">Union</span>[<span title="typing.Any">Any</span>, <span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]]</code>, default:
+                      <code>None</code>
+)
+              –
               <div class="doc-md-description">
                 <p>Additional search parameters
 that can be passed to the API for fine-tuning the search behavior.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
                   <code><span title="typing.Union">Union</span>[<span title="typing.Any">Any</span>, <span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]]</code>
-            </td>
-            <td>
+              –
               <div class="doc-md-description">
                 <p>Union[Any, List[Dict[str, Any]]]: A list of dictionaries containing the top <code>k</code> similar results, or another data type depending on the API's response.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -3244,91 +2394,70 @@ If buckets are provided, they will be associated with the collection and inline 
 If buckets are not provided, the collection will be created but embedding generation will be deferred until buckets are assigned to the collection.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the collection to be created. This should be unique.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>pipeline</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>pipeline</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the pipeline to be associated with the collection.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>buckets</code>
-            </td>
-            <td>
-                  <code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<span title="str">str</span>]]</code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>buckets</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<span title="str">str</span>]]</code>, default:
+                      <code>None</code>
+)
+              –
               <div class="doc-md-description">
                 <p>A list of bucket names. Defaults to None.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>V1CollectionResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="V1CollectionResponse (pydi_client.data.collection_manager.V1CollectionResponse)" href="../model/#pydi_client.data.collection_manager.V1CollectionResponse">V1CollectionResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>V1CollectionResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="V1CollectionResponse (pydi_client.data.collection_manager.V1CollectionResponse)" href="../model/#pydi_client.data.collection_manager.V1CollectionResponse">V1CollectionResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>The created collection object.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -3454,59 +2583,52 @@ print(collection)
         <p>Deletes a collection by its name.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the collection to be deleted.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>None</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="V1DeleteCollectionResponse (pydi_client.data.collection_manager.V1DeleteCollectionResponse)" href="../model/#pydi_client.data.collection_manager.V1DeleteCollectionResponse">V1DeleteCollectionResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>None</code></b>(                  <code><a class="autorefs autorefs-internal" title="V1DeleteCollectionResponse (pydi_client.data.collection_manager.V1DeleteCollectionResponse)" href="../model/#pydi_client.data.collection_manager.V1DeleteCollectionResponse">V1DeleteCollectionResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>This method does not return any value.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-        <p>Example Usage:</p>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>        <p>Example Usage:</p>
 <pre><code class="language-python">    client = DIAdminClient(uri=&quot;https://example.com&quot;, username=&quot;admin&quot;, password=&quot;password&quot;)
     resp = client.delete_collection(name=&quot;example_collection&quot;)
     print(resp)
@@ -3590,87 +2712,69 @@ print(collection)
 This enables inline embedding generation for the specified buckets.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>collection_name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>collection_name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the collection to which the buckets
 will be assigned.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>buckets</code>
-            </td>
-            <td>
-                  <code><span title="typing.List">List</span>[<span title="str">str</span>]</code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>buckets</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>)
+              –
               <div class="doc-md-description">
                 <p>A list of bucket names to be assigned to the
 specified collection.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>BucketUpdateResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="BucketUpdateResponse (pydi_client.data.pipeline.BucketUpdateResponse)" href="../model/#pydi_client.data.pipeline.BucketUpdateResponse">BucketUpdateResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>BucketUpdateResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="BucketUpdateResponse (pydi_client.data.pipeline.BucketUpdateResponse)" href="../model/#pydi_client.data.pipeline.BucketUpdateResponse">BucketUpdateResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>The response object containing details about the</p>
               </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-<td></td>            <td>
+            </li>
+            <li>
                   <code><a class="autorefs autorefs-internal" title="BucketUpdateResponse (pydi_client.data.pipeline.BucketUpdateResponse)" href="../model/#pydi_client.data.pipeline.BucketUpdateResponse">BucketUpdateResponse</a></code>
-            </td>
-            <td>
+              –
               <div class="doc-md-description">
                 <p>updated collection and assigned buckets.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example Usage</summary>
@@ -3802,85 +2906,67 @@ print(response)
         <p>Unassigns one or more buckets from a specified collection.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>collection_name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>collection_name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the collection from which the buckets will be unassigned.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>buckets</code>
-            </td>
-            <td>
-                  <code><span title="typing.List">List</span>[<span title="str">str</span>]</code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>buckets</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>)
+              –
               <div class="doc-md-description">
                 <p>A list of bucket names to be unassigned.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>BucketUpdateResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="BucketUpdateResponse (pydi_client.data.pipeline.BucketUpdateResponse)" href="../model/#pydi_client.data.pipeline.BucketUpdateResponse">BucketUpdateResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>BucketUpdateResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="BucketUpdateResponse (pydi_client.data.pipeline.BucketUpdateResponse)" href="../model/#pydi_client.data.pipeline.BucketUpdateResponse">BucketUpdateResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>The response object containing details about the updated collection</p>
               </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-<td></td>            <td>
+            </li>
+            <li>
                   <code><a class="autorefs autorefs-internal" title="BucketUpdateResponse (pydi_client.data.pipeline.BucketUpdateResponse)" href="../model/#pydi_client.data.pipeline.BucketUpdateResponse">BucketUpdateResponse</a></code>
-            </td>
-            <td>
+              –
               <div class="doc-md-description">
                 <p>after the buckets have been unassigned.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -3996,155 +3082,108 @@ print(response)
         <p>Creates a new pipeline with the specified configuration.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the pipeline to be created.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>pipeline_type</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>pipeline_type</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The type of the pipeline (e.g., "rag", "metadata").</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>model</code>
-            </td>
-            <td>
-                  <code>Optional (str</code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>model</code></b>
+                  (<code>Optional (str</code>, default:
+                      <code>None</code>
+)
+              –
               <div class="doc-md-description">
                 <p>The model associated with the pipeline.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>custom_func</code>
-            </td>
-            <td>
-                  <code>Optional (str</code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>custom_func</code></b>
+                  (<code>Optional (str</code>, default:
+                      <code>None</code>
+)
+              –
               <div class="doc-md-description">
                 <p>The custom function to be used in the pipeline.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>event_filter_object_suffix</code>
-            </td>
-            <td>
-                  <code><span title="typing.List">List</span>[<span title="str">str</span>]</code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>event_filter_object_suffix</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>)
+              –
               <div class="doc-md-description">
                 <p>A list of file suffixes to filter events. Ex - ["<em>.txt", "</em>.pdf"]</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>event_filter_max_object_size</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>event_filter_max_object_size</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code>None</code>
+)
+              –
               <div class="doc-md-description">
                 <p>The maximum object size for event filtering. Ex - 10485760</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>schema</code>
-            </td>
-            <td>
-                  <code>Optional (str</code>
-            </td>
-            <td>
+            </li>
+            <li>
+              <b><code>schema</code></b>
+                  (<code>Optional (str</code>, default:
+                      <code>None</code>
+)
+              –
               <div class="doc-md-description">
                 <p>The schema definition for the pipeline.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>V1CreatePipelineResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="V1CreatePipelineResponse (pydi_client.data.pipeline.V1CreatePipelineResponse)" href="../model/#pydi_client.data.pipeline.V1CreatePipelineResponse">V1CreatePipelineResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>V1CreatePipelineResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="V1CreatePipelineResponse (pydi_client.data.pipeline.V1CreatePipelineResponse)" href="../model/#pydi_client.data.pipeline.V1CreatePipelineResponse">V1CreatePipelineResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>The response object containing details of the created pipeline.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -4309,59 +3348,52 @@ print(pipeline_data)
         <p>Deletes a pipeline with the specified name.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the pipeline to be deleted.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>V1DeletePipelineResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="V1DeletePipelineResponse (pydi_client.data.pipeline.V1DeletePipelineResponse)" href="../model/#pydi_client.data.pipeline.V1DeletePipelineResponse">V1DeletePipelineResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>V1DeletePipelineResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="V1DeletePipelineResponse (pydi_client.data.pipeline.V1DeletePipelineResponse)" href="../model/#pydi_client.data.pipeline.V1DeletePipelineResponse">V1DeletePipelineResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>The response object containing details about the deleted pipeline.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -4457,59 +3489,52 @@ print(response)
 This method fetches a schema object from the SchemaAPI using the provided name.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the schema to retrieve. This is a required keyword-only argument.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>V1SchemaResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="V1SchemasResponse (pydi_client.data.schema.V1SchemasResponse)" href="../model/#pydi_client.data.schema.V1SchemasResponse">V1SchemasResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>V1SchemaResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="V1SchemasResponse (pydi_client.data.schema.V1SchemasResponse)" href="../model/#pydi_client.data.schema.V1SchemasResponse">V1SchemasResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>The response object containing details about the schema.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -4591,38 +3616,35 @@ This method fetches a schema object from the SchemaAPI using the provided name.<
         <p>Retrieves all schemas available in the system.</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>V1ListSchemasResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="V1ListSchemasResponse (pydi_client.data.schema.V1ListSchemasResponse)" href="../model/#pydi_client.data.schema.V1ListSchemasResponse">V1ListSchemasResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>V1ListSchemasResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="V1ListSchemasResponse (pydi_client.data.schema.V1ListSchemasResponse)" href="../model/#pydi_client.data.schema.V1ListSchemasResponse">V1ListSchemasResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>A response object containing a list of</p>
               </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-<td></td>            <td>
+            </li>
+            <li>
                   <code><a class="autorefs autorefs-internal" title="V1ListSchemasResponse (pydi_client.data.schema.V1ListSchemasResponse)" href="../model/#pydi_client.data.schema.V1ListSchemasResponse">V1ListSchemasResponse</a></code>
-            </td>
-            <td>
+              –
               <div class="doc-md-description">
                 <p>schemas available in the system.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -4695,59 +3717,52 @@ This method fetches a schema object from the SchemaAPI using the provided name.<
 This method fetches an embedding model object from the EmbeddingModelAPI using the provided name.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>name</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
               <div class="doc-md-description">
                 <p>The name of the embedding model to retrieve. This is a required keyword-only argument.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>V1ModelsResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="V1ModelsResponse (pydi_client.data.model.V1ModelsResponse)" href="../model/#pydi_client.data.model.V1ModelsResponse">V1ModelsResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>V1ModelsResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="V1ModelsResponse (pydi_client.data.model.V1ModelsResponse)" href="../model/#pydi_client.data.model.V1ModelsResponse">V1ModelsResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>The response object containing details about the embedding model.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -4840,38 +3855,35 @@ This method fetches an embedding model object from the EmbeddingModelAPI using t
         <p>Retrieves all embedding models available in the system.</p>
 
 
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-<th>Name</th>          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-<td><code>V1ListModelsResponse</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title="V1ListModelsResponse (pydi_client.data.model.V1ListModelsResponse)" href="../model/#pydi_client.data.model.V1ListModelsResponse">V1ListModelsResponse</a></code>
-            </td>
-            <td>
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>V1ListModelsResponse</code></b>(                  <code><a class="autorefs autorefs-internal" title="V1ListModelsResponse (pydi_client.data.model.V1ListModelsResponse)" href="../model/#pydi_client.data.model.V1ListModelsResponse">V1ListModelsResponse</a></code>
+)              –
               <div class="doc-md-description">
                 <p>A response object containing a list of</p>
               </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-<td></td>            <td>
+            </li>
+            <li>
                   <code><a class="autorefs autorefs-internal" title="V1ListModelsResponse (pydi_client.data.model.V1ListModelsResponse)" href="../model/#pydi_client.data.model.V1ListModelsResponse">V1ListModelsResponse</a></code>
-            </td>
-            <td>
+              –
               <div class="doc-md-description">
                 <p>embedding models available in the system.</p>
               </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <details class="example-usage" open>
   <summary>Example usage</summary>
@@ -4945,65 +3957,64 @@ This method fetches an embedding model object from the EmbeddingModelAPI using t
     </div>
 
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-                
-              </article>
+              
             </div>
-          
-          
-<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
-        </div>
-        
-          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+          </div>
+
+<footer>
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
-  Back to top
-</button>
-        
-      </main>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <footer class="md-footer">
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
-  
-  
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
-    </a>
-  
-</div>
+        <a href="../model/" class="btn btn-neutral float-right" title="Data Model">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../../tutorial/" class="btn btn-neutral" title="Tutorial"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+    <p>Copyright Hewlett Packard Enterprise Development LP<br />Give <a href="https://github.com/hpe-storage/pydi-client/issues/new?title=api/reference/">feedback</a> on this page.</p>
+    
   </div>
 </footer>
-      
-    </div>
-    <div class="md-dialog" data-md-component="dialog">
-      <div class="md-dialog__inner md-typeset"></div>
-    </div>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/hpe-storage/pydi-client" class="fa fa-code-fork" style="color: #fcfcfc"> hpe-storage/pydi-client</a>
+        </span>
     
     
-    
-      
-      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.top"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <span><a href="../../tutorial/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
-      
+      <span><a href="../model/" style="color: #fcfcfc">Next &raquo;</a></span>
     
-  </body>
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
 </html>
