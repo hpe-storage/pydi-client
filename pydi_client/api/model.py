@@ -42,10 +42,10 @@ class DataModelFactory:
         return V1ListModelsResponse
 
 
-class EmbeddingModelAPI:
+class ModelAPI:
     """
-    A client API for interacting with embedding models.
-    This class provides methods to retrieve information about embedding models
+    A client API for interacting with models.
+    This class provides methods to retrieve information about models
     from a backend service. It uses a session object to handle authenticated
     requests and supports retry mechanisms for robust communication.
     """
@@ -53,7 +53,7 @@ class EmbeddingModelAPI:
     def __init__(self, session: Union[Session, AuthenticatedSession]):
         self._session = session
         logger.info(
-            "EmbeddingModelAPI initialized with session: %s", type(session).__name__
+            "ModelAPI initialized with session: %s", type(session).__name__
         )
 
     def get_model(self, *, name: str) -> V1ModelsResponse:

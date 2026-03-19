@@ -1,8 +1,11 @@
 # Copyright Hewlett Packard Enterprise Development LP
 
+from enum import Enum
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 
+class ModelTags(Enum):
+    SENTENCE_SIMILARITY = "Sentence-Similarity"
 
 class V1ModelsResponse(BaseModel):
     """
@@ -13,19 +16,38 @@ class V1ModelsResponse(BaseModel):
         name (str): System model name.
         modelName (str): Model name.
         capabilities (List[str]): List of capabilities such as embedding, large language model, etc.
-        dimension (int): Model dimensionality.
-        maximumTokens (int): Maximum token size supported by the model.
         version (str): Model version.
+        communicationType (str): API communication type identifier for the model.
+        dimension (int): Model dimensionality.
+        contextLength (int): Context length for the model.
+        temperature (float): Temperature setting for the model.
+        topK (int): Top-k setting for the model.
+        topP (float): Top-p setting for the model.
+        maximumTokens (int): Maximum token size supported by the model.
+        timeout (int): API request timeout for the model.
+        language (str): Language supported by the model.
+        sampleRate (int): Sampling rate for the ASR model.
+        automaticPunctuation (bool): Enable automatic punctuation in the ASR model.
     """
 
     name: str = Field(..., description="system model name")
     modelName: str = Field(..., description="model name")
     capabilities: List[str] = Field(...,
-                                    description="embedding, large language model etc")
-    dimension: int = Field(..., description="model dimensionality")
-    maximumTokens: int = Field(...,
-                               description="max token size supported by the model")
+                                    description="Sentence-Similarity, Question-Answering, Image-Text-To-Text etc")
     version: str = Field(..., description="model version")
+    communicationType: str = Field(..., description="API communication type identifier for the model.")
+    dimension: Optional[int] = Field(..., description="model dimensionality")
+    contextLength: Optional[int] = Field(..., description="context length for the model")
+    temperature: Optional[float] = Field(..., description="temperature setting for the model")
+    topK: Optional[int] = Field(..., description="top-k setting for the model")
+    topP: Optional[float] = Field(..., description="top-p setting for the model")
+    maximumTokens: Optional[int] = Field(...,
+                               description="max token size supported by the model")
+    timeout: Optional[int] = Field(..., description="API request timeout for the model.")
+    language: Optional[str] = Field(..., description="Language supported by the model.")
+    sampleRate: Optional[int] = Field(..., description="Sampling rate for the ASR model.")
+    automaticPunctuation: Optional[bool] = Field(..., description="Enable automatic punctuation in the ASR model.")
+
 
 
 class ModelRecordSummary(BaseModel):
