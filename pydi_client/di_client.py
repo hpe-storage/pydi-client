@@ -653,6 +653,9 @@ class DIAdminClient(DIClient):
         Retrieve an embedding model by its name.
         This method fetches an embedding model object from the EmbeddingModelAPI using the provided name.
 
+        .. Deprecated::
+          This method is deprecated and will be removed in future versions. Please use `get_model` instead.
+
         Args:
             name (str): The name of the embedding model to retrieve. This is a required keyword-only argument.
 
@@ -680,6 +683,9 @@ class DIAdminClient(DIClient):
     def get_all_embedding_models(self) -> V1ListModelsResponse:
         """
         Retrieves all embedding models available in the system.
+
+        .. Deprecated::
+            This method is deprecated and will be removed in future versions. Please use `get_all_models` instead.
 
         Returns:
             V1ListModelsResponse: A response object containing a list of
