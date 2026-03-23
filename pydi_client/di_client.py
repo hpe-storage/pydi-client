@@ -4,11 +4,13 @@ from pydi_client.sessions.session import Session
 from pydi_client.sessions.authenticated_session import AuthenticatedSession
 from pydi_client.api.collection import CollectionAPI
 from pydi_client.api.pipeline import PipelineAPI
-from pydi_client.api.embedding_model import EmbeddingModelAPI
+from pydi_client.api.model import ModelAPI
 from pydi_client.api.schema import SchemaAPI
 from pydi_client.api.search import SimilaritySearchAPI
 from pydi_client.api.auth import AuthAPI
-from pydi_client.errors import NotImplementedException
+from pydi_client.data.model import ModelTags
+from pydi_client.errors import UnexpectedResponse, UnexpectedStatus
+from pydi_client.utils.utils import deprecated
 
 from pydi_client.data.collection_manager import (
     ListCollection,
@@ -248,6 +250,63 @@ class DIClient:
             secret_key=secret_key,
             search_parameters=search_parameters,
         )
+    
+    def get_model(self, *, name: str) -> V1ModelsResponse:
+        """
+        Retrieve a model by its name.
+        This method fetches a model object from the ModelAPI using the provided name.
+
+        Args:
+            name (str): The name of the model to retrieve. This is a required keyword-only argument.
+
+        Returns:
+            V1ModelsResponse: The response object containing details about the model.
+
+        Example usage:
+            ```python
+                client = DIClient(uri="https://example.com")
+                model = client.get_model(name="example_model")
+                print(model)
+                # Output: V1ModelsResponse(
+                #     name="example_model",
+                #     modelName="...",
+                #     capabilities="...",
+                #     version="...",
+                #     communicationType="...", # e.g. Ollama API
+                #     dimension=...,  # e.g., 768
+                #     contextLength=...,  # e.g., 1024
+                #     temperature=...,  # e.g., 0.7
+                #     topK=...,  # e.g., 40
+                #     topP=...,  # e.g., 0.9
+                #     maximumTokens=...,  # e.g., 512
+                #     timeout=...,  # e.g., 300
+                #     language="...",  # e.g., "en-US"
+                #     sampleRate=...,  # e.g., 16000
+                #     automaticPunctuation=...,  # e.g., True
+                # )
+            ```
+        """
+        return ModelAPI(self.session).get_model(name=name)
+
+    def get_all_models(self) -> V1ListModelsResponse:
+        """
+        Retrieves all models available in the system.
+        Returns:
+            V1ListModelsResponse: A response object containing a list of
+            models available in the system.
+
+        Example usage:
+            ```python
+                client = DIClient(uri="https://example.com")
+                models = client.get_all_models()
+                print(models[0])
+                # Output: V1ModelsResponse(
+                #     models=[ModelRecordSummary],
+                # )
+            ```
+        """
+        return ModelAPI(self.session).get_models()
+
 
 
 class DIAdminClient(DIClient):
@@ -588,10 +647,14 @@ class DIAdminClient(DIClient):
         """
         return SchemaAPI(session=self.authenticated_session).get_schemas()
 
+    @deprecated(message="This method is deprecated and will be removed in future versions. Please use get_model() instead.")
     def get_embedding_model(self, *, name: str) -> V1ModelsResponse:
         """
         Retrieve an embedding model by its name.
         This method fetches an embedding model object from the EmbeddingModelAPI using the provided name.
+
+        .. Deprecated::
+          This method is deprecated and will be removed in future versions. Please use `get_model` instead.
 
         Args:
             name (str): The name of the embedding model to retrieve. This is a required keyword-only argument.
@@ -614,11 +677,15 @@ class DIAdminClient(DIClient):
                 # )
             ```
         """
-        return EmbeddingModelAPI(self.authenticated_session).get_model(name=name)
+        return ModelAPI(self.authenticated_session).get_model(name=name)
 
+    @deprecated(message="This method is deprecated and will be removed in future versions. Please use get_all_models() instead.")
     def get_all_embedding_models(self) -> V1ListModelsResponse:
         """
         Retrieves all embedding models available in the system.
+
+        .. Deprecated::
+            This method is deprecated and will be removed in future versions. Please use `get_all_models` instead.
 
         Returns:
             V1ListModelsResponse: A response object containing a list of
@@ -634,4 +701,15 @@ class DIAdminClient(DIClient):
                 # )
             ```
         """
-        return EmbeddingModelAPI(self.authenticated_session).get_models()
+        try:
+            model_api = ModelAPI(self.authenticated_session)
+            models = model_api.get_models()
+            embedding_models_list = list()
+            for model in models.models:
+                model_details = model_api.get_model(name=model.name)
+                if any(capability.lower() == ModelTags.SENTENCE_SIMILARITY.value.lower() for capability in model_details.capabilities):
+                    embedding_models_list.append(model)
+        except (UnexpectedResponse, UnexpectedStatus) as e:
+            raise e
+        
+        return V1ListModelsResponse(models=embedding_models_list)
