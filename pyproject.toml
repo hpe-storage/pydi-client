@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydi-client"
-version = "1.0.0"
+version = "1.0.1"
 description = "Python client for data intelligence API"
 authors = ["HPE"]
 license = "Apache-2.0"

@@ -696,10 +696,11 @@ class DIAdminClient(DIClient):
             ```
         """
         try:
-            models = ModelAPI(self.authenticated_session).get_models()
+            model_api = ModelAPI(self.authenticated_session)
+            models = model_api.get_models()
             embedding_models_list = list()
             for model in models.models:
-                model_details = ModelAPI(self.authenticated_session).get_model(name=model.name)
+                model_details = model_api.get_model(name=model.name)
                 if any(capability.lower() == ModelTags.SENTENCE_SIMILARITY.value.lower() for capability in model_details.capabilities):
                     embedding_models_list.append(model)
         except (UnexpectedResponse, UnexpectedStatus) as e:

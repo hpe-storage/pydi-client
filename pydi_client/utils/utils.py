@@ -1,3 +1,5 @@
+# Copyright Hewlett Packard Enterprise Development LP
+
 import warnings
 import functools
 

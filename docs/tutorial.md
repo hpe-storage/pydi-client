@@ -39,7 +39,7 @@ client = DIClient(uri="https://your-di-instance.com:<port>")
 ```
 
 **Use DIClient for:**
-- Querying collections and pipelines
+- Querying collections, pipelines and models
 - Performing similarity searches
 
 ---
@@ -68,7 +68,10 @@ You can inspect the schema names and details to choose the appropriate schema fo
 
 If you are setting up a RAG (Retrieval-Augmented Generation) pipeline, you need to select an embedding model supported by DI.
 
+**Note**: The following method is deprecated and will be removed in the future releases. Please use `get_all_models()` instead.
+
 ```python
+# [DEPRECATED]
 # Get all embedding models available in the DI platform
 models_response = admin_client.get_all_embedding_models()
 print(models_response)
@@ -76,6 +79,27 @@ print(models_response)
 #     models=[ModelRecordSummary(name="example_model", ...), ...]
 # )
 ```
+
+**Note**: In upcoming releases
+
+```python
+from pydi_client.data.model import ModelTags
+
+# Get all models available in the DI platform
+models_response = admin_client.get_all_models()
+print(models_response)
+# Output: V1ListModelsResponse(
+#     models=[ModelRecordSummary(name="example_model", ...), ...]
+# )
+
+# Filter the embedding models based on their capabilities.
+embedding_models = list(filter(lambda model: ModelTags.SENTENCE_SIMILARITY.value in admin_client.get_model(name=model.name).capabilities, models_response.models))
+# Output: 
+# embedding_models = [
+#   ModelRecordSummary(name="example_embedding_model", ...), 
+# ...] 
+```
+
 
 Review the available models and select the one that fits your use case.
 

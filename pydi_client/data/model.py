@@ -6,6 +6,9 @@ from typing import List, Optional
 
 class ModelTags(Enum):
     SENTENCE_SIMILARITY = "Sentence-Similarity"
+    QUESTION_ANSWERING = "Question-Answering"
+    IMAGE_TEXT_TO_TEXT = "Image-Text-To-Text"
+    AUTOMATIC_SPEECH_RECOGNITION = "Automatic-Speech-Recognition"
 
 class V1ModelsResponse(BaseModel):
     """
