@@ -11,9 +11,6 @@ from pydi_client.data.collection_manager import (
     ListCollection,
 )
 from pydi_client.data.pipeline import BucketUpdateResponse
-from pydi_client.errors import (
-    NotImplementedException,
-)
 from pydi_client.api.utils import execute_with_retry, build_response
 from pydi_client.logger import get_logger  # Importing the logger utility
 
@@ -92,16 +89,20 @@ class CollectionAPI:
         name: str,
         pipeline: str,
         buckets: Optional[Union[Any, List[str]]] = [],
+        output_store: Optional[str] = None,
+        indexing_mode: Optional[str] = None,
     ) -> V1CollectionResponse:
         logger.info("Creating collection with name: %s, pipeline: %s", name, pipeline)
         body = V1CreateCollection(
             name=name,
             pipeline=pipeline,
             buckets=buckets,
+            outputStore=output_store,
+            indexingMode=indexing_mode,
         )
 
         kwargs: Dict[str, Any] = MethodFactory().create_collection()
-        kwargs["json"] = body.model_dump()
+        kwargs["json"] = body.model_dump(exclude_none=True)
 
         logger.debug("Request payload for create_collection: %s", kwargs)
         response = execute_with_retry(

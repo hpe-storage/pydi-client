@@ -364,7 +364,13 @@ class DIAdminClient(DIClient):
         return self._authenticated_session
 
     def create_collection(
-        self, *, name: str, pipeline: str, buckets: Optional[List[str]] = None
+        self,
+        *,
+        name: str,
+        pipeline: str,
+        buckets: Optional[List[str]] = None,
+        output_store: Optional[str] = None,
+        indexing_mode: Optional[str] = None,
     ) -> V1CollectionResponse:
         """
         Creates a new collection using the specified pipeline.
@@ -375,6 +381,8 @@ class DIAdminClient(DIClient):
             name (str): The name of the collection to be created. This should be unique.
             pipeline (str): The name of the pipeline to be associated with the collection.
             buckets (Optional[List[str]], optional): A list of bucket names. Defaults to None.
+            output_store (Optional[str], optional): Output bucket for transcription results. Defaults to None.
+            indexing_mode (Optional[str], optional): Indexing mode for RAG collections (supported values: 'HNSW', 'GPU_CAGRA'). Auto-detected if omitted. Defaults to None.
 
         Returns:
             V1CollectionResponse: The created collection object.
@@ -386,14 +394,16 @@ class DIAdminClient(DIClient):
             collection = client.create_collection(
                 name="example_collection",
                 pipeline="data_ingestion_pipeline",
-                buckets=["bucket1", "bucket2"]
+                buckets=["bucket1", "bucket2"],
+                output_store="output-bucket"
             )
             print(collection)
             # Sample Output:
             # V1CollectionResponse(
             #     name="example_collection",
             #     pipeline="data_ingestion_pipeline",
-            #     buckets=["bucket1", "bucket2"]
+            #     buckets=["bucket1", "bucket2"],
+            #     outputStore="output-bucket"
             # )
             ```
         """
@@ -404,6 +414,8 @@ class DIAdminClient(DIClient):
             name=name,
             buckets=buckets,
             pipeline=pipeline,
+            output_store=output_store,
+            indexing_mode=indexing_mode,
         )
 
     def delete_collection(self, *, name: str) -> V1DeleteCollectionResponse:
@@ -524,6 +536,9 @@ class DIAdminClient(DIClient):
         schema: Optional[str] = None,
         model: Optional[str] = None,
         custom_func: Optional[str] = None,
+        prompt: Optional[str] = None,
+        chunk_size: Optional[int] = None,
+        chunk_overlap: Optional[int] = None,
     ) -> V1CreatePipelineResponse:
         """
         Creates a new pipeline with the specified configuration.
@@ -536,6 +551,9 @@ class DIAdminClient(DIClient):
             event_filter_object_suffix (List[str]): A list of file suffixes to filter events. Ex - ["*.txt", "*.pdf"]
             event_filter_max_object_size (int): The maximum object size for event filtering. Ex - 10485760
             schema Optional (str): The schema definition for the pipeline.
+            prompt Optional (str): The prompt for transcribe pipelines (e.g., "Transcribe the image content into text.").
+            chunk_size Optional (int): Chunk size for RAG pipelines.
+            chunk_overlap Optional (int): Chunk overlap for RAG pipelines.
 
         Returns:
             V1CreatePipelineResponse: The response object containing details of the created pipeline.
@@ -572,6 +590,9 @@ class DIAdminClient(DIClient):
             event_filter_object_suffix=event_filter_object_suffix,
             event_filter_max_object_size=event_filter_max_object_size,
             schema=schema,
+            prompt=prompt,
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
         )
 
     def delete_pipeline(self, *, name: str) -> V1DeletePipelineResponse:

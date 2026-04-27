@@ -1,6 +1,6 @@
 # Copyright Hewlett Packard Enterprise Development LP
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Dict, Any, Optional
 
 
@@ -55,15 +55,32 @@ class V1CreatePipeline(BaseModel):
         type (str): Type of the pipeline.
         model (Optional[str]): Optional model associated with the pipeline.
         eventFilter (FilterItem): Event filter criteria for the pipeline.
-        schema (Optional[str]): Optional schema for the pipeline.
+        schema_name (Optional[str]): Optional schema for the pipeline (serialized as 'schema').
         customFunction (Optional[str]): Optional custom function for the pipeline.
+        prompt (Optional[str]): Prompt for transcribe pipelines (e.g., 'transcribe-metadata' type).
+        chunkSize (Optional[int]): Chunk size for RAG pipelines.
+        chunkOverlap (Optional[int]): Chunk overlap for RAG pipelines.
     """
+    model_config = ConfigDict(populate_by_name=True)
+
     name: str
     type: str
     model: Optional[str]
     eventFilter: FilterItem
-    schema: Optional[str]
+    schema_name: Optional[str] = Field(default=None, alias="schema")
     customFunction: Optional[str]
+    prompt: Optional[str] = Field(
+        default=None,
+        description="Prompt for transcribe pipelines",
+    )
+    chunkSize: Optional[int] = Field(
+        default=None,
+        description="Chunk size for RAG pipelines",
+    )
+    chunkOverlap: Optional[int] = Field(
+        default=None,
+        description="Chunk overlap for RAG pipelines",
+    )
 
 
 class V1CreatePipelineResponse(BaseModel):
@@ -119,3 +136,4 @@ class V1SimilaritySearchResponse(BaseModel):
     success: bool
     message: str
     results: Optional[List[NodeWithScore]] = Field(default_factory=list)
+

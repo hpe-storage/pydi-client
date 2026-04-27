@@ -140,8 +140,56 @@ def test_get_schema_success(mocker, mock_authsession, schema_api):
     assert isinstance(result, V1SchemasResponse)
     assert result.name == "schema1"
     assert result.type == "metadata"
-    assert result.schema[0].name == "object_key"
-    assert result.schema[0].type == "varchar"
+    assert result.schema_fields[0].name == "object_key"
+    assert result.schema_fields[0].type == "varchar"
+
+    mock_execute_with_retry.assert_called_once()
+
+
+def test_get_transcribe_schema_success(mocker, mock_authsession, schema_api):
+    """Test retrieving the default-transcribe-metadata-schema."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={
+            "name": "default-transcribe-metadata-schema",
+            "type": "transcribe-metadata",
+            "schema": [
+                {"name": "object_key", "type": "varchar"},
+                {"name": "bucket", "type": "varchar"},
+                {"name": "version_id", "type": "varchar"},
+                {"name": "size", "type": "bigint"},
+                {"name": "last_modified", "type": "timestamp"},
+                {"name": "content_type", "type": "varchar"},
+                {"name": "content_encoding", "type": "varchar"},
+                {"name": "content_language", "type": "varchar"},
+                {"name": "e_tag", "type": "varchar"},
+                {"name": "user_metadata", "type": "map(varchar, varchar)"},
+                {"name": "object_tags", "type": "map(varchar, varchar)"},
+                {"name": "transcription", "type": "varchar"},
+            ],
+        },
+    )
+
+    mock_execute_with_retry = mocker.patch(
+        "pydi_client.api.schema.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+
+    result = schema_api.get_schema(name="default-transcribe-metadata-schema")
+
+    assert isinstance(result, V1SchemasResponse)
+    assert result.name == "default-transcribe-metadata-schema"
+    assert result.type == "transcribe-metadata"
+    assert len(result.schema_fields) == 12
+    # Verify transcription field is present (specific to transcribe-metadata schema)
+    transcription_field = next(
+        (f for f in result.schema_fields if f.name == "transcription"), None
+    )
+    assert transcription_field is not None
+    assert transcription_field.type == "varchar"
 
     mock_execute_with_retry.assert_called_once()
 

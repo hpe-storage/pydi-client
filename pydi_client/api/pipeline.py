@@ -76,10 +76,13 @@ class PipelineAPI:
         name: str,
         pipeline_type: str,
         event_filter_object_suffix: List[str],
-        event_filter_max_object_size: int,
+        event_filter_max_object_size: Optional[int] = None,
         schema: Optional[str] = None,
         model: Optional[str] = None,
         custom_func: Optional[str] = None,
+        prompt: Optional[str] = None,
+        chunk_size: Optional[int] = None,
+        chunk_overlap: Optional[int] = None,
     ) -> V1CreatePipelineResponse:
         """
         Create a new pipeline.
@@ -106,10 +109,13 @@ class PipelineAPI:
             eventFilter=filter_item,
             schema=schema,
             customFunction=custom_func,
+            prompt=prompt,
+            chunkSize=chunk_size,
+            chunkOverlap=chunk_overlap,
         )
 
         kwargs: Dict[str, Any] = MethodFactory().create_pipeline()
-        kwargs["json"] = body.model_dump(exclude_none=True)
+        kwargs["json"] = body.model_dump(exclude_none=True, by_alias=True)
 
         logger.debug("Request payload for create_pipeline: %s", kwargs)
         response = execute_with_retry(
