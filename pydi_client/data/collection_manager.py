@@ -1,6 +1,6 @@
 # Copyright Hewlett Packard Enterprise Development LP
 
-from pydantic import BaseModel, Field, RootModel
+from pydantic import BaseModel, ConfigDict, Field, RootModel
 from typing import List, Dict, Optional, Any
 
 
@@ -41,10 +41,20 @@ class V1CreateCollection(BaseModel):
         name (str): Name of the collection.
         pipeline (str): Pipeline associated with the collection.
         buckets (Optional[List[str]]): Optional list of buckets associated with the collection.
+        outputStore (Optional[str]): Output bucket for transcription results (transcribe usecase).
+        indexingMode (Optional[str]): Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA). Auto-detected if omitted.
     """
     name: str
     pipeline: str
     buckets: Optional[List[str]]
+    outputStore: Optional[str] = Field(
+        default=None,
+        description="Output bucket for transcription results",
+    )
+    indexingMode: Optional[str] = Field(
+        default=None,
+        description="Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA). Auto-detected if omitted.",
+    )
 
 
 class V1CollectionResponse(BaseModel):
@@ -56,12 +66,22 @@ class V1CollectionResponse(BaseModel):
         name (str): Name of the collection.
         pipeline (str): Pipeline associated with the collection.
         buckets (Optional[List[str]]): Optional list of buckets associated with the collection.
+        outputStore (Optional[str]): Output bucket for transcription results (transcribe usecase).
+        indexingMode (Optional[str]): Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA).
     """
     name: str
     pipeline: str
     buckets: Optional[List[str]] = Field(
         default_factory=list,
         description="List of buckets associated with the collection",
+    )
+    outputStore: Optional[str] = Field(
+        default=None,
+        description="Output bucket for transcription results",
+    )
+    indexingMode: Optional[str] = Field(
+        default=None,
+        description="Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA)",
     )
 
 
@@ -87,14 +107,22 @@ class V1PipelineResponse(BaseModel):
         model (Optional[str]): Optional model associated with the pipeline.
         customFunction (Optional[str]): Optional custom function for the pipeline.
         eventFilter (Dict[str, Any]): Event filter criteria for the pipeline.
-        schema (str): Schema associated with the pipeline.
+        schema_name (str): Schema associated with the pipeline (serialized as 'schema').
+        prompt (Optional[str]): Prompt for transcribe pipelines.
+        chunkSize (Optional[int]): Chunk size for RAG pipelines.
+        chunkOverlap (Optional[int]): Chunk overlap for RAG pipelines.
     """
+    model_config = ConfigDict(populate_by_name=True)
+
     name: str
     type: str
-    model: Optional[str] = Field(default_factory=str)
-    customFunction: Optional[str] = Field(default_factory=str)
+    model: Optional[str] = Field(default=None)
+    customFunction: Optional[str] = Field(default=None)
     eventFilter: Dict[str, Any]
-    schema: str
+    schema_name: str = Field(alias="schema")
+    prompt: Optional[str] = Field(default=None, description="Prompt for transcribe pipelines")
+    chunkSize: Optional[int] = Field(default=None, description="Chunk size for RAG pipelines")
+    chunkOverlap: Optional[int] = Field(default=None, description="Chunk overlap for RAG pipelines")
 
 
 class ListCollectionItem(BaseModel):

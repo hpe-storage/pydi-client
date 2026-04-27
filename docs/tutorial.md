@@ -23,7 +23,7 @@ admin_client = DIAdminClient(
 **Use DIAdminClient for:**
 - Creating/deleting pipelines and collections
 - Assigning/unassigning buckets
-- Managing schemas and embedding models
+- Listing/getting schemas and managing embedding models
 
 ---
 
@@ -59,7 +59,8 @@ print(schemas_response)
 
 You can inspect the schema names and details to choose the appropriate schema for your pipeline.
 
-**Note: Currently creating new schemas is not supported. Require to use existing schemas available by default**
+**Schema API support in SDK:**
+- Supported: `get_all_schemas()`, `get_schema(name=...)`
 
 
 ---
@@ -130,9 +131,25 @@ print(pipeline_response)
 #     message="Pipeline 'example_rag_pipeline' created successfully."
 # )
 ```
-**NOTE:**  
-- For pipeline_type = "rag" (RAG workflows), `model` & `event_filter_max_object_size` are required. `schema` is optional and `custom_fuc` is not supported.
-- For metadata pipelines, `custom_func` is required. `schema` & `event_filter_max_object_size` are optional and `model` is not supported.
+You can also create a transcribe pipeline:
+
+```python
+pipeline_response = admin_client.create_pipeline(
+    name="example_transcribe_pipeline",
+    pipeline_type="transcribe-metadata",
+    model="supported_transcribe_model",
+    event_filter_object_suffix=["*.jpg", "*.png", "*.jpeg"],
+    event_filter_max_object_size=10737418240,  # Optional: max file size in bytes
+    schema="your_transcribe_schema",  # Use a transcribe-compatible schema
+    prompt="Extract text from image files.",
+)
+```
+
+**NOTE:**
+- For `pipeline_type = "rag"` (RAG workflows), `model` and `event_filter_max_object_size` are required. `schema` is optional and `custom_func` is not supported.
+- For metadata pipelines, `custom_func` is required. `schema` and `event_filter_max_object_size` are optional and `model` is not supported.
+- For `pipeline_type="rag"`, use `chunk_size` and `chunk_overlap` as needed for chunking behavior.
+- For `pipeline_type="transcribe-metadata"`, provide a transcribe `prompt`, choose a model supported by your deployment, and use a transcribe-compatible schema.
 ---
 
 ## 6. Creating a Collection (Admin)
@@ -144,7 +161,7 @@ Collections are logical groupings of data that use a pipeline for ingestion and 
 collection_response = admin_client.create_collection(
     name="example_collection",
     pipeline="example_rag_pipeline",
-    buckets=[]  # You can assign buckets now or later
+    buckets=[],  # You can assign buckets now or later
 )
 
 print(collection_response)
@@ -153,6 +170,17 @@ print(collection_response)
 #     pipeline="example_rag_pipeline",
 #     buckets=[]
 # )
+```
+
+For transcribe collections, set `output_store` to the destination bucket where transcription output is written:
+
+```python
+collection_response = admin_client.create_collection(
+    name="example_transcribe_collection",
+    pipeline="example_transcribe_pipeline",
+    buckets=["example-input-bucket"],
+    output_store="example-output-bucket",
+)
 ```
 
 ---

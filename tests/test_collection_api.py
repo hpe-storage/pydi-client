@@ -193,6 +193,41 @@ def test_create_collection_success(mocker, mock_session, collection_api):
     assert result.name == "Test Collection"
     assert result.pipeline == "default_pipeline"
     assert result.buckets == ["bucket1", "bucket2"]
+    assert result.outputStore is None
+
+
+def test_create_transcribe_collection_success(mocker, mock_session, collection_api):
+    """Test creating a transcribe collection with outputStore parameter."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={
+            "name": "transcribe_collection_test",
+            "pipeline": "transcribe-image-metadata",
+            "buckets": ["test-bucket-1"],
+            "outputStore": "test-bucket-1",
+            "indexingMode": "",
+        },
+    )
+    mocker.patch(
+        "pydi_client.api.collection.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_session.get_httpx_client.return_value = mock_httpx_client
+
+    result = collection_api.create_collection(
+        name="transcribe_collection_test",
+        pipeline="transcribe-image-metadata",
+        buckets=["test-bucket-1"],
+        output_store="test-bucket-1",
+    )
+
+    assert isinstance(result, V1CollectionResponse)
+    assert result.name == "transcribe_collection_test"
+    assert result.pipeline == "transcribe-image-metadata"
+    assert result.buckets == ["test-bucket-1"]
+    assert result.outputStore == "test-bucket-1"
 
 
 def test_create_collection_unauthorized(mocker, mock_session, collection_api):

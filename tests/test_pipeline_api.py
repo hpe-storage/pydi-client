@@ -131,8 +131,74 @@ def test_get_pipeline_success(mocker, mock_session, pipeline_api):
     assert result.type == "type1"
     assert result.model == "model1"
     assert result.customFunction == "func1"
-    assert result.schema == "schema1"
+    assert result.schema_name == "schema1"
     assert result.eventFilter == {"objectSuffix": ".txt"}
+    assert result.prompt is None
+
+
+def test_create_transcribe_pipeline_success(mocker, mock_session, pipeline_api):
+    """Test creating a transcribe-metadata pipeline with prompt parameter."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={"success": True, "message": "transcribe-image-metadata resource created successfully."},
+    )
+    mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_session.get_httpx_client.return_value = mock_httpx_client
+
+    result = pipeline_api.create_pipeline(
+        name="transcribe-image-metadata",
+        pipeline_type="transcribe-metadata",
+        model="cosmos-reason2-8b",
+        event_filter_object_suffix=["*.jpg", "*.png", "*.jpeg"],
+        event_filter_max_object_size=10737418240,
+        prompt="Transcribe the image content into text.",
+        schema="default-transcribe-metadata-schema",
+    )
+
+    assert isinstance(result, V1CreatePipelineResponse)
+    assert result.success is True
+    assert "transcribe-image-metadata" in result.message
+
+
+def test_get_transcribe_pipeline_success(mocker, mock_session, pipeline_api):
+    """Test retrieving a transcribe-metadata pipeline with prompt field."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={
+            "name": "transcribe-image-metadata",
+            "type": "transcribe-metadata",
+            "model": "cosmos-reason2-8b",
+            "customFunction": None,
+            "eventFilter": {
+                "objectSuffix": ["*.jpg", "*.png", "*.jpeg"],
+                "maxObjectSize": "10737418240",
+            },
+            "schema": "default-transcribe-metadata-schema",
+            "prompt": "Transcribe the image content into text.",
+        },
+    )
+    mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_session.get_httpx_client.return_value = mock_httpx_client
+
+    result = pipeline_api.get_pipeline(name="transcribe-image-metadata")
+
+    assert isinstance(result, V1PipelineResponse)
+    assert result.name == "transcribe-image-metadata"
+    assert result.type == "transcribe-metadata"
+    assert result.model == "cosmos-reason2-8b"
+    assert result.schema_name == "default-transcribe-metadata-schema"
+    assert result.prompt == "Transcribe the image content into text."
+    assert result.eventFilter["objectSuffix"] == ["*.jpg", "*.png", "*.jpeg"]
 
 
 def test_get_pipeline_unauthorized(mocker, mock_session, pipeline_api):
