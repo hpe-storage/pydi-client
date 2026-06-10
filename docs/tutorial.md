@@ -122,7 +122,7 @@ pipeline_response = admin_client.create_pipeline(
     custom_func="custom_processing_function",  # Optional
     event_filter_object_suffix=["*.txt", "*.pdf"],  # File types to ingest
     event_filter_max_object_size=10485760,  # Max file size in bytes
-    schema="example_schema"  # Optional: specify schema
+    schema="example_schema"
 )
 
 print(pipeline_response)
@@ -144,6 +144,42 @@ pipeline_response = admin_client.create_pipeline(
     prompt="Extract text from image files.",
 )
 ```
+# Create Video Pipeline
+```python
+pipeline_response = admin_client.create_pipeline(
+    name="example-transcribe-video-metadata",
+    model="parakeet-1_1b-rnnt-multilingual-asr",
+    event_filter_object_suffix=["*.mp4"],
+    pipeline_type="transcribe-metadata",
+    schema="default-transcribe-metadata-schema",
+    maxObjectSize: "524288000",
+    prompt="Transcribe the speech content into text."
+)
+```
+# Create Nim Rag pipeline
+```python
+pipeline_response = admin_client.create_pipeline(
+    name="example-nim-rag-pipeline",
+    model="llama-nemotron-embed-1b-v2",
+    event_filter_object_suffix=["*.pdf"],
+    pipeline_type="rag",
+    schema="default-rag-schema",
+    event_filter_max_object_size="1000000",
+    chunk_size="512",
+    chunk_overlap="50"
+)
+```
+# Create custom function pipeline
+```python
+pipeline_response = admin_client.create_pipeline(
+    name="custom-p1-gv",
+    model="di-custom-function-model",
+    event_filter_object_suffix=["*.jpg"],
+    pipeline_type="custom-function",
+    schema="my-custom-function-schema",
+    chunk_size="512",
+    chunk_overlap="50"
+)
 
 **NOTE:**
 - For `pipeline_type = "rag"` (RAG workflows), `model` and `event_filter_max_object_size` are required. `schema` is optional and `custom_func` is not supported.

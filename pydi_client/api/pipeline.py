@@ -77,7 +77,7 @@ class PipelineAPI:
         pipeline_type: str,
         event_filter_object_suffix: List[str],
         event_filter_max_object_size: Optional[int] = None,
-        schema: Optional[str] = None,
+        schema: str,
         model: Optional[str] = None,
         custom_func: Optional[str] = None,
         prompt: Optional[str] = None,

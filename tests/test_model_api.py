@@ -271,3 +271,99 @@ def test_get_model_unexpected_status(mocker, mock_authsession, model_api):
         model_api.get_model(name="model1")
 
     mock_execute_with_retry.assert_called_once()
+
+
+def test_model_tag_custom_function_value():
+    """Test that ModelTags.CUSTOM_FUNCTION has the correct string value."""
+    assert ModelTags.CUSTOM_FUNCTION.value == "Custom-Function"
+
+
+def test_model_tag_video_to_text_value():
+    """Test that ModelTags.VIDEO_TO_TEXT has the correct string value."""
+    assert ModelTags.VIDEO_TO_TEXT.value == "Video-To-Text"
+
+
+def test_get_model_custom_function_success(mocker, mock_authsession, model_api):
+    """Test retrieving a model with Custom-Function capability."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={
+            "name": "di-custom-function-model",
+            "modelName": "di-custom-function-model",
+            "capabilities": [ModelTags.CUSTOM_FUNCTION.value],
+            "version": "1.0",
+            "communicationType": "Ollama API",
+            "dimension": None,
+            "maximumTokens": None,
+            "contextLength": None,
+            "topK": None,
+            "topP": None,
+            "temperature": None,
+            "timeout": 30,
+            "language": None,
+            "sampleRate": None,
+            "automaticPunctuation": None,
+            "endpoint": None,
+        },
+    )
+
+    mock_execute_with_retry = mocker.patch(
+        "pydi_client.api.model.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+
+    result = model_api.get_model(name="di-custom-function-model")
+
+    assert isinstance(result, V1ModelsResponse)
+    assert result.name == "di-custom-function-model"
+    assert result.capabilities == [ModelTags.CUSTOM_FUNCTION.value]
+    assert ModelTags.CUSTOM_FUNCTION.value in result.capabilities
+
+    mock_execute_with_retry.assert_called_once()
+
+
+def test_get_model_video_to_text_success(mocker, mock_authsession, model_api):
+    """Test retrieving a model with Video-To-Text capability."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={
+            "name": "parakeet-1_1b-rnnt-multilingual-asr",
+            "modelName": "parakeet-1.1b-rnnt-multilingual-asr",
+            "capabilities": [ModelTags.VIDEO_TO_TEXT.value],
+            "version": "1.0",
+            "communicationType": "Ollama API",
+            "dimension": None,
+            "maximumTokens": None,
+            "contextLength": None,
+            "topK": None,
+            "topP": None,
+            "temperature": None,
+            "timeout": 60,
+            "language": "en-US",
+            "sampleRate": 16000,
+            "automaticPunctuation": True,
+        },
+    )
+
+    mock_execute_with_retry = mocker.patch(
+        "pydi_client.api.model.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+
+    result = model_api.get_model(name="parakeet-1_1b-rnnt-multilingual-asr")
+
+    assert isinstance(result, V1ModelsResponse)
+    assert result.name == "parakeet-1_1b-rnnt-multilingual-asr"
+    assert result.capabilities == [ModelTags.VIDEO_TO_TEXT.value]
+    assert ModelTags.VIDEO_TO_TEXT.value in result.capabilities
+    assert result.language == "en-US"
+    assert result.sampleRate == 16000
+    assert result.automaticPunctuation is True
+
+    mock_execute_with_retry.assert_called_once()
