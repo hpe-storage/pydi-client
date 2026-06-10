@@ -1,7 +1,7 @@
 # Copyright Hewlett Packard Enterprise Development LP
 
 from pydantic import BaseModel, ConfigDict, Field
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 
 class SchemaListItem(BaseModel):
@@ -79,8 +79,8 @@ class V1CreateSchemaRequest(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     name: str = Field(..., description="schema name")
-    type: str = Field(..., description="schema type (e.g., 'rag', 'transcribe-metadata')")
-    schema_fields: List[SchemaItem] = Field(..., alias="schema", description="list of schema fields")
+    type: str = Field(..., description="schema type (e.g., 'custom-function')")
+    schema_fields: List[SchemaItem] = Field(..., validation_alias="schema", serialization_alias="schema", description="list of schema fields")
 
 
 class V1CreateSchemaResponse(BaseModel):
@@ -94,4 +94,34 @@ class V1CreateSchemaResponse(BaseModel):
 
     success: Optional[bool] = None
     message: Optional[str] = None
+
+class V1DeleteSchemaResponse(BaseModel):
+    """
+    Response model for deleting a pipeline.
+    This model contains fields to indicate the status of the delete operation,
+    any errors that occurred, and a message providing additional information.
+
+    Attributes:
+        status (Optional[str]): Status of the delete operation.
+        Status (Optional[str]): Alternative case for status of the delete operation.
+        Error (Optional[Dict[Any, Any]]): Error message if the delete operation fails.
+        success (Optional[bool]): Indicates if the delete operation was successful.
+        message (Optional[str]): Message providing additional information about the operation.
+    """
+    status: Optional[str] = Field(
+        default_factory=str, description="Status of the delete operation"
+    )
+    Status: Optional[str] = Field(
+        default_factory=str,
+        description="Status of the delete operation (alternative case)",
+    )
+    Error: Optional[Dict[Any, Any]] = Field(
+        default_factory=dict, description="Error message if the delete operation fails"
+    )
+    success: Optional[bool] = Field(
+        default=None, description="Indicates if the delete operation was successful"
+    )
+    message: Optional[str] = Field(
+        default=None, description="Message providing additional information about the operation"
+    )
 

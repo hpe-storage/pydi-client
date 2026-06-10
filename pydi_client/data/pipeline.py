@@ -67,7 +67,7 @@ class V1CreatePipeline(BaseModel):
     type: str
     model: Optional[str]
     eventFilter: FilterItem
-    schema_name: str = Field(alias="schema")
+    schema_name: str = Field(validation_alias="schema", serialization_alias="schema")
     customFunction: Optional[str]
     prompt: Optional[str] = Field(
         default=None,

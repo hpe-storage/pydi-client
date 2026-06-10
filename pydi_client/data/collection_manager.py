@@ -119,7 +119,7 @@ class V1PipelineResponse(BaseModel):
     model: Optional[str] = Field(default=None)
     customFunction: Optional[str] = Field(default=None)
     eventFilter: Dict[str, Any]
-    schema_name: str = Field(alias="schema")
+    schema_name: str = Field(validation_alias="schema", serialization_alias="schema")
     prompt: Optional[str] = Field(default=None, description="Prompt for transcribe pipelines")
     chunkSize: Optional[int] = Field(default=None, description="Chunk size for RAG pipelines")
     chunkOverlap: Optional[int] = Field(default=None, description="Chunk overlap for RAG pipelines")
