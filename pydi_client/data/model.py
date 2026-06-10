@@ -9,6 +9,8 @@ class ModelTags(Enum):
     QUESTION_ANSWERING = "Question-Answering"
     IMAGE_TEXT_TO_TEXT = "Image-Text-To-Text"
     AUTOMATIC_SPEECH_RECOGNITION = "Automatic-Speech-Recognition"
+    CUSTOM_FUNCTION = "Custom-Function"
+    VIDEO_TO_TEXT = "Video-To-Text"
 
 class V1ModelsResponse(BaseModel):
     """
@@ -36,7 +38,7 @@ class V1ModelsResponse(BaseModel):
     name: str = Field(..., description="system model name")
     modelName: str = Field(..., description="model name")
     capabilities: List[str] = Field(...,
-                                    description="Sentence-Similarity, Question-Answering, Image-Text-To-Text etc")
+                                    description="Sentence-Similarity, Question-Answering, Image-Text-To-Text, Custom-Function, Video-To-Text etc")
     version: str = Field(..., description="model version")
     communicationType: str = Field(..., description="API communication type identifier for the model.")
     dimension: Optional[int] = Field(..., description="model dimensionality")
@@ -50,6 +52,7 @@ class V1ModelsResponse(BaseModel):
     language: Optional[str] = Field(..., description="Language supported by the model.")
     sampleRate: Optional[int] = Field(..., description="Sampling rate for the ASR model.")
     automaticPunctuation: Optional[bool] = Field(..., description="Enable automatic punctuation in the ASR model.")
+    endpoint: Optional[str] = Field(default=None, description="Custom function endpoint URL")
 
 
 

@@ -55,7 +55,7 @@ class V1CreatePipeline(BaseModel):
         type (str): Type of the pipeline.
         model (Optional[str]): Optional model associated with the pipeline.
         eventFilter (FilterItem): Event filter criteria for the pipeline.
-        schema_name (Optional[str]): Optional schema for the pipeline (serialized as 'schema').
+        schema_name (str): Schema for the pipeline (serialized as 'schema').
         customFunction (Optional[str]): Optional custom function for the pipeline.
         prompt (Optional[str]): Prompt for transcribe pipelines (e.g., 'transcribe-metadata' type).
         chunkSize (Optional[int]): Chunk size for RAG pipelines.
@@ -67,7 +67,7 @@ class V1CreatePipeline(BaseModel):
     type: str
     model: Optional[str]
     eventFilter: FilterItem
-    schema_name: Optional[str] = Field(default=None, alias="schema")
+    schema_name: str = Field(alias="schema")
     customFunction: Optional[str]
     prompt: Optional[str] = Field(
         default=None,

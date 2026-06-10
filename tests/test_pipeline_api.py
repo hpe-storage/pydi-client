@@ -320,3 +320,203 @@ def test_delete_pipeline_unexpected_status(mocker, mock_session, pipeline_api):
 
     with pytest.raises(UnexpectedStatus):
         pipeline_api.delete_pipeline(name="Test Pipeline")
+
+
+def test_create_custom_function_pipeline_with_event_filter_success(mocker, mock_session, pipeline_api):
+    """Test creating a custom-function pipeline with explicit eventFilter."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={"success": True, "message": "example-custom-function-pipeline resource created successfully."},
+    )
+    mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_session.get_httpx_client.return_value = mock_httpx_client
+
+    result = pipeline_api.create_pipeline(
+        name="example-custom-function-pipeline",
+        pipeline_type="custom-function",
+        model="di-custom-function-model",
+        schema="yolo-detection-schema",
+        event_filter_object_suffix=["*.jpeg", "*.jpg", "*.png"],
+        event_filter_max_object_size=10485760,
+    )
+
+    assert isinstance(result, V1CreatePipelineResponse)
+    assert result.success is True
+    assert "example-custom-function-pipeline" in result.message
+
+
+def test_get_custom_function_pipeline_success(mocker, mock_session, pipeline_api):
+    """Test retrieving a custom-function pipeline."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={
+            "name": "example-custom-function-pipeline",
+            "type": "custom-function",
+            "model": "di-custom-function-model",
+            "customFunction": None,
+            "eventFilter": {
+                "objectSuffix": ["*.jpeg", "*.jpg", "*.png"],
+                "maxObjectSize": 10485760,
+            },
+            "schema": "yolo-detection-schema",
+        },
+    )
+    mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_session.get_httpx_client.return_value = mock_httpx_client
+
+    result = pipeline_api.get_pipeline(name="example-custom-function-pipeline")
+
+    assert isinstance(result, V1PipelineResponse)
+    assert result.name == "example-custom-function-pipeline"
+    assert result.type == "custom-function"
+    assert result.model == "di-custom-function-model"
+    assert result.schema_name == "yolo-detection-schema"
+    assert result.customFunction is None
+    assert result.prompt is None
+    assert result.eventFilter["objectSuffix"] == ["*.jpeg", "*.jpg", "*.png"]
+    assert result.eventFilter["maxObjectSize"] == 10485760
+
+
+def test_create_nim_rag_pipeline_success(mocker, mock_session, pipeline_api):
+    """Test creating a NIM RAG pipeline with llama-nemotron-embed-1b-v2 model."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={"success": True, "message": "nim-rag-pipeline resource created successfully."},
+    )
+    mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_session.get_httpx_client.return_value = mock_httpx_client
+
+    result = pipeline_api.create_pipeline(
+        name="nim-rag-pipeline",
+        pipeline_type="rag",
+        model="llama-nemotron-embed-1b-v2",
+        schema="default-rag-schema",
+        event_filter_object_suffix=["*.pdf", "*.txt", "*.docx", "*.csv", "*.html", "*.json"],
+        event_filter_max_object_size=1000000,
+        chunk_size=512,
+        chunk_overlap=50,
+    )
+
+    assert isinstance(result, V1CreatePipelineResponse)
+    assert result.success is True
+    assert "nim-rag-pipeline" in result.message
+
+
+def test_get_nim_rag_pipeline_success(mocker, mock_session, pipeline_api):
+    """Test retrieving the NIM RAG pipeline."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={
+            "name": "nim-rag-pipeline",
+            "type": "rag",
+            "model": "llama-nemotron-embed-1b-v2",
+            "customFunction": None,
+            "eventFilter": {
+                "objectSuffix": ["*.pdf", "*.txt", "*.docx", "*.csv", "*.html", "*.json"],
+                "maxObjectSize": 1000000,
+            },
+            "schema": "default-rag-schema",
+            "chunkSize": 512,
+            "chunkOverlap": 50,
+            "prompt": None,
+        },
+    )
+    mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_session.get_httpx_client.return_value = mock_httpx_client
+
+    result = pipeline_api.get_pipeline(name="nim-rag-pipeline")
+
+    assert isinstance(result, V1PipelineResponse)
+    assert result.name == "nim-rag-pipeline"
+    assert result.type == "rag"
+    assert result.model == "llama-nemotron-embed-1b-v2"
+    assert result.schema_name == "default-rag-schema"
+    assert result.prompt is None
+    assert result.eventFilter["objectSuffix"] == ["*.pdf", "*.txt", "*.docx", "*.csv", "*.html", "*.json"]
+    assert result.eventFilter["maxObjectSize"] == 1000000
+
+
+def test_create_video_transcribe_pipeline_success(mocker, mock_session, pipeline_api):
+    """Test creating a video transcribe-metadata pipeline."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={"success": True, "message": "transcribe-video-metadata resource created successfully."},
+    )
+    mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_session.get_httpx_client.return_value = mock_httpx_client
+
+    result = pipeline_api.create_pipeline(
+        name="transcribe-video-metadata",
+        pipeline_type="transcribe-metadata",
+        model="parakeet-1_1b-rnnt-multilingual-asr",
+        event_filter_object_suffix=["*.mp4"],
+        event_filter_max_object_size=524288000,
+        prompt="Transcribe the speech content into text.",
+        schema="default-transcribe-metadata-schema",
+    )
+
+    assert isinstance(result, V1CreatePipelineResponse)
+    assert result.success is True
+    assert "transcribe-video-metadata" in result.message
+
+
+def test_get_video_transcribe_pipeline_success(mocker, mock_session, pipeline_api):
+    """Test retrieving the video transcribe-metadata pipeline."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={
+            "name": "transcribe-video-metadata",
+            "type": "transcribe-metadata",
+            "model": "parakeet-1_1b-rnnt-multilingual-asr",
+            "customFunction": None,
+            "eventFilter": {
+                "objectSuffix": ["*.mp4"],
+                "maxObjectSize": 524288000,
+            },
+            "schema": "default-transcribe-metadata-schema",
+            "prompt": "Transcribe the speech content into text.",
+        },
+    )
+    mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_session.get_httpx_client.return_value = mock_httpx_client
+
+    result = pipeline_api.get_pipeline(name="transcribe-video-metadata")
+
+    assert isinstance(result, V1PipelineResponse)
+    assert result.name == "transcribe-video-metadata"
+    assert result.type == "transcribe-metadata"
+    assert result.model == "parakeet-1_1b-rnnt-multilingual-asr"
+    assert result.schema_name == "default-transcribe-metadata-schema"
+    assert result.prompt == "Transcribe the speech content into text."
+    assert result.eventFilter["objectSuffix"] == ["*.mp4"]
+    assert result.eventFilter["maxObjectSize"] == 524288000
