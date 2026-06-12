@@ -755,6 +755,18 @@ class DIAdminClient(DIClient):
 
         Returns:
             V1CreateSchemaResponse: Response indicating success or failure.
+        
+        Example usage
+        ```python
+             schema_response = client.create_schema(
+                name="yolo-detection-schema",
+                type="custom-function",
+                schema=[{"name": "id", "type": "varchar"},
+                        {"name": "content", "type": "varchar"},
+                        {"name": "embedding", "type": "array(real)"},
+                    ]
+            )
+        
         """
         return SchemaAPI(session=self.authenticated_session).create_schema(
             name=name,
