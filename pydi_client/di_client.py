@@ -742,7 +742,7 @@ class DIAdminClient(DIClient):
         self,
         *,
         name: str,
-        type: str,
+        schema_type: str,
         schema: List[SchemaItem],
     ) -> V1CreateSchemaResponse:
         """
@@ -750,7 +750,7 @@ class DIAdminClient(DIClient):
 
         Args:
             name (str): The name of the schema to create.
-            type (str): The schema type (e.g., 'custom-function').
+            schema_type (str): The schema type (e.g., 'custom-function').
             schema (List[SchemaItem]): List of schema fields, each with a name and type.
 
         Returns:
@@ -760,7 +760,7 @@ class DIAdminClient(DIClient):
         ```python
              schema_response = client.create_schema(
                 name="yolo-detection-schema",
-                type="custom-function",
+                schema_type="custom-function",
                 schema=[{"name": "id", "type": "varchar"},
                         {"name": "content", "type": "varchar"},
                         {"name": "embedding", "type": "array(real)"},
@@ -770,7 +770,7 @@ class DIAdminClient(DIClient):
         """
         return SchemaAPI(session=self.authenticated_session).create_schema(
             name=name,
-            type=type,
+            schema_type=schema_type,
             schema=schema,
         )
 

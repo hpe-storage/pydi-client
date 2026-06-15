@@ -70,7 +70,7 @@ class SchemaAPI:
     def __init__(self, session: Union[Session, AuthenticatedSession]):
         self._session = session
         logger.info("SchemaAPI initialized with session: %s", type(session).__name__)
-        
+
     def get_schema(self, *, name: str) -> V1SchemasResponse:
         logger.info("Retrieving schema with name: %s", name)
         kwargs: Dict[str, Any] = MethodFactory().get_schema(name)
@@ -103,7 +103,7 @@ class SchemaAPI:
         self,
         *,
         name: str,
-        type: str,
+        schema_type: str,
         schema: List[SchemaItem],
     ) -> V1CreateSchemaResponse:
         """
@@ -114,7 +114,7 @@ class SchemaAPI:
         
         """
         logger.info("Creating schema with name: %s", name)
-        body = V1CreateSchemaRequest(name=name, type=type, schema=schema)
+        body = V1CreateSchemaRequest(name=name, type=schema_type, schema=schema)
         kwargs: Dict[str, Any] = MethodFactory().create_schema()
         kwargs["json"] = body.model_dump(by_alias=True)
 
@@ -124,10 +124,11 @@ class SchemaAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        logger.info("Schema created successfully: %s", name)
-        return build_response(
+        result = build_response(
             response=response, response_cls=DataModelFactory.create_schema()
         )
+        logger.info("Schema created successfully: %s", name)
+        return result
 
     def delete_schema(self, *, name: str) -> V1DeleteSchemaResponse:
         """
@@ -135,18 +136,19 @@ class SchemaAPI:
             Args:
                 schema_name (str): The name of the schema to be deleted
             Returns:
-                Optional[Union[Any, Pipeline]]: The deleted pipeline or None if the request failed.
+                Optional[Union[Any, Schema]]: The deleted schema or None if the request failed.
         """
         logger.info("Deleting schema with name: %s", name)
         kwargs: Dict[str, Any] = MethodFactory().delete_schema(name=name)
 
-        logger.debug("Request payload for delete_pipeline: %s", kwargs)
+        logger.debug("Request payload for delete_schema: %s", kwargs)
         response = execute_with_retry(
             session=self._session,
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        logger.info("Deleted schema successfully: %s", name)
-        return build_response(
+        result = build_response(
             response=response, response_cls=DataModelFactory.delete_schema()
         )
+        logger.info("Deleted schema successfully: %s", name)
+        return result

@@ -88,12 +88,12 @@ class V1CreateSchemaResponse(BaseModel):
     Response returned after attempting to create a schema.
 
     Attributes:
+        status (Optional[str]): Status string returned by the server.
         success (Optional[bool]): Indicates whether schema creation succeeded.
-        message (Optional[str]): Additional information about the operation.
     """
 
-    success: Optional[bool] = None
-    message: Optional[str] = None
+    status: Optional[str] = Field(default=None, description="Status of the create operation")
+    success: bool = Field(default=True, description="Indicates if the create operation was successful")
 
 class V1DeleteSchemaResponse(BaseModel):
     """
@@ -119,7 +119,7 @@ class V1DeleteSchemaResponse(BaseModel):
         default_factory=dict, description="Error message if the delete operation fails"
     )
     success: Optional[bool] = Field(
-        default=None, description="Indicates if the delete operation was successful"
+        default=True, description="Indicates if the delete operation was successful"
     )
     message: Optional[str] = Field(
         default=None, description="Message providing additional information about the operation"
