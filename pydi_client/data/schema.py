@@ -1,7 +1,7 @@
 # Copyright Hewlett Packard Enterprise Development LP
 
 from pydantic import BaseModel, ConfigDict, Field
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 
 class SchemaListItem(BaseModel):
@@ -79,8 +79,8 @@ class V1CreateSchemaRequest(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     name: str = Field(..., description="schema name")
-    type: str = Field(..., description="schema type (e.g., 'rag', 'transcribe-metadata')")
-    schema_fields: List[SchemaItem] = Field(..., alias="schema", description="list of schema fields")
+    type: str = Field(..., description="schema type (e.g., 'custom-function')")
+    schema_fields: List[SchemaItem] = Field(..., validation_alias="schema", serialization_alias="schema", description="list of schema fields")
 
 
 class V1CreateSchemaResponse(BaseModel):
@@ -88,10 +88,31 @@ class V1CreateSchemaResponse(BaseModel):
     Response returned after attempting to create a schema.
 
     Attributes:
-        success (Optional[bool]): Indicates whether schema creation succeeded.
-        message (Optional[str]): Additional information about the operation.
+        status (int): HTTP status code of the operation.
+        message (str): Status message from the server.
+        success (bool): Indicates whether schema creation succeeded.
+        error (Dict[str, Any]): Error details if the operation fails.
     """
 
-    success: Optional[bool] = None
-    message: Optional[str] = None
+    status: int = Field(default=200, description="HTTP status code")
+    message: str = Field(default="", description="Status message from the server")
+    success: bool = Field(default=True, description="Indicates if the create operation was successful")
+    error: Dict[str, Any] = Field(default_factory=dict, description="Error details if the operation fails")
+
+
+class V1DeleteSchemaResponse(BaseModel):
+    """
+    Response returned after attempting to delete a schema.
+
+    Attributes:
+        status (int): HTTP status code of the operation.
+        message (str): Status message from the server.
+        success (bool): Indicates if the delete operation was successful.
+        error (Dict[str, Any]): Error details if the delete operation fails.
+    """
+
+    status: int = Field(default=200, description="HTTP status code")
+    message: str = Field(default="", description="Status message from the server")
+    success: bool = Field(default=True, description="Indicates if the delete operation was successful")
+    error: Dict[str, Any] = Field(default_factory=dict, description="Error details if the delete operation fails")
 

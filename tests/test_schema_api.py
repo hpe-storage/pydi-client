@@ -13,6 +13,8 @@ from pydi_client.api.schema import SchemaAPI
 from pydi_client.data.schema import (
     V1SchemasResponse,
     V1ListSchemasResponse,
+    V1CreateSchemaResponse,
+    V1DeleteSchemaResponse,
 )
 
 
@@ -231,5 +233,147 @@ def test_get_schema_unexpected_status(mocker, mock_authsession, schema_api):
 
     with pytest.raises(UnexpectedStatus):
         schema_api.get_schema(name="schema1")
+
+    mock_execute_with_retry.assert_called_once()
+
+
+def test_create_schema_success(mocker, mock_authsession, schema_api):
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={"status": "Schema 'yolo-detection-schema' created successfully"},
+    )
+
+    mock_execute_with_retry = mocker.patch(
+        "pydi_client.api.schema.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+
+    result = schema_api.create_schema(
+        name="yolo-detection-schema",
+        schema_type="custom-function",
+        schema=[
+            {"name": "id", "type": "varchar"},
+            {"name": "content", "type": "varchar"},
+            {"name": "embedding", "type": "array(real)"},
+        ],
+    )
+
+    assert isinstance(result, V1CreateSchemaResponse)
+    assert result.status == 200
+    assert result.message == "Schema 'yolo-detection-schema' created successfully"
+    assert result.success is True
+    assert result.error == {}
+    mock_execute_with_retry.assert_called_once()
+
+
+def test_create_schema_unauthorized(mocker, mock_authsession, schema_api):
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.UNAUTHORIZED, json={"detail": "Unauthorized"}
+    )
+
+    mock_execute_with_retry = mocker.patch(
+        "pydi_client.api.schema.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+
+    with pytest.raises(HTTPUnauthorizedException):
+        schema_api.create_schema(
+            name="yolo-detection-schema",
+            schema_type="custom-function",
+            schema=[{"name": "id", "type": "varchar"}],
+        )
+
+    mock_execute_with_retry.assert_called_once()
+
+
+def test_create_schema_unexpected_status(mocker, mock_authsession, schema_api):
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+        json={"detail": "Internal Server Error"},
+    )
+
+    mock_execute_with_retry = mocker.patch(
+        "pydi_client.api.schema.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+
+    with pytest.raises(UnexpectedStatus):
+        schema_api.create_schema(
+            name="yolo-detection-schema",
+            schema_type="custom-function",
+            schema=[{"name": "id", "type": "varchar"}],
+        )
+
+    mock_execute_with_retry.assert_called_once()
+
+
+def test_delete_schema_success(mocker, mock_authsession, schema_api):
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={"status": "Schema 'yolo-detection-schema' deleted successfully"},
+    )
+
+    mock_execute_with_retry = mocker.patch(
+        "pydi_client.api.schema.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+
+    result = schema_api.delete_schema(name="yolo-detection-schema")
+
+    assert isinstance(result, V1DeleteSchemaResponse)
+    assert result.status == 200
+    assert result.message == "Schema 'yolo-detection-schema' deleted successfully"
+    assert result.success is True
+    assert result.error == {}
+    mock_execute_with_retry.assert_called_once()
+
+
+def test_delete_schema_unauthorized(mocker, mock_authsession, schema_api):
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.UNAUTHORIZED, json={"detail": "Unauthorized"}
+    )
+
+    mock_execute_with_retry = mocker.patch(
+        "pydi_client.api.schema.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+
+    with pytest.raises(HTTPUnauthorizedException):
+        schema_api.delete_schema(name="yolo-detection-schema")
+
+    mock_execute_with_retry.assert_called_once()
+
+
+def test_delete_schema_unexpected_status(mocker, mock_authsession, schema_api):
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+        json={"detail": "Internal Server Error"},
+    )
+
+    mock_execute_with_retry = mocker.patch(
+        "pydi_client.api.schema.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+
+    with pytest.raises(UnexpectedStatus):
+        schema_api.delete_schema(name="yolo-detection-schema")
 
     mock_execute_with_retry.assert_called_once()

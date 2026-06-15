@@ -33,6 +33,9 @@ from pydi_client.data.model import (
 from pydi_client.data.schema import (
     V1SchemasResponse,
     V1ListSchemasResponse,
+    V1CreateSchemaResponse,
+    SchemaItem,
+    V1DeleteSchemaResponse,
 )
 
 from typing import Union, Any, List, Dict, Optional
@@ -533,7 +536,7 @@ class DIAdminClient(DIClient):
         pipeline_type: str,
         event_filter_object_suffix: List[str],
         event_filter_max_object_size: Optional[int] = None,
-        schema: Optional[str] = None,
+        schema: str,
         model: Optional[str] = None,
         custom_func: Optional[str] = None,
         prompt: Optional[str] = None,
@@ -734,3 +737,69 @@ class DIAdminClient(DIClient):
             raise e
         
         return V1ListModelsResponse(models=embedding_models_list)
+
+    def create_schema(
+        self,
+        *,
+        name: str,
+        schema_type: str,
+        schema: List[SchemaItem],
+    ) -> V1CreateSchemaResponse:
+        """
+        Create a new schema.
+
+        Args:
+            name (str): The name of the schema to create.
+            schema_type (str): The schema type (e.g., 'custom-function').
+            schema (List[SchemaItem]): List of schema fields, each with a name and type.
+
+        Returns:
+            V1CreateSchemaResponse: Response indicating success or failure.
+        
+        Example usage
+        ```python
+             schema_response = client.create_schema(
+                name="yolo-detection-schema",
+                schema_type="custom-function",
+                schema=[{"name": "id", "type": "varchar"},
+                        {"name": "content", "type": "varchar"},
+                        {"name": "embedding", "type": "array(real)"},
+                    ]
+            )
+        
+        """
+        return SchemaAPI(session=self.authenticated_session).create_schema(
+            name=name,
+            schema_type=schema_type,
+            schema=schema,
+        )
+
+    def delete_schema(self, *, name: str) -> V1DeleteSchemaResponse:
+        """
+        Deletes a schema with the specified name.
+
+        Args:
+            name (str): The name of the schema to be deleted.
+
+        Returns:
+            V1DeleteSchemaResponse: The response object containing details about the deleted schema.
+
+        Example usage:
+            ```python
+            # Initialize the DIAdminClient
+            client = DIAdminClient(uri="http://example.com", username="admin", password="password")
+
+            # Delete a schema by name
+            response = client.delete_schema(name="example_schema")
+            print(response)
+            # Output:
+            # V1DeleteSchemaResponse(
+            #     message="Schema successfully deleted"
+            #     success=True,
+            # )
+            ```
+        """
+        return SchemaAPI(session=self.authenticated_session).delete_schema(
+            name=name
+        )
+    

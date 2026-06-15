@@ -275,6 +275,23 @@ print(results)
 #     ...
 # ]
 ```
+## 9. Create schema
+
+```python
+    schema_response = session.create_schema(
+        name="yolo-detection-schema",
+        schema_type="custom-function",
+        schema=[
+            {"name": "id", "type": "varchar"},
+            {"name": "content", "type": "varchar"},
+            {"name": "embedding", "type": "array(real)"},
+        ]
+    )
+```
+## 10. Delete schema
+```python
+    res = session.delete_schema(name="yolo-detection-schema")
+```
 
 ---
 
