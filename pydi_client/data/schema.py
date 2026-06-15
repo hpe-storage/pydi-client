@@ -88,35 +88,31 @@ class V1CreateSchemaResponse(BaseModel):
     Response returned after attempting to create a schema.
 
     Attributes:
-        status (Optional[str]): Status string returned by the server.
-        success (Optional[bool]): Indicates whether schema creation succeeded.
+        status (int): HTTP status code of the operation.
+        message (str): Status message from the server.
+        success (bool): Indicates whether schema creation succeeded.
+        error (Dict[str, Any]): Error details if the operation fails.
     """
 
-    status: Optional[str] = Field(default=None, description="Status of the create operation")
+    status: int = Field(default=200, description="HTTP status code")
+    message: str = Field(default="", description="Status message from the server")
     success: bool = Field(default=True, description="Indicates if the create operation was successful")
+    error: Dict[str, Any] = Field(default_factory=dict, description="Error details if the operation fails")
+
 
 class V1DeleteSchemaResponse(BaseModel):
     """
-    Response model for deleting a pipeline.
-    This model contains fields to indicate the status of the delete operation,
-    any errors that occurred, and a message providing additional information.
+    Response returned after attempting to delete a schema.
 
     Attributes:
-        status (Optional[str]): Status of the delete operation.
-        Error (Optional[Dict[Any, Any]]): Error message if the delete operation fails.
-        success (Optional[bool]): Indicates if the delete operation was successful.
-        message (Optional[str]): Message providing additional information about the operation.
+        status (int): HTTP status code of the operation.
+        message (str): Status message from the server.
+        success (bool): Indicates if the delete operation was successful.
+        error (Dict[str, Any]): Error details if the delete operation fails.
     """
-    status: Optional[str] = Field(
-        default=None, description="Status of the delete operation"
-    )
-    Error: Optional[Dict[Any, Any]] = Field(
-        default_factory=dict, description="Error message if the delete operation fails"
-    )
-    success: Optional[bool] = Field(
-        default=True, description="Indicates if the delete operation was successful"
-    )
-    message: Optional[str] = Field(
-        default=None, description="Message providing additional information about the operation"
-    )
+
+    status: int = Field(default=200, description="HTTP status code")
+    message: str = Field(default="", description="Status message from the server")
+    success: bool = Field(default=True, description="Indicates if the delete operation was successful")
+    error: Dict[str, Any] = Field(default_factory=dict, description="Error details if the delete operation fails")
 

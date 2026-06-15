@@ -262,8 +262,10 @@ def test_create_schema_success(mocker, mock_authsession, schema_api):
     )
 
     assert isinstance(result, V1CreateSchemaResponse)
-    assert result.status == "Schema 'yolo-detection-schema' created successfully"
+    assert result.status == 200
+    assert result.message == "Schema 'yolo-detection-schema' created successfully"
     assert result.success is True
+    assert result.error == {}
     mock_execute_with_retry.assert_called_once()
 
 
@@ -331,8 +333,10 @@ def test_delete_schema_success(mocker, mock_authsession, schema_api):
     result = schema_api.delete_schema(name="yolo-detection-schema")
 
     assert isinstance(result, V1DeleteSchemaResponse)
-    assert result.status == "Schema 'yolo-detection-schema' deleted successfully"
+    assert result.status == 200
+    assert result.message == "Schema 'yolo-detection-schema' deleted successfully"
     assert result.success is True
+    assert result.error == {}
     mock_execute_with_retry.assert_called_once()
 
 

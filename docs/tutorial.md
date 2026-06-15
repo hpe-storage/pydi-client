@@ -280,7 +280,7 @@ print(results)
 ```python
     schema_response = session.create_schema(
         name="yolo-detection-schema",
-        type="custom-function",
+        schema_type="custom-function",
         schema=[
             {"name": "id", "type": "varchar"},
             {"name": "content", "type": "varchar"},

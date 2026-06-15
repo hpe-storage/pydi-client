@@ -16,9 +16,17 @@ from pydi_client.data.schema import (
 
 from pydi_client.api.utils import execute_with_retry, build_response
 from pydi_client.logger import get_logger  # Importing the logger utility
+import httpx
+from pydantic import BaseModel
+from typing import Optional as _Optional
 
 # Initialize logger for this module
 logger = get_logger()
+
+
+class _ServerStatusResponse(BaseModel):
+    """Internal model matching the server's raw status response shape."""
+    status: _Optional[str] = None
 
 
 class MethodFactory:
@@ -124,8 +132,12 @@ class SchemaAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        result = build_response(
-            response=response, response_cls=DataModelFactory.create_schema()
+        raw = build_response(response=response, response_cls=_ServerStatusResponse)
+        result = V1CreateSchemaResponse(
+            status=response.status_code,
+            message=raw.status if raw else "",
+            success=True,
+            error={},
         )
         logger.info("Schema created successfully: %s", name)
         return result
@@ -147,8 +159,12 @@ class SchemaAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        result = build_response(
-            response=response, response_cls=DataModelFactory.delete_schema()
+        raw = build_response(response=response, response_cls=_ServerStatusResponse)
+        result = V1DeleteSchemaResponse(
+            status=response.status_code,
+            message=raw.status if raw else "",
+            success=True,
+            error={},
         )
         logger.info("Deleted schema successfully: %s", name)
         return result
