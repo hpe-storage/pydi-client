@@ -103,17 +103,12 @@ class V1DeleteSchemaResponse(BaseModel):
 
     Attributes:
         status (Optional[str]): Status of the delete operation.
-        Status (Optional[str]): Alternative case for status of the delete operation.
         Error (Optional[Dict[Any, Any]]): Error message if the delete operation fails.
         success (Optional[bool]): Indicates if the delete operation was successful.
         message (Optional[str]): Message providing additional information about the operation.
     """
     status: Optional[str] = Field(
-        default_factory=str, description="Status of the delete operation"
-    )
-    Status: Optional[str] = Field(
-        default_factory=str,
-        description="Status of the delete operation (alternative case)",
+        default=None, description="Status of the delete operation"
     )
     Error: Optional[Dict[Any, Any]] = Field(
         default_factory=dict, description="Error message if the delete operation fails"
