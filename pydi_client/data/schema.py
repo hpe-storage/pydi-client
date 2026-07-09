@@ -35,10 +35,17 @@ class SchemaItem(BaseModel):
     Attributes:
         name (str): Field name in the schema definition.
         type (str): Field type in the schema definition.
+        nullable (bool): Whether the field allows null values. Defaults to
+            ``True``. Set to ``False`` to mark the field as required (the
+            underlying database column is created as ``NOT NULL`` and schema
+            validation is strict for that field).
     """
 
     name: str = Field(..., description="field name")
     type: str = Field(..., description="field type")
+    nullable: bool = Field(
+        default=True, description="whether the field allows null values"
+    )
 
 
 class V1SchemasResponse(BaseModel):

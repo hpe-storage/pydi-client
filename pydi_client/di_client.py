@@ -751,22 +751,29 @@ class DIAdminClient(DIClient):
         Args:
             name (str): The name of the schema to create.
             schema_type (str): The schema type (e.g., 'custom-function').
-            schema (List[SchemaItem]): List of schema fields, each with a name and type.
+            schema (List[SchemaItem]): List of schema fields. Each field has a
+                ``name`` and ``type``, and may optionally include a ``nullable``
+                flag (defaults to ``True``). Set ``nullable`` to ``False`` to
+                mark a field as required: the underlying database column is created
+                as ``NOT NULL`` and schema validation is strict for that field,
+                while fields left as ``nullable=True`` are validated non-strictly.
 
         Returns:
             V1CreateSchemaResponse: Response indicating success or failure.
-        
+
         Example usage
         ```python
              schema_response = client.create_schema(
                 name="yolo-detection-schema",
                 schema_type="custom-function",
-                schema=[{"name": "id", "type": "varchar"},
+                schema=[{"name": "id", "type": "varchar", "nullable": False},
                         {"name": "content", "type": "varchar"},
-                        {"name": "embedding", "type": "array(real)"},
+                        {"name": "embedding", "type": "array(real)", "nullable": True},
                     ]
             )
-        
+            # "id" is required (NOT NULL, strict validation); "content" and
+            # "embedding" allow nulls (nullable defaults to True when omitted).
+
         """
         return SchemaAPI(session=self.authenticated_session).create_schema(
             name=name,

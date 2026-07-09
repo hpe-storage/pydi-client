@@ -118,8 +118,11 @@ class SchemaAPI:
         Create a new schema
         schema_name (str): The name of the schema
         schema_type (str): The type of the schema
-        schemaItem (list): The keys required to create the table in trino
-        
+        schemaItem (list): The keys required to create the table in the database.
+            Each field may include an optional ``nullable`` flag (defaults to
+            ``True``). Set ``nullable`` to ``False`` to mark a field as
+            required (``NOT NULL`` in the database, strict schema validation).
+
         """
         logger.info("Creating schema with name: %s", name)
         body = V1CreateSchemaRequest(name=name, type=schema_type, schema=schema)

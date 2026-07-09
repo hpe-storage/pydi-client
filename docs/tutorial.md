@@ -288,6 +288,20 @@ print(results)
         ]
     )
 ```
+
+You can optionally mark individual fields as required by setting `nullable: False`. Fields with `nullable: False` are created as `NOT NULL` in the database and validated strictly, while fields where `nullable` is omitted default to `True` (non-strict validation).
+
+```python
+    schema_response = session.create_schema(
+        name="yolo-detection-schema",
+        schema_type="custom-function",
+        schema=[
+            {"name": "id", "type": "varchar", "nullable": False},   # required
+            {"name": "content", "type": "varchar"},                 # optional (nullable=True)
+            {"name": "embedding", "type": "array(real)"},           # optional (nullable=True)
+        ]
+    )
+```
 ## 10. Delete schema
 ```python
     res = session.delete_schema(name="yolo-detection-schema")

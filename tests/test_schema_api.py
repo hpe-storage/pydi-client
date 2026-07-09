@@ -148,6 +148,39 @@ def test_get_schema_success(mocker, mock_authsession, schema_api):
     mock_execute_with_retry.assert_called_once()
 
 
+def test_get_schema_parses_nullable(mocker, mock_authsession, schema_api):
+    """The nullable flag is parsed from the response, defaulting to True when absent."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={
+            "name": "schema1",
+            "type": "metadata",
+            "schema": [
+                {"name": "field1", "type": "varchar", "nullable": True},
+                {"name": "field2", "type": "varchar", "nullable": False},
+                {"name": "field3", "type": "varchar"},  # omitted -> defaults True
+            ],
+        },
+    )
+
+    mock_execute_with_retry = mocker.patch(
+        "pydi_client.api.schema.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+
+    result = schema_api.get_schema(name="schema1")
+
+    assert isinstance(result, V1SchemasResponse)
+    assert result.schema_fields[0].nullable is True
+    assert result.schema_fields[1].nullable is False
+    assert result.schema_fields[2].nullable is True
+
+    mock_execute_with_retry.assert_called_once()
+
+
 def test_get_transcribe_schema_success(mocker, mock_authsession, schema_api):
     """Test retrieving the default-transcribe-metadata-schema."""
     mock_response = HTTPXResponse(
@@ -266,6 +299,45 @@ def test_create_schema_success(mocker, mock_authsession, schema_api):
     assert result.message == "Schema 'yolo-detection-schema' created successfully"
     assert result.success is True
     assert result.error == {}
+    mock_execute_with_retry.assert_called_once()
+
+
+def test_create_schema_with_nullable_fields(mocker, mock_authsession, schema_api):
+    """Fields may declare a ``nullable`` flag which is sent in the request body."""
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={"status": "Schema 'mixed-nullable-schema' created successfully"},
+    )
+
+    mock_execute_with_retry = mocker.patch(
+        "pydi_client.api.schema.execute_with_retry", return_value=mock_response
+    )
+
+    mock_httpx_client = mocker.MagicMock()
+    mock_httpx_client.request.return_value = mock_response
+    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+
+    result = schema_api.create_schema(
+        name="mixed-nullable-schema",
+        schema_type="custom-function",
+        schema=[
+            {"name": "field1", "type": "varchar", "nullable": True},
+            {"name": "field2", "type": "varchar", "nullable": False},
+            {"name": "field3", "type": "varchar"},  # defaults to nullable=True
+        ],
+    )
+
+    assert isinstance(result, V1CreateSchemaResponse)
+    assert result.status == 200
+
+    # Verify the serialized request body carries the nullable flag for each field.
+    _, kwargs = mock_execute_with_retry.call_args
+    sent_schema = kwargs["json"]["schema"]
+    assert sent_schema == [
+        {"name": "field1", "type": "varchar", "nullable": True},
+        {"name": "field2", "type": "varchar", "nullable": False},
+        {"name": "field3", "type": "varchar", "nullable": True},
+    ]
     mock_execute_with_retry.assert_called_once()
 
 
