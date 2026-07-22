@@ -110,10 +110,11 @@ class CollectionAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        logger.info("Collection created successfully: %s", name)
-        return build_response(
+        result = build_response(
             response=response, response_cls=DataModelFactory.create_collection()
         )
+        logger.info("Collection created successfully: %s", name)
+        return result
 
     def get_collections(
         self,
@@ -127,10 +128,11 @@ class CollectionAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        logger.info("Fetched all collections successfully")
-        return build_response(
+        result = build_response(
             response=response, response_cls=DataModelFactory.get_collections()
         )
+        logger.info("Fetched all collections successfully")
+        return result
 
     def get_collection(self, *, name: str) -> V1CollectionResponse:
         logger.info("Fetching collection with name: %s", name)
@@ -142,10 +144,11 @@ class CollectionAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        logger.info("Fetched collection successfully: %s", name)
-        return build_response(
+        result = build_response(
             response=response, response_cls=DataModelFactory.get_collection()
         )
+        logger.info("Fetched collection successfully: %s", name)
+        return result
 
     def delete_collection(self, *, name: str) -> V1DeleteCollectionResponse:
         logger.info("Deleting collection with name: %s", name)
@@ -157,10 +160,11 @@ class CollectionAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        logger.info("Deleted collection successfully: %s", name)
-        return build_response(
+        result = build_response(
             response=response, response_cls=DataModelFactory.delete_collection()
         )
+        logger.info("Deleted collection successfully: %s", name)
+        return result
 
     def assign_buckets_to_collection(
         self, *, collection_name: str, buckets: List[str]
@@ -175,10 +179,11 @@ class CollectionAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        logger.info("Buckets assigned successfully to collection: %s", collection_name)
-        return build_response(
+        result = build_response(
             response=response, response_cls=DataModelFactory.assign_buckets()
         )
+        logger.info("Buckets assigned successfully to collection: %s", collection_name)
+        return result
 
     def unassign_buckets_from_collection(
         self, *, collection_name: str, buckets: List[str]
@@ -193,9 +198,10 @@ class CollectionAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
+        result = build_response(
+            response=response, response_cls=DataModelFactory.unassign_buckets()
+        )
         logger.info(
             "Buckets unassigned successfully from collection: %s", collection_name
         )
-        return build_response(
-            response=response, response_cls=DataModelFactory.unassign_buckets()
-        )
+        return result
