@@ -123,10 +123,11 @@ class PipelineAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        logger.info("Pipeline created successfully: %s", name)
-        return build_response(
+        result = build_response(
             response=response, response_cls=DataModelFactory.create_pipeline()
         )
+        logger.info("Pipeline created successfully: %s", name)
+        return result
 
     def get_pipeline(self, *, name: str) -> V1PipelineResponse:
         """
@@ -148,10 +149,11 @@ class PipelineAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        logger.info("Fetched pipeline successfully: %s", name)
-        return build_response(
+        result = build_response(
             response=response, response_cls=DataModelFactory.get_pipeline()
         )
+        logger.info("Fetched pipeline successfully: %s", name)
+        return result
 
     def get_pipelines(self) -> ListPipelines:
         """
@@ -170,10 +172,11 @@ class PipelineAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        logger.info("Fetched all pipelines successfully")
-        return build_response(
+        result = build_response(
             response=response, response_cls=DataModelFactory.get_pipelines()
         )
+        logger.info("Fetched all pipelines successfully")
+        return result
 
     def delete_pipeline(self, *, name: str) -> V1DeletePipelineResponse:
         """
@@ -195,7 +198,8 @@ class PipelineAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        logger.info("Deleted pipeline successfully: %s", name)
-        return build_response(
+        result = build_response(
             response=response, response_cls=DataModelFactory.delete_pipeline()
         )
+        logger.info("Deleted pipeline successfully: %s", name)
+        return result
