@@ -10,7 +10,12 @@ from pydi_client.data.collection_manager import (
     V1PipelineResponse,
     ListPipelines,
 )
-from pydi_client.errors import HTTPUnauthorizedException, UnexpectedStatus
+from pydi_client.errors import (
+    HTTPUnauthorizedException,
+    PipelineValidationError,
+    UnexpectedStatus,
+)
+from pydi_client.di_client import DIAdminClient
 from pydi_client.sessions.authenticated_session import AuthenticatedSession
 from pydi_client.sessions.session import Session
 
@@ -60,6 +65,189 @@ def test_create_pipeline_success(mocker, mock_session, pipeline_api):
     assert result.message == "Pipeline created successfully"
 
 
+def test_create_pipeline_preserves_serialized_payload(
+    mocker, mock_session, pipeline_api
+):
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={"success": True, "message": "Pipeline created successfully"},
+    )
+    execute_request = mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    pipeline_api.create_pipeline(
+        name="Test Pipeline",
+        pipeline_type="type1",
+        model="model1",
+        custom_func="func1",
+        event_filter_object_suffix=[".txt"],
+        event_filter_max_object_size=100,
+        schema="schema1",
+    )
+
+    assert execute_request.call_args.kwargs["json"] == {
+        "name": "Test Pipeline",
+        "type": "type1",
+        "model": "model1",
+        "eventFilter": {"objectSuffix": [".txt"], "maxObjectSize": 100},
+        "schema": "schema1",
+        "customFunction": "func1",
+    }
+
+
+@pytest.mark.parametrize(
+    "field",
+    ["name", "pipeline_type", "event_filter_object_suffix", "schema"],
+)
+def test_create_pipeline_missing_required_input_raises_client_validation_error(
+    mocker, mock_session, pipeline_api, field
+):
+    execute_request = mocker.patch("pydi_client.api.pipeline.execute_with_retry")
+    arguments = {
+        "name": "Test Pipeline",
+        "pipeline_type": "type1",
+        "event_filter_object_suffix": [".txt"],
+        "schema": "schema1",
+    }
+    arguments.pop(field)
+
+    with pytest.raises(PipelineValidationError) as exception:
+        pipeline_api.create_pipeline(**arguments)
+
+    assert exception.value.source == "client"
+    assert exception.value.status_code is None
+    if field != "schema":
+        assert exception.value.errors == [
+            {"type": "missing", "loc": [field], "msg": "Field required"}
+        ]
+    execute_request.assert_not_called()
+
+
+def test_create_pipeline_schema_none_raises_client_validation_error(
+    mocker, mock_session, pipeline_api
+):
+    execute_request = mocker.patch("pydi_client.api.pipeline.execute_with_retry")
+
+    with pytest.raises(PipelineValidationError) as exception:
+        pipeline_api.create_pipeline(
+            name="Test Pipeline",
+            pipeline_type="type1",
+            event_filter_object_suffix=[".txt"],
+            schema=None,
+        )
+
+    assert exception.value.source == "client"
+    execute_request.assert_not_called()
+
+
+def test_admin_client_missing_pipeline_type_raises_client_validation_error(
+    mocker, mock_session
+):
+    mocker.patch("pydi_client.di_client.AuthAPI.login", return_value=mock_session)
+    execute_request = mocker.patch("pydi_client.api.pipeline.execute_with_retry")
+    client = DIAdminClient(
+        uri="http://example.com", username="admin", password="password"
+    )
+
+    with pytest.raises(PipelineValidationError):
+        client.create_pipeline(
+            name="Test Pipeline",
+            event_filter_object_suffix=[".txt"],
+            schema="schema1",
+        )
+
+    execute_request.assert_not_called()
+
+
+def test_create_pipeline_gateway_validation_error(mocker, mock_session, pipeline_api):
+    response_content = (
+        b'{"Status":"invalid payload","errors":[{"type":"missing",'
+        b'"loc":["rag","eventFilter","maxObjectSize"],'
+        b'"msg":"Field required"}]}'
+    )
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.UNPROCESSABLE_ENTITY, content=response_content
+    )
+    mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    with pytest.raises(PipelineValidationError) as exception:
+        pipeline_api.create_pipeline(
+            name="Test Pipeline",
+            pipeline_type="rag",
+            event_filter_object_suffix=["*.pdf"],
+            schema="schema1",
+        )
+
+    assert exception.value.source == "server"
+    assert exception.value.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert exception.value.errors[0]["loc"] == [
+        "rag",
+        "eventFilter",
+        "maxObjectSize",
+    ]
+    assert exception.value.errors[0]["msg"] == "Field required"
+    assert exception.value.raw_response == response_content
+
+
+def test_create_pipeline_semantic_gateway_validation_error(
+    mocker, mock_session, pipeline_api
+):
+    response_content = b'{"Status":"Invalid maxObjectSize","error":"limit exceeded"}'
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.UNPROCESSABLE_ENTITY, content=response_content
+    )
+    mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    with pytest.raises(PipelineValidationError) as exception:
+        pipeline_api.create_pipeline(
+            name="Test Pipeline",
+            pipeline_type="rag",
+            event_filter_object_suffix=["*.pdf"],
+            schema="schema1",
+        )
+
+    assert exception.value.source == "server"
+    assert exception.value.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert exception.value.errors == [
+        {
+            "type": "server_validation_error",
+            "loc": [],
+            "msg": "limit exceeded",
+            "status": "Invalid maxObjectSize",
+        }
+    ]
+    assert exception.value.raw_response == response_content
+
+
+@pytest.mark.parametrize("response_content", [b"not json", b"\xff"])
+def test_create_pipeline_nonstandard_gateway_validation_error(
+    mocker, mock_session, pipeline_api, response_content
+):
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.UNPROCESSABLE_ENTITY, content=response_content
+    )
+    mocker.patch(
+        "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
+    )
+
+    with pytest.raises(PipelineValidationError) as exception:
+        pipeline_api.create_pipeline(
+            name="Test Pipeline",
+            pipeline_type="type1",
+            event_filter_object_suffix=[".txt"],
+            schema="schema1",
+        )
+
+    assert exception.value.source == "server"
+    assert exception.value.errors == []
+    assert exception.value.raw_response == response_content
+
+
 def test_create_pipeline_unauthorized(mocker, mock_authsession, pipeline_api):
     mock_response = HTTPXResponse(status_code=HTTPStatus.UNAUTHORIZED)
     mocker.patch(
@@ -82,15 +270,21 @@ def test_create_pipeline_unauthorized(mocker, mock_authsession, pipeline_api):
         )
 
 
-def test_create_pipeline_unexpected_status(mocker, mock_authsession, pipeline_api):
-    mock_response = HTTPXResponse(status_code=HTTPStatus.INTERNAL_SERVER_ERROR)
+@pytest.mark.parametrize(
+    "status_code",
+    [HTTPStatus.NOT_FOUND, HTTPStatus.CONFLICT, HTTPStatus.INTERNAL_SERVER_ERROR],
+)
+def test_create_pipeline_unexpected_status(
+    mocker, mock_session, pipeline_api, status_code
+):
+    mock_response = HTTPXResponse(status_code=status_code)
     mocker.patch(
         "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
     )
 
     mock_httpx_client = mocker.MagicMock()
     mock_httpx_client.request.return_value = mock_response
-    mock_authsession.get_httpx_client.return_value = mock_httpx_client
+    mock_session.get_httpx_client.return_value = mock_httpx_client
 
     with pytest.raises(UnexpectedStatus):
         pipeline_api.create_pipeline(
@@ -140,7 +334,10 @@ def test_create_transcribe_pipeline_success(mocker, mock_session, pipeline_api):
     """Test creating a transcribe-metadata pipeline with prompt parameter."""
     mock_response = HTTPXResponse(
         status_code=HTTPStatus.OK,
-        json={"success": True, "message": "transcribe-image-metadata resource created successfully."},
+        json={
+            "success": True,
+            "message": "transcribe-image-metadata resource created successfully.",
+        },
     )
     mocker.patch(
         "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
@@ -322,11 +519,16 @@ def test_delete_pipeline_unexpected_status(mocker, mock_session, pipeline_api):
         pipeline_api.delete_pipeline(name="Test Pipeline")
 
 
-def test_create_custom_function_pipeline_with_event_filter_success(mocker, mock_session, pipeline_api):
+def test_create_custom_function_pipeline_with_event_filter_success(
+    mocker, mock_session, pipeline_api
+):
     """Test creating a custom-function pipeline with explicit eventFilter."""
     mock_response = HTTPXResponse(
         status_code=HTTPStatus.OK,
-        json={"success": True, "message": "example-custom-function-pipeline resource created successfully."},
+        json={
+            "success": True,
+            "message": "example-custom-function-pipeline resource created successfully.",
+        },
     )
     mocker.patch(
         "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
@@ -391,7 +593,10 @@ def test_create_nim_rag_pipeline_success(mocker, mock_session, pipeline_api):
     """Test creating a NIM RAG pipeline with llama-nemotron-embed-1b-v2 model."""
     mock_response = HTTPXResponse(
         status_code=HTTPStatus.OK,
-        json={"success": True, "message": "nim-rag-pipeline resource created successfully."},
+        json={
+            "success": True,
+            "message": "nim-rag-pipeline resource created successfully.",
+        },
     )
     mocker.patch(
         "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response
@@ -406,7 +611,14 @@ def test_create_nim_rag_pipeline_success(mocker, mock_session, pipeline_api):
         pipeline_type="rag",
         model="llama-nemotron-embed-1b-v2",
         schema="default-rag-schema",
-        event_filter_object_suffix=["*.pdf", "*.txt", "*.docx", "*.csv", "*.html", "*.json"],
+        event_filter_object_suffix=[
+            "*.pdf",
+            "*.txt",
+            "*.docx",
+            "*.csv",
+            "*.html",
+            "*.json",
+        ],
         event_filter_max_object_size=1000000,
         chunk_size=512,
         chunk_overlap=50,
@@ -427,7 +639,14 @@ def test_get_nim_rag_pipeline_success(mocker, mock_session, pipeline_api):
             "model": "llama-nemotron-embed-1b-v2",
             "customFunction": None,
             "eventFilter": {
-                "objectSuffix": ["*.pdf", "*.txt", "*.docx", "*.csv", "*.html", "*.json"],
+                "objectSuffix": [
+                    "*.pdf",
+                    "*.txt",
+                    "*.docx",
+                    "*.csv",
+                    "*.html",
+                    "*.json",
+                ],
                 "maxObjectSize": 1000000,
             },
             "schema": "default-rag-schema",
@@ -452,7 +671,14 @@ def test_get_nim_rag_pipeline_success(mocker, mock_session, pipeline_api):
     assert result.model == "llama-nemotron-embed-1b-v2"
     assert result.schema_name == "default-rag-schema"
     assert result.prompt is None
-    assert result.eventFilter["objectSuffix"] == ["*.pdf", "*.txt", "*.docx", "*.csv", "*.html", "*.json"]
+    assert result.eventFilter["objectSuffix"] == [
+        "*.pdf",
+        "*.txt",
+        "*.docx",
+        "*.csv",
+        "*.html",
+        "*.json",
+    ]
     assert result.eventFilter["maxObjectSize"] == 1000000
 
 
@@ -460,7 +686,10 @@ def test_create_video_transcribe_pipeline_success(mocker, mock_session, pipeline
     """Test creating a video transcribe-metadata pipeline."""
     mock_response = HTTPXResponse(
         status_code=HTTPStatus.OK,
-        json={"success": True, "message": "transcribe-video-metadata resource created successfully."},
+        json={
+            "success": True,
+            "message": "transcribe-video-metadata resource created successfully.",
+        },
     )
     mocker.patch(
         "pydi_client.api.pipeline.execute_with_retry", return_value=mock_response

@@ -1,6 +1,9 @@
 # Copyright Hewlett Packard Enterprise Development LP
 
+import json
 from typing import Any, Dict, Union, List, Type, Optional
+
+from pydantic import ValidationError
 
 from pydi_client.sessions.authenticated_session import AuthenticatedSession
 from pydi_client.sessions.session import Session
@@ -15,6 +18,10 @@ from pydi_client.data.collection_manager import (
     ListPipelines,
 )
 from pydi_client.api.utils import execute_with_retry, build_response
+from pydi_client.errors import (
+    PipelineValidationError,
+    normalize_pipeline_argument_errors,
+)
 from pydi_client.logger import get_logger  # Importing the logger utility
 
 # Initialize logger for this module
@@ -70,6 +77,7 @@ class PipelineAPI:
         self._session = session
         logger.info("PipelineAPI initialized with session: %s", type(session).__name__)
 
+    @normalize_pipeline_argument_errors
     def create_pipeline(
         self,
         *,
@@ -77,7 +85,7 @@ class PipelineAPI:
         pipeline_type: str,
         event_filter_object_suffix: List[str],
         event_filter_max_object_size: Optional[int] = None,
-        schema: str,
+        schema: Optional[str] = None,
         model: Optional[str] = None,
         custom_func: Optional[str] = None,
         prompt: Optional[str] = None,
@@ -98,21 +106,26 @@ class PipelineAPI:
         """
         logger.info("Creating pipeline with name: %s, type: %s", name, pipeline_type)
 
-        filter_item = FilterItem(
-            objectSuffix=event_filter_object_suffix,
-            maxObjectSize=event_filter_max_object_size,
-        )
-        body = V1CreatePipeline(
-            name=name,
-            type=pipeline_type,
-            model=model,
-            eventFilter=filter_item,
-            schema=schema,
-            customFunction=custom_func,
-            prompt=prompt,
-            chunkSize=chunk_size,
-            chunkOverlap=chunk_overlap,
-        )
+        try:
+            filter_item = FilterItem(
+                objectSuffix=event_filter_object_suffix,
+                maxObjectSize=event_filter_max_object_size,
+            )
+            body = V1CreatePipeline(
+                name=name,
+                type=pipeline_type,
+                model=model,
+                eventFilter=filter_item,
+                schema=schema,
+                customFunction=custom_func,
+                prompt=prompt,
+                chunkSize=chunk_size,
+                chunkOverlap=chunk_overlap,
+            )
+        except ValidationError as error:
+            raise PipelineValidationError(
+                errors=error.errors(), source="client"
+            ) from error
 
         kwargs: Dict[str, Any] = MethodFactory().create_pipeline()
         kwargs["json"] = body.model_dump(exclude_none=True, by_alias=True)
@@ -123,6 +136,36 @@ class PipelineAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
+        if response.status_code == 422:
+            errors = []
+            try:
+                payload = json.loads(response.content)
+                if isinstance(payload, dict) and isinstance(
+                    payload.get("errors"), list
+                ):
+                    errors = [
+                        error for error in payload["errors"] if isinstance(error, dict)
+                    ]
+                elif isinstance(payload, dict) and isinstance(
+                    payload.get("error"), str
+                ):
+                    errors = [
+                        {
+                            "type": "server_validation_error",
+                            "loc": [],
+                            "msg": payload["error"],
+                            "status": payload.get("Status"),
+                        }
+                    ]
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                pass
+
+            raise PipelineValidationError(
+                errors=errors,
+                source="server",
+                status_code=response.status_code,
+                raw_response=response.content,
+            )
         result = build_response(
             response=response, response_cls=DataModelFactory.create_pipeline()
         )

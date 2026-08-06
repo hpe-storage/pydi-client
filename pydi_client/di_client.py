@@ -9,7 +9,11 @@ from pydi_client.api.schema import SchemaAPI
 from pydi_client.api.search import SimilaritySearchAPI
 from pydi_client.api.auth import AuthAPI
 from pydi_client.data.model import ModelTags
-from pydi_client.errors import UnexpectedResponse, UnexpectedStatus
+from pydi_client.errors import (
+    UnexpectedResponse,
+    UnexpectedStatus,
+    normalize_pipeline_argument_errors,
+)
 from pydi_client.utils.utils import deprecated
 
 from pydi_client.data.collection_manager import (
@@ -253,7 +257,7 @@ class DIClient:
             secret_key=secret_key,
             search_parameters=search_parameters,
         )
-    
+
     def get_model(self, *, name: str) -> V1ModelsResponse:
         """
         Retrieve a model by its name.
@@ -311,7 +315,6 @@ class DIClient:
         return ModelAPI(self.session).get_models()
 
 
-
 class DIAdminClient(DIClient):
     """
     DIAdminClient
@@ -360,7 +363,7 @@ class DIAdminClient(DIClient):
         """
         Property to get the authenticated session object.
 
-        Returns: 
+        Returns:
         AuthenticatedSession: The authenticated session object used for making API requests.This session is initialized with the provided URI, username, password, and token.
 
         """
@@ -529,6 +532,7 @@ class DIAdminClient(DIClient):
             collection_name=collection_name, buckets=buckets
         )
 
+    @normalize_pipeline_argument_errors
     def create_pipeline(
         self,
         *,
@@ -536,7 +540,7 @@ class DIAdminClient(DIClient):
         pipeline_type: str,
         event_filter_object_suffix: List[str],
         event_filter_max_object_size: Optional[int] = None,
-        schema: str,
+        schema: Optional[str] = None,
         model: Optional[str] = None,
         custom_func: Optional[str] = None,
         prompt: Optional[str] = None,
@@ -671,7 +675,9 @@ class DIAdminClient(DIClient):
         """
         return SchemaAPI(session=self.authenticated_session).get_schemas()
 
-    @deprecated(message="This method is deprecated and will be removed in future versions. Please use get_model() instead.")
+    @deprecated(
+        message="This method is deprecated and will be removed in future versions. Please use get_model() instead."
+    )
     def get_embedding_model(self, *, name: str) -> V1ModelsResponse:
         """
         Retrieve an embedding model by its name.
@@ -703,7 +709,9 @@ class DIAdminClient(DIClient):
         """
         return ModelAPI(self.authenticated_session).get_model(name=name)
 
-    @deprecated(message="This method is deprecated and will be removed in future versions. Please use get_all_models() instead.")
+    @deprecated(
+        message="This method is deprecated and will be removed in future versions. Please use get_all_models() instead."
+    )
     def get_all_embedding_models(self) -> V1ListModelsResponse:
         """
         Retrieves all embedding models available in the system.
@@ -731,11 +739,14 @@ class DIAdminClient(DIClient):
             embedding_models_list = list()
             for model in models.models:
                 model_details = model_api.get_model(name=model.name)
-                if any(capability.lower() == ModelTags.SENTENCE_SIMILARITY.value.lower() for capability in model_details.capabilities):
+                if any(
+                    capability.lower() == ModelTags.SENTENCE_SIMILARITY.value.lower()
+                    for capability in model_details.capabilities
+                ):
                     embedding_models_list.append(model)
         except (UnexpectedResponse, UnexpectedStatus) as e:
             raise e
-        
+
         return V1ListModelsResponse(models=embedding_models_list)
 
     def create_schema(
@@ -806,7 +817,4 @@ class DIAdminClient(DIClient):
             # )
             ```
         """
-        return SchemaAPI(session=self.authenticated_session).delete_schema(
-            name=name
-        )
-    
+        return SchemaAPI(session=self.authenticated_session).delete_schema(name=name)
