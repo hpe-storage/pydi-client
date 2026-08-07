@@ -117,10 +117,9 @@ def test_create_pipeline_missing_required_input_raises_client_validation_error(
 
     assert exception.value.source == "client"
     assert exception.value.status_code is None
-    if field != "schema":
-        assert exception.value.errors == [
-            {"type": "missing", "loc": [field], "msg": "Field required"}
-        ]
+    assert exception.value.errors == [
+        {"type": "missing", "loc": [field], "msg": "Field required"}
+    ]
     execute_request.assert_not_called()
 
 
