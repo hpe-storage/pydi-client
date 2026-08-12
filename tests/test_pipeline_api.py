@@ -120,6 +120,9 @@ def test_create_pipeline_missing_required_input_raises_client_validation_error(
     assert exception.value.errors == [
         {"type": "missing", "loc": [field], "msg": "Field required"}
     ]
+    assert str(exception.value) == (
+        f"Pipeline validation failed (client): {field}: Field required"
+    )
     execute_request.assert_not_called()
 
 
@@ -137,6 +140,7 @@ def test_create_pipeline_schema_none_raises_client_validation_error(
         )
 
     assert exception.value.source == "client"
+    assert "schema: Input should be a valid string" in str(exception.value)
     execute_request.assert_not_called()
 
 
@@ -189,6 +193,10 @@ def test_create_pipeline_gateway_validation_error(mocker, mock_session, pipeline
     ]
     assert exception.value.errors[0]["msg"] == "Field required"
     assert exception.value.raw_response == response_content
+    assert str(exception.value) == (
+        "Pipeline validation failed (server): "
+        "rag.eventFilter.maxObjectSize: Field required"
+    )
 
 
 def test_create_pipeline_semantic_gateway_validation_error(
@@ -221,6 +229,9 @@ def test_create_pipeline_semantic_gateway_validation_error(
         }
     ]
     assert exception.value.raw_response == response_content
+    assert str(exception.value) == (
+        "Pipeline validation failed (server): Invalid maxObjectSize: limit exceeded"
+    )
 
 
 @pytest.mark.parametrize("response_content", [b"not json", b"\xff"])
@@ -245,6 +256,9 @@ def test_create_pipeline_nonstandard_gateway_validation_error(
     assert exception.value.source == "server"
     assert exception.value.errors == []
     assert exception.value.raw_response == response_content
+    assert (
+        str(exception.value) == "Pipeline validation failed (server): no error details"
+    )
 
 
 def test_create_pipeline_unauthorized(mocker, mock_authsession, pipeline_api):
