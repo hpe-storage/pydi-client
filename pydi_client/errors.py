@@ -25,7 +25,37 @@ class PipelineValidationError(ValueError):
         self.status_code = status_code
         self.raw_response = raw_response
 
-        super().__init__(f"Pipeline validation failed ({source}).")
+        super().__init__(self._message())
+
+    def _message(self) -> str:
+        details = []
+        for error in self.errors:
+            rendered_error = self._format_error(error)
+            if rendered_error:
+                details.append(rendered_error)
+
+        prefix = f"Pipeline validation failed ({self.source})"
+        return (
+            f"{prefix}: {'; '.join(details)}"
+            if details
+            else f"{prefix}: no error details"
+        )
+
+    @staticmethod
+    def _format_error(error: Dict[str, Any]) -> str:
+        message = error.get("msg")
+        if not isinstance(message, str):
+            return ""
+
+        location = error.get("loc")
+        if isinstance(location, (list, tuple)) and location:
+            return f"{'.'.join(str(part) for part in location)}: {message}"
+
+        status = error.get("status")
+        if isinstance(status, str) and status:
+            return f"{status}: {message}"
+
+        return message
 
 
 def normalize_pipeline_argument_errors(
