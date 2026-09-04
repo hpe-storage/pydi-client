@@ -49,8 +49,8 @@ class DIClient:
     """
     DIClient
     The `DIClient` class serves as a client interface for interacting with the Data Intelligence (DI) solution.
-    It provides methods to retrieve and interact with various data entities such as collections, pipelines, schemas,
-    and embedding models. Additionally, it supports performing similarity searches within collections.
+    It provides methods to retrieve and interact with various data entities such as collections, pipelines,
+    and models. Additionally, it supports performing similarity searches within collections.
     This class is designed for general-purpose usage and is intended for scenarios where non-administrative
     operations are required. For administrative operations, such as managing users, permissions, or system-level
     configurations, the `DIAdminClient` class should be used instead.
@@ -59,11 +59,11 @@ class DIClient:
     --------
     The `DIClient` class simplifies the interaction with the DI solution by abstracting the underlying API calls
     and providing a Pythonic interface for common operations. It is particularly useful for developers and data
-    scientists who need to work with DI collections, pipelines, schemas, and embedding models in their workflows.
+    scientists who need to work with DI collections, pipelines, and models in their workflows.
 
     Key Features:
     -------------
-    1. Retrieve specific or all collections, pipelines.
+    1. Retrieve specific or all collections, pipelines and models.
     2. Perform similarity searches within a specified collection.
     3. Provides a session object for managing API interactions.
 
@@ -101,13 +101,15 @@ class DIClient:
 
         Example usage:
             ```python
-                client = DIClient(uri="https://example.com")
-                collection = client.get_collection(name="example_collection")
-                print(collection)
-                # Output: V1CollectionResponse(
+            client = DIClient(uri="https://example.com")
+            collection = client.get_collection(name="example_collection")
+            print(collection)
+            # Output: V1CollectionResponse(
             #     name="example_collection",
+            #     pipeline="rag-pipeline",
             #     buckets=["bucket-1", "bucket-2"],
-            #     pipeline="rag-pipeline"
+            #     outputStore=None,
+            #     indexingMode="HNSW"
             # )
             ```
         """
@@ -118,22 +120,22 @@ class DIClient:
         Retrieves all collections available in the system.
 
         Returns:
-            V1ListCollectionsResponse: A response object containing a list of
+            ListCollection: A response object containing a list of
             collections available in the system.
 
         Example usage:
             ```python
-                client = DIClient(uri="https://example.com")
-                collections = client.get_all_collections()
-                for collection in collections:
-                    print(collection.name)
+            client = DIClient(uri="https://example.com")
+            collections = client.get_all_collections()
+            for collection in collections.root:
+                print(collection.name)
             # Output:
-            ListCollection(
-                root=[
-                    ListCollectionItem(id="1", name="collection1"),
-                    ListCollectionItem(id="2", name="collection2")
-                ]
-            )
+            # ListCollection(
+            #     root=[
+            #         ListCollectionItem(id="1", name="collection1"),
+            #         ListCollectionItem(id="2", name="collection2")
+            #     ]
+            # )
             ```
         """
 
@@ -148,23 +150,30 @@ class DIClient:
             name (str): The name of the pipeline to retrieve. This is a required keyword-only argument.
 
         Returns:
-            DescribePipelineRecordResponse: The response object containing details about the pipeline.
+            V1PipelineResponse: The response object containing details about the pipeline.
 
         Example usage:
-                ```python
-                client = DIClient(uri="https://example.com")
-                pipeline = client.get_pipeline(name="example_pipeline")
-                print(pipeline)
-                # Output: V1PipelineResponse(
-                #     name="example_pipeline",
-                #     type="rag",
-                #     model="example_model",
-                #     customFunction="custom_processing_function",
-                #     eventFilter={"objectSuffix": ["*.txt", "*.pdf"],
-                #                  "maxObjectSize": 10485760},
-                #     schema="example_schema"
-                # )
-                ```
+            ```python
+            client = DIClient(uri="https://example.com")
+            pipeline = client.get_pipeline(name="example_pipeline")
+            print(pipeline)
+            # Output: V1PipelineResponse(
+            #     name="example_pipeline",
+            #     type="rag",
+            #     model="example_model",
+            #     customFunction=None,
+            #     eventFilter={"objectSuffix": ["*.txt", "*.pdf"],
+            #                  "maxObjectSize": 10485760},
+            #     schema_name="example_schema",
+            #     prompt=None,
+            #     chunkSize=512,
+            #     chunkOverlap=50
+            # )
+            ```
+
+        Note:
+            The schema is exposed as the ``schema_name`` attribute because ``schema`` collides with a
+            reserved Pydantic attribute. It is serialized and deserialized as ``schema``.
         """
         return PipelineAPI(self.session).get_pipeline(name=name)
 
@@ -173,22 +182,22 @@ class DIClient:
         Retrieves all pipelines available in the system.
 
         Returns:
-            ListPipelineRecordsResponse: A response object containing a list of
+            ListPipelines: A response object containing a list of
             pipelines available in the system.
 
         Example usage:
             ```python
-                client = DIClient(uri="https://example.com")
-                pipelines = client.get_all_pipelines()
-                for pipeline in pipelines.pipelines:
-                    print(pipeline.name)
+            client = DIClient(uri="https://example.com")
+            pipelines = client.get_all_pipelines()
+            for pipeline in pipelines.root:
+                print(pipeline.name)
             # Output:
-            ListPipelines(
-                root=[
-                    ListPipeline(id="1", name="pipeline1"),
-                    ListPipeline(id="2", name="pipeline2")
-                ]
-            )
+            # ListPipelines(
+            #     root=[
+            #         ListPipeline(id="1", name="pipeline1"),
+            #         ListPipeline(id="2", name="pipeline2")
+            #     ]
+            # )
             ```
         """
         return PipelineAPI(self.session).get_pipelines()
@@ -223,7 +232,7 @@ class DIClient:
 
         Example usage:
             ```python
-            client = DIClient(session)
+            client = DIClient(uri="https://example.com")
             results = client.similarity_search(
                 query="machine learning",
                 collection_name="research_papers",
@@ -233,20 +242,21 @@ class DIClient:
                 search_parameters={"metric": "cosine", "ef_search": "100"}
             )
             print(results)
-            [
-                {
-                    "dataChunk": "chunk1",
-                    "score": 0.9,
-                    "chunkMetadata": {
-                        "objectKey": "value",
-                        "startCharIndex": 1,
-                        "endCharIndex": 2,
-                        "bucketName": "string",
-                        "pageLabel": "string",
-                        "versionId": "string",
-                    }
-                }
-            ]
+            # Output:
+            # [
+            #     {
+            #         "dataChunk": "chunk1",
+            #         "score": 0.9,
+            #         "chunkMetadata": {
+            #             "objectKey": "value",
+            #             "startCharIndex": 1,
+            #             "endCharIndex": 2,
+            #             "bucketName": "string",
+            #             "pageLabel": "string",
+            #             "versionId": "string",
+            #         }
+            #     }
+            # ]
             ```
         """
         return SimilaritySearchAPI(self.session).search(
@@ -271,26 +281,27 @@ class DIClient:
 
         Example usage:
             ```python
-                client = DIClient(uri="https://example.com")
-                model = client.get_model(name="example_model")
-                print(model)
-                # Output: V1ModelsResponse(
-                #     name="example_model",
-                #     modelName="...",
-                #     capabilities="...",
-                #     version="...",
-                #     communicationType="...", # e.g. Ollama API
-                #     dimension=...,  # e.g., 768
-                #     contextLength=...,  # e.g., 1024
-                #     temperature=...,  # e.g., 0.7
-                #     topK=...,  # e.g., 40
-                #     topP=...,  # e.g., 0.9
-                #     maximumTokens=...,  # e.g., 512
-                #     timeout=...,  # e.g., 300
-                #     language="...",  # e.g., "en-US"
-                #     sampleRate=...,  # e.g., 16000
-                #     automaticPunctuation=...,  # e.g., True
-                # )
+            client = DIClient(uri="https://example.com")
+            model = client.get_model(name="example_model")
+            print(model)
+            # Output: V1ModelsResponse(
+            #     name="example_model",
+            #     modelName="...",
+            #     capabilities=["..."],
+            #     version="...",
+            #     communicationType="...", # e.g. Ollama API
+            #     dimension=...,  # e.g., 768
+            #     contextLength=...,  # e.g., 1024
+            #     temperature=...,  # e.g., 0.7
+            #     topK=...,  # e.g., 40
+            #     topP=...,  # e.g., 0.9
+            #     maximumTokens=...,  # e.g., 512
+            #     timeout=...,  # e.g., 300
+            #     language="...",  # e.g., "en-US"
+            #     sampleRate=...,  # e.g., 16000
+            #     automaticPunctuation=...,  # e.g., True
+            #     endpoint="...",  # custom-function models only
+            # )
             ```
         """
         return ModelAPI(self.session).get_model(name=name)
@@ -298,18 +309,22 @@ class DIClient:
     def get_all_models(self) -> V1ListModelsResponse:
         """
         Retrieves all models available in the system.
+
         Returns:
             V1ListModelsResponse: A response object containing a list of
             models available in the system.
 
         Example usage:
             ```python
-                client = DIClient(uri="https://example.com")
-                models = client.get_all_models()
-                print(models[0])
-                # Output: V1ModelsResponse(
-                #     models=[ModelRecordSummary],
-                # )
+            client = DIClient(uri="https://example.com")
+            models = client.get_all_models()
+            print(models)
+            # Output: V1ListModelsResponse(
+            #     models=[ModelRecordSummary(id="1", name="example_model")]
+            # )
+
+            for model in models.models:
+                print(model.name)
             ```
         """
         return ModelAPI(self.session).get_models()
@@ -432,10 +447,10 @@ class DIAdminClient(DIClient):
             name (str): The name of the collection to be deleted.
 
         Returns:
-            None: This method does not return any value.
+            V1DeleteCollectionResponse: The response object containing details about the deleted collection.
 
         Example Usage:
-        ```python
+            ```python
             client = DIAdminClient(uri="https://example.com", username="admin", password="password")
             resp = client.delete_collection(name="example_collection")
             print(resp)
@@ -444,7 +459,7 @@ class DIAdminClient(DIClient):
             #     success=True,
             #     message="Collection 'example_collection' has been deleted."
             # )
-        ```
+            ```
         """
         return CollectionAPI(session=self.authenticated_session).delete_collection(
             name=name
@@ -482,7 +497,7 @@ class DIAdminClient(DIClient):
             print(response)
             # Output:
             # BucketUpdateResponse(
-            #     sucess=true,
+            #     success=True,
             #     message="Buckets assigned successfully to collection 'my_collection'."
             # )
             ```
@@ -521,7 +536,7 @@ class DIAdminClient(DIClient):
             print(response)
             # Output:
             # BucketUpdateResponse(
-            #     success=true,
+            #     success=True,
             #     message="Buckets unassigned successfully from collection 'example_collection'."
             # )
             ```
@@ -552,18 +567,22 @@ class DIAdminClient(DIClient):
 
         Args:
             name (str): The name of the pipeline to be created.
-            pipeline_type (str): The type of the pipeline (e.g., "rag", "metadata").
-            model Optional (str): The model associated with the pipeline.
-            custom_func Optional (str): The custom function to be used in the pipeline.
+            pipeline_type (str): The type of the pipeline ("rag", "metadata", "transcribe-metadata" or "custom-function").
             event_filter_object_suffix (List[str]): A list of file suffixes to filter events. Ex - ["*.txt", "*.pdf"]
-            event_filter_max_object_size (int): The maximum object size for event filtering. Ex - 10485760
-            schema Optional (str): The schema definition for the pipeline.
+            schema (str): The schema definition for the pipeline.
+            event_filter_max_object_size Optional (int): The maximum object size for event filtering. Ex - 10485760
+            model Optional (str): The model associated with the pipeline. Required for "rag" and "custom-function" pipelines.
+            custom_func Optional (str): The custom function to be used in the pipeline. Required for "metadata" pipelines.
             prompt Optional (str): The prompt for transcribe pipelines (e.g., "Transcribe the image content into text.").
             chunk_size Optional (int): Chunk size for RAG pipelines.
             chunk_overlap Optional (int): Chunk overlap for RAG pipelines.
 
         Returns:
             V1CreatePipelineResponse: The response object containing details of the created pipeline.
+
+        Raises:
+            PipelineValidationError: If the arguments are invalid or incomplete, or if the server rejects
+                the request with an HTTP 422 validation error.
 
         Example usage:
             ```python
@@ -576,7 +595,6 @@ class DIAdminClient(DIClient):
                 name="example_pipeline",
                 pipeline_type="rag",
                 model="example_model",
-                custom_func="custom_processing_function",
                 event_filter_object_suffix=["*.txt", "*.pdf"],
                 event_filter_max_object_size=10485760,
                 schema="example_schema"
@@ -622,7 +640,7 @@ class DIAdminClient(DIClient):
             print(response)
             # Output:
             # V1DeletePipelineResponse(
-            #     message="Pipeline successfully deleted"
+            #     message="Pipeline successfully deleted",
             #     success=True,
             # )
             ```
@@ -640,18 +658,23 @@ class DIAdminClient(DIClient):
             name (str): The name of the schema to retrieve. This is a required keyword-only argument.
 
         Returns:
-            V1SchemaResponse: The response object containing details about the schema.
+            V1SchemasResponse: The response object containing details about the schema.
 
         Example usage:
             ```python
-                client = DIAdminClient(uri="https://example.com", username="admin", password="password")
-                schema = client.get_schema(name="example_schema")
-                print(schema)
-                # Output: V1SchemaResponse(
-                #     name="example_schema",
-                #     type="...",
-                #     schema=[SchemaItem]
-                # )
+            client = DIAdminClient(uri="https://example.com", username="admin", password="password")
+            schema = client.get_schema(name="example_schema")
+            print(schema)
+            # Output: V1SchemasResponse(
+            #     name="example_schema",
+            #     type="...",
+            #     schema_fields=[SchemaItem(name="id", type="varchar", nullable=False)]
+            # )
+            ```
+
+        Note:
+            The schema fields are exposed as the ``schema_fields`` attribute because ``schema`` collides
+            with a reserved Pydantic attribute. They are serialized and deserialized as ``schema``.
         """
         return SchemaAPI(session=self.authenticated_session).get_schema(name=name)
 
@@ -665,12 +688,12 @@ class DIAdminClient(DIClient):
 
         Example usage:
             ```python
-                client = DIAdminClient(uri="https://example.com", username="admin", password="password")
-                schemas = client.get_all_schemas()
-                print(schemas)
-                # Output: V1ListSchemasResponse(
-                #     schemas=[SchemaRecordSummary]
-                # )
+            client = DIAdminClient(uri="https://example.com", username="admin", password="password")
+            schemas = client.get_all_schemas()
+            print(schemas)
+            # Output: V1ListSchemasResponse(
+            #     schemas=[SchemaListItem(id="1", name="example_schema")]
+            # )
             ```
         """
         return SchemaAPI(session=self.authenticated_session).get_schemas()
@@ -681,7 +704,7 @@ class DIAdminClient(DIClient):
     def get_embedding_model(self, *, name: str) -> V1ModelsResponse:
         """
         Retrieve an embedding model by its name.
-        This method fetches an embedding model object from the EmbeddingModelAPI using the provided name.
+        This method fetches an embedding model object from the ModelAPI using the provided name.
 
         .. Deprecated::
           This method is deprecated and will be removed in future versions. Please use `get_model` instead.
@@ -694,17 +717,17 @@ class DIAdminClient(DIClient):
 
         Example usage:
             ```python
-                client = DIAdminClient(uri="https://example.com", username="admin", password="password")
-                model = client.get_embedding_model(name="example_model")
-                print(model)
-                # Output: V1ModelsResponse(
-                #     name="example_model",
-                #     modelName="...",
-                #     capabilities="...",
-                #     dimension=...,  # e.g., 768
-                #     maximumTokens=...,  # e.g., 512
-                #     version="..."
-                # )
+            client = DIAdminClient(uri="https://example.com", username="admin", password="password")
+            model = client.get_embedding_model(name="example_model")
+            print(model)
+            # Output: V1ModelsResponse(
+            #     name="example_model",
+            #     modelName="...",
+            #     capabilities=["Sentence-Similarity"],
+            #     version="...",
+            #     dimension=...,  # e.g., 768
+            #     maximumTokens=...,  # e.g., 512
+            # )
             ```
         """
         return ModelAPI(self.authenticated_session).get_model(name=name)
@@ -725,12 +748,12 @@ class DIAdminClient(DIClient):
 
         Example usage:
             ```python
-                client = DIAdminClient(uri="https://example.com", username="admin", password="password")
-                models = client.get_all_embedding_models()
-                print(models[0])
-                # Output: V1ModelsResponse(
-                #     models=[ModelRecordSummary],
-                # )
+            client = DIAdminClient(uri="https://example.com", username="admin", password="password")
+            models = client.get_all_embedding_models()
+            print(models)
+            # Output: V1ListModelsResponse(
+            #     models=[ModelRecordSummary(id="1", name="example_embedding_model")]
+            # )
             ```
         """
         try:
@@ -772,9 +795,9 @@ class DIAdminClient(DIClient):
         Returns:
             V1CreateSchemaResponse: Response indicating success or failure.
 
-        Example usage
-        ```python
-             schema_response = client.create_schema(
+        Example usage:
+            ```python
+            schema_response = client.create_schema(
                 name="yolo-detection-schema",
                 schema_type="custom-function",
                 schema=[{"name": "id", "type": "varchar", "nullable": False},
@@ -784,7 +807,7 @@ class DIAdminClient(DIClient):
             )
             # "id" is required (NOT NULL, strict validation); "content" and
             # "embedding" allow nulls (nullable defaults to True when omitted).
-
+            ```
         """
         return SchemaAPI(session=self.authenticated_session).create_schema(
             name=name,
