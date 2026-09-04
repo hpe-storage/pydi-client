@@ -552,18 +552,22 @@ class DIAdminClient(DIClient):
 
         Args:
             name (str): The name of the pipeline to be created.
-            pipeline_type (str): The type of the pipeline (e.g., "rag", "metadata").
-            model Optional (str): The model associated with the pipeline.
-            custom_func Optional (str): The custom function to be used in the pipeline.
+            pipeline_type (str): The type of the pipeline ("rag", "metadata", "transcribe-metadata" or "custom-function").
             event_filter_object_suffix (List[str]): A list of file suffixes to filter events. Ex - ["*.txt", "*.pdf"]
-            event_filter_max_object_size (int): The maximum object size for event filtering. Ex - 10485760
-            schema Optional (str): The schema definition for the pipeline.
+            schema (str): The schema definition for the pipeline.
+            event_filter_max_object_size Optional (int): The maximum object size for event filtering. Ex - 10485760
+            model Optional (str): The model associated with the pipeline. Required for "rag" and "custom-function" pipelines.
+            custom_func Optional (str): The custom function to be used in the pipeline. Required for "metadata" pipelines.
             prompt Optional (str): The prompt for transcribe pipelines (e.g., "Transcribe the image content into text.").
             chunk_size Optional (int): Chunk size for RAG pipelines.
             chunk_overlap Optional (int): Chunk overlap for RAG pipelines.
 
         Returns:
             V1CreatePipelineResponse: The response object containing details of the created pipeline.
+
+        Raises:
+            PipelineValidationError: If the arguments are invalid or incomplete, or if the server rejects
+                the request with an HTTP 422 validation error.
 
         Example usage:
             ```python
@@ -576,7 +580,6 @@ class DIAdminClient(DIClient):
                 name="example_pipeline",
                 pipeline_type="rag",
                 model="example_model",
-                custom_func="custom_processing_function",
                 event_filter_object_suffix=["*.txt", "*.pdf"],
                 event_filter_max_object_size=10485760,
                 schema="example_schema"
@@ -652,6 +655,7 @@ class DIAdminClient(DIClient):
                 #     type="...",
                 #     schema=[SchemaItem]
                 # )
+            ```
         """
         return SchemaAPI(session=self.authenticated_session).get_schema(name=name)
 
@@ -772,9 +776,9 @@ class DIAdminClient(DIClient):
         Returns:
             V1CreateSchemaResponse: Response indicating success or failure.
 
-        Example usage
-        ```python
-             schema_response = client.create_schema(
+        Example usage:
+            ```python
+            schema_response = client.create_schema(
                 name="yolo-detection-schema",
                 schema_type="custom-function",
                 schema=[{"name": "id", "type": "varchar", "nullable": False},
@@ -784,7 +788,7 @@ class DIAdminClient(DIClient):
             )
             # "id" is required (NOT NULL, strict validation); "content" and
             # "embedding" allow nulls (nullable defaults to True when omitted).
-
+            ```
         """
         return SchemaAPI(session=self.authenticated_session).create_schema(
             name=name,
