@@ -6,6 +6,8 @@ Logical domain for identifying a set of object metadata that is extracted and qu
 - One or more Buckets associated with the Collection
 - One Pipeline
 
+A Collection may also define an output store, which is the destination bucket for transcription output, and an indexing mode for RAG collections (`HNSW` or `GPU_CAGRA`). When the indexing mode is not specified, it is auto-detected.
+
 A Search query is executed against a Collection. The result from the Query will be based on search performed over all object metadata present within that Collection.
 
 ## Pipelines
@@ -14,17 +16,27 @@ Representation of the processing required to extract metadata for Data Intellige
 - One or more Event Filters that trigger the pipeline. A common use case for an event filter is to indicate the suffix for triggering extraction (e.g. "*.pdf" filter to trigger extraction from PDF files)
 
 - One of either:
-    - Model that identifies the embedding model to use for the Pipeline, or,
-    - Custom Function (custom function is not supported currently. However the API requires a dummy custom function string as input. Ex - "custom_processing_function")
-
+    - Model that identifies the model to use for the Pipeline, or,
+    - Custom Function that identifies an external function used to extract metadata for the Pipeline
 
 - One Schema describing the logical structure of the metadata to be extracted.
 
-## Embedding Models
-ML model used to extract embeddings from the object data. A Model may be associated with a Pipeline Instance. This association is created when the Pipeline is instantiated, and cannot be modified for the lifetime of the Pipeline. The embeddings generated from a Model are persisted within the Collection corresponding to the Pipeline.
+Pipelines are created with a `pipeline_type`, which determines the processing performed:
+
+- `rag` - generates embeddings for semantic search, optionally chunked using `chunk_size` and `chunk_overlap`
+- `transcribe-metadata` - transcribes image, audio or video content into text using a `prompt`
+- `custom-function` - processes objects using a custom-function model and writes the result into the fields defined by the schema
+- `metadata` - extracts metadata using a custom function
+
+## Models
+ML model used to process the object data, for example to extract embeddings or to transcribe media into text. A Model may be associated with a Pipeline Instance. This association is created when the Pipeline is instantiated, and cannot be modified for the lifetime of the Pipeline. The output generated from a Model is persisted within the Collection corresponding to the Pipeline.
+
+Each Model advertises one or more capabilities (`Sentence-Similarity`, `Question-Answering`, `Image-Text-To-Text`, `Automatic-Speech-Recognition`, `Video-To-Text`, `Custom-Function`), which identify the pipeline types it can be used with.
 
 ## Schemas
 Defines the structure of metadata to be extracted or queried. This is equivalent to the schema that identifies the columns/fields within a database table. Internally, the Collection organizes the metadata as defined by the schema for optimized RAG or Structured Query.
+
+Each field in a Schema has a name, a type, and an optional `nullable` flag. A field with `nullable` set to `false` is required: the corresponding database column is created as `NOT NULL` and the field is validated strictly. Fields default to `nullable` true.
 
 
 ## Query
