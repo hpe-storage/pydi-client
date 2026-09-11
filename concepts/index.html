@@ -69,7 +69,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#pipelines">Pipelines</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#embedding-models">Embedding Models</a>
+    <li class="toctree-l2"><a class="reference internal" href="#models">Models</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#schemas">Schemas</a>
     </li>
@@ -124,6 +124,7 @@
 <li>One or more Buckets associated with the Collection</li>
 <li>One Pipeline</li>
 </ul>
+<p>A Collection may also define an output store, which is the destination bucket for transcription output, and an indexing mode for RAG collections (<code>HNSW</code> or <code>GPU_CAGRA</code>). When the indexing mode is not specified, it is auto-detected.</p>
 <p>A Search query is executed against a Collection. The result from the Query will be based on search performed over all object metadata present within that Collection.</p>
 <h2 id="pipelines">Pipelines</h2>
 <p>Representation of the processing required to extract metadata for Data Intelligence. Each Pipeline consists of the following:</p>
@@ -134,18 +135,27 @@
 <li>
 <p>One of either:</p>
 <ul>
-<li>Model that identifies the embedding model to use for the Pipeline, or,</li>
-<li>Custom Function (custom function is not supported currently. However the API requires a dummy custom function string as input. Ex - "custom_processing_function")</li>
+<li>Model that identifies the model to use for the Pipeline, or,</li>
+<li>Custom Function that identifies an external function used to extract metadata for the Pipeline</li>
 </ul>
 </li>
 <li>
 <p>One Schema describing the logical structure of the metadata to be extracted.</p>
 </li>
 </ul>
-<h2 id="embedding-models">Embedding Models</h2>
-<p>ML model used to extract embeddings from the object data. A Model may be associated with a Pipeline Instance. This association is created when the Pipeline is instantiated, and cannot be modified for the lifetime of the Pipeline. The embeddings generated from a Model are persisted within the Collection corresponding to the Pipeline.</p>
+<p>Pipelines are created with a <code>pipeline_type</code>, which determines the processing performed:</p>
+<ul>
+<li><code>rag</code> - generates embeddings for semantic search, optionally chunked using <code>chunk_size</code> and <code>chunk_overlap</code></li>
+<li><code>transcribe-metadata</code> - transcribes image, audio or video content into text using a <code>prompt</code></li>
+<li><code>custom-function</code> - processes objects using a custom-function model and writes the result into the fields defined by the schema</li>
+<li><code>metadata</code> - extracts metadata using a custom function</li>
+</ul>
+<h2 id="models">Models</h2>
+<p>ML model used to process the object data, for example to extract embeddings or to transcribe media into text. A Model may be associated with a Pipeline Instance. This association is created when the Pipeline is instantiated, and cannot be modified for the lifetime of the Pipeline. The output generated from a Model is persisted within the Collection corresponding to the Pipeline.</p>
+<p>Each Model advertises one or more capabilities (<code>Sentence-Similarity</code>, <code>Question-Answering</code>, <code>Image-Text-To-Text</code>, <code>Automatic-Speech-Recognition</code>, <code>Video-To-Text</code>, <code>Custom-Function</code>), which identify the pipeline types it can be used with.</p>
 <h2 id="schemas">Schemas</h2>
 <p>Defines the structure of metadata to be extracted or queried. This is equivalent to the schema that identifies the columns/fields within a database table. Internally, the Collection organizes the metadata as defined by the schema for optimized RAG or Structured Query.</p>
+<p>Each field in a Schema has a name, a type, and an optional <code>nullable</code> flag. A field with <code>nullable</code> set to <code>false</code> is required: the corresponding database column is created as <code>NOT NULL</code> and the field is validated strictly. Fields default to <code>nullable</code> true.</p>
 <h2 id="query">Query</h2>
 <p>A query that provides an input in the form of natural language text, and expects a response in the form of a list of "result objects". A Query can be of either one of two types:</p>
 <ul>

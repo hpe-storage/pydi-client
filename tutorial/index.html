@@ -81,15 +81,31 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#3-getting-list-of-existing-schemas-admin">3. Getting List of Existing Schemas (Admin)</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#4-getting-list-of-existing-embedding-models-admin-rag-workflow">4. Getting List of Existing Embedding Models (Admin, RAG Workflow)</a>
+    <li class="toctree-l2"><a class="reference internal" href="#4-getting-list-of-existing-models">4. Getting List of Existing Models</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#5-creating-a-pipeline-admin">5. Creating a Pipeline (Admin)</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#transcribe-pipeline-images">Transcribe pipeline (images)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#transcribe-pipeline-video">Transcribe pipeline (video)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#nim-rag-pipeline">NIM RAG pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#custom-function-pipeline">Custom-function pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#handling-validation-errors">Handling validation errors</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#6-creating-a-collection-admin">6. Creating a Collection (Admin)</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#7-assigning-s3-buckets-to-a-collection-admin">7. Assigning S3 Buckets to a Collection (Admin)</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#8-performing-similarity-search-user">8. Performing Similarity Search (User)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#9-create-schema-admin">9. Create schema (Admin)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#10-delete-schema-admin">10. Delete schema (Admin)</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a>
     </li>
@@ -145,7 +161,7 @@ admin_client = DIAdminClient(
 <p><strong>Use DIAdminClient for:</strong>
 - Creating/deleting pipelines and collections
 - Assigning/unassigning buckets
-- Managing schemas and embedding models</p>
+- Creating, deleting, listing and getting schemas</p>
 <hr />
 <h2 id="2-non-admin-operations-setting-up-diclient">2. Non-Admin Operations: Setting Up DIClient</h2>
 <p>For non-admin tasks (querying collections, retrieving pipelines, similarity search), use <code>DIClient</code>. Note that <code>DIAdminClient</code> extends <code>DIClient</code>, but for read-only/search operations, use <code>DIClient</code>.</p>
@@ -155,7 +171,7 @@ admin_client = DIAdminClient(
 client = DIClient(uri=&quot;https://your-di-instance.com:&lt;port&gt;&quot;)
 </code></pre>
 <p><strong>Use DIClient for:</strong>
-- Querying collections and pipelines
+- Querying collections, pipelines and models
 - Performing similarity searches</p>
 <hr />
 <h2 id="3-getting-list-of-existing-schemas-admin">3. Getting List of Existing Schemas (Admin)</h2>
@@ -168,31 +184,90 @@ print(schemas_response)
 # )
 </code></pre>
 <p>You can inspect the schema names and details to choose the appropriate schema for your pipeline.</p>
-<p><strong>Note: Currently creating new schemas is not supported. Require to use existing schemas available by default</strong></p>
+<p><strong>Schema API support in SDK:</strong>
+- Supported: <code>get_all_schemas()</code>, <code>get_schema(name=...)</code>, <code>create_schema(...)</code>, <code>delete_schema(name=...)</code></p>
 <hr />
-<h2 id="4-getting-list-of-existing-embedding-models-admin-rag-workflow">4. Getting List of Existing Embedding Models (Admin, RAG Workflow)</h2>
-<p>If you are setting up a RAG (Retrieval-Augmented Generation) pipeline, you need to select an embedding model supported by DI.</p>
-<pre><code class="language-python"># Get all embedding models available in the DI platform
-models_response = admin_client.get_all_embedding_models()
+<h2 id="4-getting-list-of-existing-models">4. Getting List of Existing Models</h2>
+<p>Before creating a pipeline, select a model that matches your workflow. <code>get_all_models()</code> and <code>get_model()</code>
+return both embedding models and LLMs, and do not require authentication, so they are available on <code>DIClient</code>
+as well as <code>DIAdminClient</code>.</p>
+<pre><code class="language-python">from pydi_client.data.model import ModelTags
+
+# Get all models available in the DI platform
+models_response = client.get_all_models()
 print(models_response)
 # Output: V1ListModelsResponse(
 #     models=[ModelRecordSummary(name=&quot;example_model&quot;, ...), ...]
 # )
+
+# Filter the embedding models based on their capabilities.
+embedding_models = list(filter(lambda model: ModelTags.SENTENCE_SIMILARITY.value in client.get_model(name=model.name).capabilities, models_response.models))
+# Output: 
+# embedding_models = [
+#   ModelRecordSummary(name=&quot;example_embedding_model&quot;, ...), 
+# ...] 
 </code></pre>
-<p>Review the available models and select the one that fits your use case.</p>
-<p><strong>Note: Currently creating new embedding models is not supported. Require to use existing models available by default</strong></p>
+<p>Use <code>get_model()</code> to inspect a single model in detail:</p>
+<pre><code class="language-python">model = client.get_model(name=&quot;example_model&quot;)
+print(model.capabilities, model.dimension, model.contextLength, model.endpoint)
+</code></pre>
+<p>Available capability tags (<code>pydi_client.data.model.ModelTags</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Value</th>
+<th>Typical pipeline type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SENTENCE_SIMILARITY</code></td>
+<td><code>Sentence-Similarity</code></td>
+<td><code>rag</code></td>
+</tr>
+<tr>
+<td><code>QUESTION_ANSWERING</code></td>
+<td><code>Question-Answering</code></td>
+<td><code>rag</code></td>
+</tr>
+<tr>
+<td><code>IMAGE_TEXT_TO_TEXT</code></td>
+<td><code>Image-Text-To-Text</code></td>
+<td><code>transcribe-metadata</code></td>
+</tr>
+<tr>
+<td><code>AUTOMATIC_SPEECH_RECOGNITION</code></td>
+<td><code>Automatic-Speech-Recognition</code></td>
+<td><code>transcribe-metadata</code></td>
+</tr>
+<tr>
+<td><code>VIDEO_TO_TEXT</code></td>
+<td><code>Video-To-Text</code></td>
+<td><code>transcribe-metadata</code></td>
+</tr>
+<tr>
+<td><code>CUSTOM_FUNCTION</code></td>
+<td><code>Custom-Function</code></td>
+<td><code>custom-function</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: <code>get_all_embedding_models()</code> and <code>get_embedding_model()</code> on <code>DIAdminClient</code> are deprecated and
+will be removed in a future release. They emit a <code>DeprecationWarning</code>; use <code>get_all_models()</code> and
+<code>get_model()</code> instead.</p>
+<p><strong>Note: Currently creating new models is not supported. Require to use existing models available by default</strong></p>
 <hr />
 <h2 id="5-creating-a-pipeline-admin">5. Creating a Pipeline (Admin)</h2>
 <p>A pipeline defines how data is processed and ingested. Use <code>create_pipeline</code> in <code>DIAdminClient</code> to set up a pipeline.</p>
 <pre><code class="language-python"># Create a RAG pipeline
 pipeline_response = admin_client.create_pipeline(
     name=&quot;example_rag_pipeline&quot;,
-    pipeline_type=&quot;rag&quot;,  # or &quot;metadata&quot;
-    model=&quot;example_model&quot;,  # Optional: specify embedding model
-    custom_func=&quot;custom_processing_function&quot;,  # Optional
+    pipeline_type=&quot;rag&quot;,
+    model=&quot;example_model&quot;,
     event_filter_object_suffix=[&quot;*.txt&quot;, &quot;*.pdf&quot;],  # File types to ingest
     event_filter_max_object_size=10485760,  # Max file size in bytes
-    schema=&quot;example_schema&quot;  # Optional: specify schema
+    schema=&quot;example_schema&quot;
 )
 
 print(pipeline_response)
@@ -201,9 +276,79 @@ print(pipeline_response)
 #     message=&quot;Pipeline 'example_rag_pipeline' created successfully.&quot;
 # )
 </code></pre>
-<p><strong>NOTE:</strong><br />
-- For pipeline_type = "rag" (RAG workflows), <code>model</code> &amp; <code>event_filter_max_object_size</code> are required. <code>schema</code> is optional and <code>custom_fuc</code> is not supported.
-- For metadata pipelines, <code>custom_func</code> is required. <code>schema</code> &amp; <code>event_filter_max_object_size</code> are optional and <code>model</code> is not supported.</p>
+<h3 id="transcribe-pipeline-images">Transcribe pipeline (images)</h3>
+<pre><code class="language-python">pipeline_response = admin_client.create_pipeline(
+    name=&quot;example_transcribe_pipeline&quot;,
+    pipeline_type=&quot;transcribe-metadata&quot;,
+    model=&quot;supported_transcribe_model&quot;,
+    event_filter_object_suffix=[&quot;*.jpg&quot;, &quot;*.png&quot;, &quot;*.jpeg&quot;],
+    event_filter_max_object_size=10737418240,  # Optional: max file size in bytes
+    schema=&quot;your_transcribe_schema&quot;,  # Use a transcribe-compatible schema
+    prompt=&quot;Extract text from image files.&quot;,
+)
+</code></pre>
+<h3 id="transcribe-pipeline-video">Transcribe pipeline (video)</h3>
+<pre><code class="language-python">pipeline_response = admin_client.create_pipeline(
+    name=&quot;example-transcribe-video-metadata&quot;,
+    pipeline_type=&quot;transcribe-metadata&quot;,
+    model=&quot;parakeet-1_1b-rnnt-multilingual-asr&quot;,
+    event_filter_object_suffix=[&quot;*.mp4&quot;],
+    event_filter_max_object_size=524288000,
+    schema=&quot;default-transcribe-metadata-schema&quot;,
+    prompt=&quot;Transcribe the speech content into text.&quot;
+)
+</code></pre>
+<h3 id="nim-rag-pipeline">NIM RAG pipeline</h3>
+<pre><code class="language-python">pipeline_response = admin_client.create_pipeline(
+    name=&quot;example-nim-rag-pipeline&quot;,
+    pipeline_type=&quot;rag&quot;,
+    model=&quot;llama-nemotron-embed-1b-v2&quot;,
+    event_filter_object_suffix=[&quot;*.pdf&quot;],
+    event_filter_max_object_size=1000000,
+    schema=&quot;default-rag-schema&quot;,
+    chunk_size=512,
+    chunk_overlap=50
+)
+</code></pre>
+<h3 id="custom-function-pipeline">Custom-function pipeline</h3>
+<pre><code class="language-python">pipeline_response = admin_client.create_pipeline(
+    name=&quot;example-custom-function-pipeline&quot;,
+    pipeline_type=&quot;custom-function&quot;,
+    model=&quot;di-custom-function-model&quot;,
+    event_filter_object_suffix=[&quot;*.jpg&quot;],
+    schema=&quot;my-custom-function-schema&quot;
+)
+</code></pre>
+<p><strong>NOTE:</strong></p>
+<ul>
+<li><code>name</code>, <code>pipeline_type</code>, <code>event_filter_object_suffix</code> and <code>schema</code> are required for every pipeline type.</li>
+<li><code>event_filter_max_object_size</code> is optional.</li>
+<li>For <code>pipeline_type="rag"</code>, <code>model</code> is required and <code>custom_func</code> is not supported. Use <code>chunk_size</code> and
+  <code>chunk_overlap</code> to control chunking behavior.</li>
+<li>For <code>pipeline_type="metadata"</code>, <code>custom_func</code> is required and <code>model</code> is not supported.</li>
+<li>For <code>pipeline_type="transcribe-metadata"</code>, provide a transcribe <code>prompt</code> and choose a model supported by
+  your deployment (for example an <code>Image-Text-To-Text</code>, <code>Automatic-Speech-Recognition</code> or <code>Video-To-Text</code>
+  model), together with a transcribe-compatible schema.</li>
+<li>For <code>pipeline_type="custom-function"</code>, both <code>model</code> and <code>schema</code> are mandatory.</li>
+</ul>
+<h3 id="handling-validation-errors">Handling validation errors</h3>
+<p>Invalid pipeline input raises <code>PipelineValidationError</code>, whether the problem is detected locally (missing or
+unexpected arguments, wrong types) or reported by the server as HTTP 422. The exception collects every
+problem into a single message.</p>
+<pre><code class="language-python">from pydi_client.errors import PipelineValidationError
+
+try:
+    admin_client.create_pipeline(
+        name=&quot;example_rag_pipeline&quot;,
+        pipeline_type=&quot;rag&quot;,
+        event_filter_object_suffix=[&quot;*.pdf&quot;],
+    )
+except PipelineValidationError as error:
+    print(error)          # Pipeline validation failed (client): schema: Field required
+    print(error.source)   # &quot;client&quot; or &quot;server&quot;
+    print(error.errors)   # [{&quot;type&quot;: &quot;missing&quot;, &quot;loc&quot;: [&quot;schema&quot;], &quot;msg&quot;: &quot;Field required&quot;}]
+    print(error.status_code)  # HTTP status code when source == &quot;server&quot;
+</code></pre>
 <hr />
 <h2 id="6-creating-a-collection-admin">6. Creating a Collection (Admin)</h2>
 <p>Collections are logical groupings of data that use a pipeline for ingestion and processing.</p>
@@ -211,7 +356,7 @@ print(pipeline_response)
 collection_response = admin_client.create_collection(
     name=&quot;example_collection&quot;,
     pipeline=&quot;example_rag_pipeline&quot;,
-    buckets=[]  # You can assign buckets now or later
+    buckets=[],  # You can assign buckets now or later
 )
 
 print(collection_response)
@@ -220,6 +365,23 @@ print(collection_response)
 #     pipeline=&quot;example_rag_pipeline&quot;,
 #     buckets=[]
 # )
+</code></pre>
+<p>For transcribe collections, set <code>output_store</code> to the destination bucket where transcription output is written:</p>
+<pre><code class="language-python">collection_response = admin_client.create_collection(
+    name=&quot;example_transcribe_collection&quot;,
+    pipeline=&quot;example_transcribe_pipeline&quot;,
+    buckets=[&quot;example-input-bucket&quot;],
+    output_store=&quot;example-output-bucket&quot;,
+)
+</code></pre>
+<p>For RAG collections you can pin the vector index type with <code>indexing_mode</code> (<code>"HNSW"</code> or <code>"GPU_CAGRA"</code>).
+When omitted, the indexing mode is auto-detected from the deployment.</p>
+<pre><code class="language-python">collection_response = admin_client.create_collection(
+    name=&quot;example_gpu_collection&quot;,
+    pipeline=&quot;example_rag_pipeline&quot;,
+    buckets=[&quot;example-input-bucket&quot;],
+    indexing_mode=&quot;GPU_CAGRA&quot;,
+)
 </code></pre>
 <hr />
 <h2 id="7-assigning-s3-buckets-to-a-collection-admin">7. Assigning S3 Buckets to a Collection (Admin)</h2>
@@ -266,6 +428,39 @@ print(results)
 #     },
 #     ...
 # ]
+</code></pre>
+<h2 id="9-create-schema-admin">9. Create schema (Admin)</h2>
+<pre><code class="language-python">schema_response = admin_client.create_schema(
+    name=&quot;yolo-detection-schema&quot;,
+    schema_type=&quot;custom-function&quot;,
+    schema=[
+        {&quot;name&quot;: &quot;id&quot;, &quot;type&quot;: &quot;varchar&quot;},
+        {&quot;name&quot;: &quot;content&quot;, &quot;type&quot;: &quot;varchar&quot;},
+        {&quot;name&quot;: &quot;embedding&quot;, &quot;type&quot;: &quot;array(real)&quot;},
+    ]
+)
+
+print(schema_response)
+# Output: V1CreateSchemaResponse(
+#     status=200,
+#     message=&quot;Schema created successfully&quot;,
+#     success=True,
+#     error={}
+# )
+</code></pre>
+<p>You can optionally mark individual fields as required by setting <code>nullable: False</code>. Fields with <code>nullable: False</code> are created as <code>NOT NULL</code> in the database and validated strictly, while fields where <code>nullable</code> is omitted default to <code>True</code> (non-strict validation).</p>
+<pre><code class="language-python">schema_response = admin_client.create_schema(
+    name=&quot;yolo-detection-schema&quot;,
+    schema_type=&quot;custom-function&quot;,
+    schema=[
+        {&quot;name&quot;: &quot;id&quot;, &quot;type&quot;: &quot;varchar&quot;, &quot;nullable&quot;: False},   # required
+        {&quot;name&quot;: &quot;content&quot;, &quot;type&quot;: &quot;varchar&quot;},                 # optional (nullable=True)
+        {&quot;name&quot;: &quot;embedding&quot;, &quot;type&quot;: &quot;array(real)&quot;},           # optional (nullable=True)
+    ]
+)
+</code></pre>
+<h2 id="10-delete-schema-admin">10. Delete schema (Admin)</h2>
+<pre><code class="language-python">res = admin_client.delete_schema(name=&quot;yolo-detection-schema&quot;)
 </code></pre>
 <hr />
 <h2 id="summary">Summary</h2>

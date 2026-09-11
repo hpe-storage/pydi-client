@@ -102,13 +102,19 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#pydi_client.data.schema">schema</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pydi_client.data.schema.SchemaListItem">SchemaListItem</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pydi_client.data.schema.V1ListSchemasResponse">V1ListSchemasResponse</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#pydi_client.data.schema.SchemaItem">SchemaItem</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#pydi_client.data.schema.V1SchemasResponse">V1SchemasResponse</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#pydi_client.data.schema.SchemaRecordSummary">SchemaRecordSummary</a>
+    <li class="toctree-l2"><a class="reference internal" href="#pydi_client.data.schema.V1CreateSchemaRequest">V1CreateSchemaRequest</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#pydi_client.data.schema.V1ListSchemasResponse">V1ListSchemasResponse</a>
+    <li class="toctree-l2"><a class="reference internal" href="#pydi_client.data.schema.V1CreateSchemaResponse">V1CreateSchemaResponse</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pydi_client.data.schema.V1DeleteSchemaResponse">V1DeleteSchemaResponse</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#model">Model</a>
     </li>
@@ -189,7 +195,9 @@
 
 
 
-  <div class="doc doc-children">
+
+<div class="doc doc-children">
+
 
 
 
@@ -212,6 +220,7 @@
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
 
 
         <p>Response model for deleting a pipeline.
@@ -313,7 +322,7 @@ any errors that occurred, and a message providing additional information.</p>
 <span class="normal">35</span>
 <span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1DeletePipelineResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Response model for deleting a pipeline.</span>
 <span class="sd">    This model contains fields to indicate the status of the delete operation,</span>
 <span class="sd">    any errors that occurred, and a message providing additional information.</span>
@@ -324,29 +333,30 @@ any errors that occurred, and a message providing additional information.</p>
 <span class="sd">        Error (Optional[Dict[Any, Any]]): Error message if the delete operation fails.</span>
 <span class="sd">        success (Optional[bool]): Indicates if the delete operation was successful.</span>
 <span class="sd">        message (Optional[str]): Message providing additional information about the operation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Status of the delete operation&quot;</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Status of the delete operation"</span>
     <span class="p">)</span>
     <span class="n">Status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Status of the delete operation (alternative case)&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Status of the delete operation (alternative case)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">Error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Error message if the delete operation fails&quot;</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Error message if the delete operation fails"</span>
     <span class="p">)</span>
     <span class="n">success</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Indicates if the delete operation was successful&quot;</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Indicates if the delete operation was successful"</span>
     <span class="p">)</span>
     <span class="n">message</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Message providing additional information about the operation&quot;</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Message providing additional information about the operation"</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -361,6 +371,7 @@ any errors that occurred, and a message providing additional information.</p>
   </div>
 
     </div>
+
 
 </div>
 
@@ -378,6 +389,7 @@ any errors that occurred, and a message providing additional information.</p>
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
 
 
         <p>Represents a filter item used in event filtering for pipelines.
@@ -402,12 +414,12 @@ Attributes:
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FilterItem</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a filter item used in event filtering for pipelines.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        objectSuffix (List[str]): List of suffixes for objects to filter.</span>
 <span class="sd">        maxObjectSize (int): Maximum size of the object to filter.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">objectSuffix</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="n">maxObjectSize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -415,7 +427,8 @@ Attributes:
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -430,6 +443,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -449,14 +463,18 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Represents a request to create a pipeline.
 Attributes:
     name (str): Name of the pipeline.
     type (str): Type of the pipeline.
     model (Optional[str]): Optional model associated with the pipeline.
     eventFilter (FilterItem): Event filter criteria for the pipeline.
-    schema (Optional[str]): Optional schema for the pipeline.
-    customFunction (Optional[str]): Optional custom function for the pipeline.</p>
+    schema_name (str): Schema for the pipeline (serialized as 'schema').
+    customFunction (Optional[str]): Optional custom function for the pipeline.
+    prompt (Optional[str]): Prompt for transcribe pipelines (e.g., 'transcribe-metadata' type).
+    chunkSize (Optional[int]): Chunk size for RAG pipelines.
+    chunkOverlap (Optional[int]): Chunk overlap for RAG pipelines.</p>
 
 
 
@@ -482,29 +500,64 @@ Attributes:
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
-<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1CreatePipeline</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1CreatePipeline</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a request to create a pipeline.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        name (str): Name of the pipeline.</span>
 <span class="sd">        type (str): Type of the pipeline.</span>
 <span class="sd">        model (Optional[str]): Optional model associated with the pipeline.</span>
 <span class="sd">        eventFilter (FilterItem): Event filter criteria for the pipeline.</span>
-<span class="sd">        schema (Optional[str]): Optional schema for the pipeline.</span>
+<span class="sd">        schema_name (str): Schema for the pipeline (serialized as 'schema').</span>
 <span class="sd">        customFunction (Optional[str]): Optional custom function for the pipeline.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        prompt (Optional[str]): Prompt for transcribe pipelines (e.g., 'transcribe-metadata' type).</span>
+<span class="sd">        chunkSize (Optional[int]): Chunk size for RAG pipelines.</span>
+<span class="sd">        chunkOverlap (Optional[int]): Chunk overlap for RAG pipelines.</span>
+<span class="sd">    """</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="n">eventFilter</span><span class="p">:</span> <span class="n">FilterItem</span>
-    <span class="n">schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">schema_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span><span class="s2">"schema"</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s2">"schema"</span><span class="p">)</span>
     <span class="n">customFunction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Prompt for transcribe pipelines"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">chunkSize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Chunk size for RAG pipelines"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">chunkOverlap</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Chunk overlap for RAG pipelines"</span><span class="p">,</span>
+    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -519,6 +572,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -536,6 +590,7 @@ Attributes:
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
 
 
         <p>Response model for creating a pipeline.
@@ -582,19 +637,19 @@ and a message providing additional information.</p>
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/pipeline.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1CreatePipelineResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1CreatePipelineResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Response model for creating a pipeline.</span>
 <span class="sd">    This model contains fields to indicate the success of the creation operation</span>
 <span class="sd">    and a message providing additional information.</span>
@@ -602,7 +657,7 @@ and a message providing additional information.</p>
 <span class="sd">    Attributes:</span>
 <span class="sd">        success (bool): Indicates if the pipeline creation was successful.</span>
 <span class="sd">        message (str): Message providing additional information about the operation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
 </code></pre></div></td></tr></table></div>
@@ -610,7 +665,8 @@ and a message providing additional information.</p>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -625,6 +681,7 @@ and a message providing additional information.</p>
   </div>
 
     </div>
+
 
 </div>
 
@@ -644,6 +701,7 @@ and a message providing additional information.</p>
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Response model for updating buckets in a collection.
 This model contains fields to indicate the success of the update operation
 and a message providing additional information.
@@ -659,25 +717,25 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/pipeline.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BucketUpdateResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BucketUpdateResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Response model for updating buckets in a collection.</span>
 <span class="sd">    This model contains fields to indicate the success of the update operation</span>
 <span class="sd">    and a message providing additional information.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        success (bool): Indicates if the bucket update was successful.</span>
 <span class="sd">        message (str): Message providing additional information about the operation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
 </code></pre></div></td></tr></table></div>
@@ -685,7 +743,8 @@ Attributes:
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -700,6 +759,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -719,6 +779,7 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Represents a node with its associated score and metadata.
 Attributes:
     score (float): Score associated with the node.
@@ -733,24 +794,24 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/pipeline.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">NodeWithScore</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">NodeWithScore</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a node with its associated score and metadata.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        score (float): Score associated with the node.</span>
 <span class="sd">        dataChunk (str): Data chunk associated with the node.</span>
 <span class="sd">        chunkMetadata (Optional[Dict[str, Any]]): Optional metadata associated with the data chunk</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">score</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">dataChunk</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">chunkMetadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
@@ -759,7 +820,8 @@ Attributes:
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -774,6 +836,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -793,6 +856,7 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Response model for similarity search in a collection.
 This model contains fields to indicate the success of the search operation,
 a message providing additional information, and the results of the search.
@@ -809,20 +873,20 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/pipeline.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1SimilaritySearchResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1SimilaritySearchResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Response model for similarity search in a collection.</span>
 <span class="sd">    This model contains fields to indicate the success of the search operation,</span>
 <span class="sd">    a message providing additional information, and the results of the search.</span>
@@ -830,7 +894,7 @@ Attributes:
 <span class="sd">        success (bool): Indicates if the similarity search was successful.</span>
 <span class="sd">        message (str): Message providing additional information about the operation.</span>
 <span class="sd">        results (Optional[List[NodeWithScore]]): List of nodes with their scores returned by the search.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">results</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">NodeWithScore</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -839,7 +903,8 @@ Attributes:
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -854,6 +919,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -882,7 +948,9 @@ Attributes:
 
 
 
-  <div class="doc doc-children">
+
+<div class="doc doc-children">
+
 
 
 
@@ -895,8 +963,8 @@ Attributes:
 
 
 
-<h2 id="pydi_client.data.schema.SchemaItem" class="doc doc-heading">
-            <code>SchemaItem</code>
+<h2 id="pydi_client.data.schema.SchemaListItem" class="doc doc-heading">
+            <code>SchemaListItem</code>
 
 
 </h2>
@@ -907,11 +975,41 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
-        <p>Represents a schema item with a name and type.
-Attributes:
-    name (str): Name of the schema field.
-    type (str): Type of the schema field.</p>
 
+        <p>Represents a single schema item in the list schemas response.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>id</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Unique identifier of the schema.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Name of the schema.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -928,102 +1026,26 @@ Attributes:
 <span class="normal">12</span>
 <span class="normal">13</span>
 <span class="normal">14</span>
-<span class="normal">15</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SchemaItem</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents a schema item with a name and type.</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SchemaListItem</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Represents a single schema item in the list schemas response.</span>
+
 <span class="sd">    Attributes:</span>
-<span class="sd">        name (str): Name of the schema field.</span>
-<span class="sd">        type (str): Type of the schema field.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;field name&quot;</span><span class="p">)</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;field type&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-              </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h2 id="pydi_client.data.schema.V1SchemasResponse" class="doc doc-heading">
-            <code>V1SchemasResponse</code>
-
-
-</h2>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
-
-
-        <p>Represents a response containing schema information.
-This model contains fields to represent the schema name, type, and a list of schema items.
-Attributes:
-    name (str): Name of the schema.
-    type (str): Type of the schema.
-    schema (List[SchemaItem]): List of schema fields.</p>
-
-
-
-
-
-
-
-              <details class="quote">
-                <summary>Source code in <code>pydi_client/data/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span>
-<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1SchemasResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents a response containing schema information.</span>
-<span class="sd">    This model contains fields to represent the schema name, type, and a list of schema items.</span>
-<span class="sd">    Attributes:</span>
+<span class="sd">        id (Optional[str]): Unique identifier of the schema.</span>
 <span class="sd">        name (str): Name of the schema.</span>
-<span class="sd">        type (str): Type of the schema.</span>
-<span class="sd">        schema (List[SchemaItem]): List of schema fields.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;schema name&quot;</span><span class="p">)</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;schema type&quot;</span><span class="p">)</span>
-    <span class="n">schema</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SchemaItem</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="o">...</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;schema&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;list of schema fields&quot;</span>
-    <span class="p">)</span>
+<span class="sd">    """</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"schema id"</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"schema name"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1039,74 +1061,6 @@ Attributes:
 
     </div>
 
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h2 id="pydi_client.data.schema.SchemaRecordSummary" class="doc doc-heading">
-            <code>SchemaRecordSummary</code>
-
-
-</h2>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
-
-
-        <p>Represents a summary of a schema record.
-Attributes:
-    id (str): Unique identifier for the schema record.
-    name (str): Name of the schema record.</p>
-
-
-
-
-
-
-
-              <details class="quote">
-                <summary>Source code in <code>pydi_client/data/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SchemaRecordSummary</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents a summary of a schema record.</span>
-<span class="sd">    Attributes:</span>
-<span class="sd">        id (str): Unique identifier for the schema record.</span>
-<span class="sd">        name (str): Name of the schema record.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</code></pre></div></td></tr></table></div>
-              </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
 
 </div>
 
@@ -1126,11 +1080,33 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
-        <p>Response model for listing available schemas.
-This model contains a list of schema records.
-Attributes:
-    schemas (List[SchemaRecordSummary]): List of schema records.</p>
 
+        <p>Represents a response containing a list of schema records.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>schemas</code></b>
+                  (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="SchemaListItem (pydi_client.data.schema.SchemaListItem)" href="#pydi_client.data.schema.SchemaListItem">SchemaListItem</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>List of available schemas with id and name.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
 
@@ -1139,27 +1115,30 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/schema.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1ListSchemasResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Response model for listing available schemas.</span>
-<span class="sd">    This model contains a list of schema records.</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1ListSchemasResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Represents a response containing a list of schema records.</span>
+
 <span class="sd">    Attributes:</span>
-<span class="sd">        schemas (List[SchemaRecordSummary]): List of schema records.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">schemas</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SchemaRecordSummary</span><span class="p">]</span>
+<span class="sd">        schemas (List[SchemaListItem]): List of available schemas with id and name.</span>
+<span class="sd">    """</span>
+
+    <span class="n">schemas</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SchemaListItem</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1174,6 +1153,655 @@ Attributes:
   </div>
 
     </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pydi_client.data.schema.SchemaItem" class="doc doc-heading">
+            <code>SchemaItem</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+
+        <p>Represents a single field definition inside a schema.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Field name in the schema definition.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>type</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Field type in the schema definition.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>nullable</code></b>
+                  (<code><span title="bool">bool</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Whether the field allows null values. Defaults to
+<code>True</code>. Set to <code>False</code> to mark the field as required (the
+underlying database column is created as <code>NOT NULL</code> and schema
+validation is strict for that field).</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>pydi_client/data/schema.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SchemaItem</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Represents a single field definition inside a schema.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        name (str): Field name in the schema definition.</span>
+<span class="sd">        type (str): Field type in the schema definition.</span>
+<span class="sd">        nullable (bool): Whether the field allows null values. Defaults to</span>
+<span class="sd">            ``True``. Set to ``False`` to mark the field as required (the</span>
+<span class="sd">            underlying database column is created as ``NOT NULL`` and schema</span>
+<span class="sd">            validation is strict for that field).</span>
+<span class="sd">    """</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"field name"</span><span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"field type"</span><span class="p">)</span>
+    <span class="n">nullable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"whether the field allows null values"</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pydi_client.data.schema.V1SchemasResponse" class="doc doc-heading">
+            <code>V1SchemasResponse</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+
+        <p>Represents a detailed schema response.</p>
+<p>This model contains the schema name, schema type, and the list of
+schema fields returned by the API.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Name of the schema.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>type</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Schema type (for example, <code>rag</code> or <code>transcribe-metadata</code>).</p>
+              </div>
+            </li>
+            <li>
+              <b><code>schema_fields</code></b>
+                  (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="SchemaItem (pydi_client.data.schema.SchemaItem)" href="#pydi_client.data.schema.SchemaItem">SchemaItem</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>List of schema fields (serialized as <code>schema</code>).</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>pydi_client/data/schema.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1SchemasResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Represents a detailed schema response.</span>
+
+<span class="sd">    This model contains the schema name, schema type, and the list of</span>
+<span class="sd">    schema fields returned by the API.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        name (str): Name of the schema.</span>
+<span class="sd">        type (Optional[str]): Schema type (for example, `rag` or `transcribe-metadata`).</span>
+<span class="sd">        schema_fields (List[SchemaItem]): List of schema fields (serialized as `schema`).</span>
+<span class="sd">    """</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"schema name"</span><span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Schema type (e.g., 'rag', 'transcribe-metadata')"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">schema_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SchemaItem</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="s2">"schema"</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"list of schema fields"</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pydi_client.data.schema.V1CreateSchemaRequest" class="doc doc-heading">
+            <code>V1CreateSchemaRequest</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+
+        <p>Request body for creating a new schema.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Name of the schema to create.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>type</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Schema type (for example, <code>rag</code> or <code>transcribe-metadata</code>).</p>
+              </div>
+            </li>
+            <li>
+              <b><code>schema_fields</code></b>
+                  (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="SchemaItem (pydi_client.data.schema.SchemaItem)" href="#pydi_client.data.schema.SchemaItem">SchemaItem</a>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>List of schema fields (serialized as <code>schema</code>).</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>pydi_client/data/schema.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1CreateSchemaRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Request body for creating a new schema.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        name (str): Name of the schema to create.</span>
+<span class="sd">        type (str): Schema type (for example, `rag` or `transcribe-metadata`).</span>
+<span class="sd">        schema_fields (List[SchemaItem]): List of schema fields (serialized as `schema`).</span>
+<span class="sd">    """</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"schema name"</span><span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"schema type (e.g., 'custom-function')"</span><span class="p">)</span>
+    <span class="n">schema_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SchemaItem</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">validation_alias</span><span class="o">=</span><span class="s2">"schema"</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s2">"schema"</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"list of schema fields"</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pydi_client.data.schema.V1CreateSchemaResponse" class="doc doc-heading">
+            <code>V1CreateSchemaResponse</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+
+        <p>Response returned after attempting to create a schema.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>status</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>HTTP status code of the operation.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>message</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Status message from the server.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>success</code></b>
+                  (<code><span title="bool">bool</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Indicates whether schema creation succeeded.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>error</code></b>
+                  (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Error details if the operation fails.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>pydi_client/data/schema.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1CreateSchemaResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Response returned after attempting to create a schema.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        status (int): HTTP status code of the operation.</span>
+<span class="sd">        message (str): Status message from the server.</span>
+<span class="sd">        success (bool): Indicates whether schema creation succeeded.</span>
+<span class="sd">        error (Dict[str, Any]): Error details if the operation fails.</span>
+<span class="sd">    """</span>
+
+    <span class="n">status</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"HTTP status code"</span><span class="p">)</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Status message from the server"</span><span class="p">)</span>
+    <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Indicates if the create operation was successful"</span><span class="p">)</span>
+    <span class="n">error</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Error details if the operation fails"</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="pydi_client.data.schema.V1DeleteSchemaResponse" class="doc doc-heading">
+            <code>V1DeleteSchemaResponse</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+
+        <p>Response returned after attempting to delete a schema.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Attributes:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>status</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>HTTP status code of the operation.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>message</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Status message from the server.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>success</code></b>
+                  (<code><span title="bool">bool</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Indicates if the delete operation was successful.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>error</code></b>
+                  (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>Error details if the delete operation fails.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>pydi_client/data/schema.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1DeleteSchemaResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Response returned after attempting to delete a schema.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        status (int): HTTP status code of the operation.</span>
+<span class="sd">        message (str): Status message from the server.</span>
+<span class="sd">        success (bool): Indicates if the delete operation was successful.</span>
+<span class="sd">        error (Dict[str, Any]): Error details if the delete operation fails.</span>
+<span class="sd">    """</span>
+
+    <span class="n">status</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"HTTP status code"</span><span class="p">)</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Status message from the server"</span><span class="p">)</span>
+    <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Indicates if the delete operation was successful"</span><span class="p">)</span>
+    <span class="n">error</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Error details if the delete operation fails"</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
 
 </div>
 
@@ -1202,7 +1830,9 @@ Attributes:
 
 
 
-  <div class="doc doc-children">
+
+<div class="doc doc-children">
+
 
 
 
@@ -1227,6 +1857,7 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Response model for listing available models.
 This model contains fields to represent the system model name, model name,
 capabilities, dimensionality, maximum tokens supported by the model, and the version of the model.
@@ -1234,9 +1865,18 @@ Attributes:
     name (str): System model name.
     modelName (str): Model name.
     capabilities (List[str]): List of capabilities such as embedding, large language model, etc.
+    version (str): Model version.
+    communicationType (str): API communication type identifier for the model.
     dimension (int): Model dimensionality.
+    contextLength (int): Context length for the model.
+    temperature (float): Temperature setting for the model.
+    topK (int): Top-k setting for the model.
+    topP (float): Top-p setting for the model.
     maximumTokens (int): Maximum token size supported by the model.
-    version (str): Model version.</p>
+    timeout (int): API request timeout for the model.
+    language (str): Language supported by the model.
+    sampleRate (int): Sampling rate for the ASR model.
+    automaticPunctuation (bool): Enable automatic punctuation in the ASR model.</p>
 
 
 
@@ -1246,15 +1886,7 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/model.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
 <span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
@@ -1267,8 +1899,35 @@ Attributes:
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
-<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1ModelsResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1ModelsResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Response model for listing available models.</span>
 <span class="sd">    This model contains fields to represent the system model name, model name,</span>
 <span class="sd">    capabilities, dimensionality, maximum tokens supported by the model, and the version of the model.</span>
@@ -1276,25 +1935,45 @@ Attributes:
 <span class="sd">        name (str): System model name.</span>
 <span class="sd">        modelName (str): Model name.</span>
 <span class="sd">        capabilities (List[str]): List of capabilities such as embedding, large language model, etc.</span>
-<span class="sd">        dimension (int): Model dimensionality.</span>
-<span class="sd">        maximumTokens (int): Maximum token size supported by the model.</span>
 <span class="sd">        version (str): Model version.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        communicationType (str): API communication type identifier for the model.</span>
+<span class="sd">        dimension (int): Model dimensionality.</span>
+<span class="sd">        contextLength (int): Context length for the model.</span>
+<span class="sd">        temperature (float): Temperature setting for the model.</span>
+<span class="sd">        topK (int): Top-k setting for the model.</span>
+<span class="sd">        topP (float): Top-p setting for the model.</span>
+<span class="sd">        maximumTokens (int): Maximum token size supported by the model.</span>
+<span class="sd">        timeout (int): API request timeout for the model.</span>
+<span class="sd">        language (str): Language supported by the model.</span>
+<span class="sd">        sampleRate (int): Sampling rate for the ASR model.</span>
+<span class="sd">        automaticPunctuation (bool): Enable automatic punctuation in the ASR model.</span>
+<span class="sd">    """</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;system model name&quot;</span><span class="p">)</span>
-    <span class="n">modelName</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;model name&quot;</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"system model name"</span><span class="p">)</span>
+    <span class="n">modelName</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"model name"</span><span class="p">)</span>
     <span class="n">capabilities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span>
-                                    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;embedding, large language model etc&quot;</span><span class="p">)</span>
-    <span class="n">dimension</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;model dimensionality&quot;</span><span class="p">)</span>
-    <span class="n">maximumTokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span>
-                               <span class="n">description</span><span class="o">=</span><span class="s2">&quot;max token size supported by the model&quot;</span><span class="p">)</span>
-    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;model version&quot;</span><span class="p">)</span>
+                                    <span class="n">description</span><span class="o">=</span><span class="s2">"Sentence-Similarity, Question-Answering, Image-Text-To-Text, Custom-Function, Video-To-Text etc"</span><span class="p">)</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"model version"</span><span class="p">)</span>
+    <span class="n">communicationType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"API communication type identifier for the model."</span><span class="p">)</span>
+    <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"model dimensionality"</span><span class="p">)</span>
+    <span class="n">contextLength</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"context length for the model"</span><span class="p">)</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"temperature setting for the model"</span><span class="p">)</span>
+    <span class="n">topK</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"top-k setting for the model"</span><span class="p">)</span>
+    <span class="n">topP</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"top-p setting for the model"</span><span class="p">)</span>
+    <span class="n">maximumTokens</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span>
+                               <span class="n">description</span><span class="o">=</span><span class="s2">"max token size supported by the model"</span><span class="p">)</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"API request timeout for the model."</span><span class="p">)</span>
+    <span class="n">language</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Language supported by the model."</span><span class="p">)</span>
+    <span class="n">sampleRate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Sampling rate for the ASR model."</span><span class="p">)</span>
+    <span class="n">automaticPunctuation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Enable automatic punctuation in the ASR model."</span><span class="p">)</span>
+    <span class="n">endpoint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Custom function endpoint URL"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1309,6 +1988,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -1328,6 +2008,7 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Represents a summary of a model record.
 Attributes:
     id (str): Unique identifier for the model record.
@@ -1341,21 +2022,21 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/model.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ModelRecordSummary</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ModelRecordSummary</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a summary of a model record.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        id (str): Unique identifier for the model record.</span>
 <span class="sd">        name (str): Name of the model record.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 </code></pre></div></td></tr></table></div>
@@ -1363,7 +2044,8 @@ Attributes:
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1378,6 +2060,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -1397,6 +2080,7 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Response model for listing available models.
 This model contains a list of model records.
 Attributes:
@@ -1410,27 +2094,28 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/model.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1ListModelsResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1ListModelsResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Response model for listing available models.</span>
 <span class="sd">    This model contains a list of model records.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        models (List[ModelRecordSummary]): List of model records.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelRecordSummary</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1445,6 +2130,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -1473,7 +2159,9 @@ Attributes:
 
 
 
-  <div class="doc doc-children">
+
+<div class="doc doc-children">
+
 
 
 
@@ -1496,6 +2184,7 @@ Attributes:
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+
 
 
         <p>Response model for deleting a collection.
@@ -1544,7 +2233,7 @@ Attributes:
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1DeleteCollectionResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Response model for deleting a collection.</span>
 <span class="sd">    This model contains fields to indicate the status of the delete operation,</span>
 <span class="sd">    any errors that occurred, and a message providing additional information.</span>
@@ -1554,29 +2243,30 @@ Attributes:
 <span class="sd">        Error (Optional[Dict[Any, Any]]): Error message if the delete operation fails.</span>
 <span class="sd">        success (Optional[bool]): Indicates if the delete operation was successful.</span>
 <span class="sd">        message (Optional[str]): Message providing additional information about the operation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Status of the delete operation&quot;</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Status of the delete operation"</span>
     <span class="p">)</span>
     <span class="n">Status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Status of the delete operation (alternative case)&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Status of the delete operation (alternative case)"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">Error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Error message if the delete operation fails&quot;</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Error message if the delete operation fails"</span>
     <span class="p">)</span>
     <span class="n">success</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Indicates if the delete operation was successful&quot;</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Indicates if the delete operation was successful"</span>
     <span class="p">)</span>
     <span class="n">message</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Message providing additional information about the operation&quot;</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Message providing additional information about the operation"</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1591,6 +2281,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -1610,11 +2301,14 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Represents a request to create a collection.
 Attributes:
     name (str): Name of the collection.
     pipeline (str): Pipeline associated with the collection.
-    buckets (Optional[List[str]]): Optional list of buckets associated with the collection.</p>
+    buckets (Optional[List[str]]): Optional list of buckets associated with the collection.
+    outputStore (Optional[str]): Output bucket for transcription results (transcribe usecase).
+    indexingMode (Optional[str]): Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA). Auto-detected if omitted.</p>
 
 
 
@@ -1634,23 +2328,44 @@ Attributes:
 <span class="normal">44</span>
 <span class="normal">45</span>
 <span class="normal">46</span>
-<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1CreateCollection</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1CreateCollection</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a request to create a collection.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        name (str): Name of the collection.</span>
 <span class="sd">        pipeline (str): Pipeline associated with the collection.</span>
 <span class="sd">        buckets (Optional[List[str]]): Optional list of buckets associated with the collection.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        outputStore (Optional[str]): Output bucket for transcription results (transcribe usecase).</span>
+<span class="sd">        indexingMode (Optional[str]): Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA). Auto-detected if omitted.</span>
+<span class="sd">    """</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">pipeline</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">buckets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">outputStore</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Output bucket for transcription results"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">indexingMode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA). Auto-detected if omitted."</span><span class="p">,</span>
+    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1665,6 +2380,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -1684,13 +2400,16 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Represents a response containing collection information.
 This model contains fields to represent the collection name, pipeline, and an optional list of buckets
 associated with the collection.
 Attributes:
     name (str): Name of the collection.
     pipeline (str): Pipeline associated with the collection.
-    buckets (Optional[List[str]]): Optional list of buckets associated with the collection.</p>
+    buckets (Optional[List[str]]): Optional list of buckets associated with the collection.
+    outputStore (Optional[str]): Output bucket for transcription results (transcribe usecase).
+    indexingMode (Optional[str]): Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA).</p>
 
 
 
@@ -1700,23 +2419,33 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/collection_manager.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
 <span class="normal">61</span>
 <span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
-<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1CollectionResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1CollectionResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a response containing collection information.</span>
 <span class="sd">    This model contains fields to represent the collection name, pipeline, and an optional list of buckets</span>
 <span class="sd">    associated with the collection.</span>
@@ -1724,19 +2453,30 @@ Attributes:
 <span class="sd">        name (str): Name of the collection.</span>
 <span class="sd">        pipeline (str): Pipeline associated with the collection.</span>
 <span class="sd">        buckets (Optional[List[str]]): Optional list of buckets associated with the collection.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        outputStore (Optional[str]): Output bucket for transcription results (transcribe usecase).</span>
+<span class="sd">        indexingMode (Optional[str]): Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA).</span>
+<span class="sd">    """</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">pipeline</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">buckets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of buckets associated with the collection&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"List of buckets associated with the collection"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">outputStore</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Output bucket for transcription results"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">indexingMode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA)"</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1751,6 +2491,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -1770,6 +2511,7 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Represents a request to update the buckets of a collection.
 Attributes:
     name (str): Name of the collection.
@@ -1783,21 +2525,21 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/collection_manager.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BucketUpdateRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BucketUpdateRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a request to update the buckets of a collection.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        name (str): Name of the collection.</span>
 <span class="sd">        buckets (List[str]): List of buckets to be associated with the collection.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">buckets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
@@ -1805,7 +2547,8 @@ Attributes:
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1820,6 +2563,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -1839,6 +2583,7 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Represents a response containing pipeline information.
 This model contains fields to represent the pipeline name, type, model, custom function,
 event filter criteria, and schema associated with the pipeline.
@@ -1848,7 +2593,10 @@ Attributes:
     model (Optional[str]): Optional model associated with the pipeline.
     customFunction (Optional[str]): Optional custom function for the pipeline.
     eventFilter (Dict[str, Any]): Event filter criteria for the pipeline.
-    schema (str): Schema associated with the pipeline.</p>
+    schema_name (str): Schema associated with the pipeline (serialized as 'schema').
+    prompt (Optional[str]): Prompt for transcribe pipelines.
+    chunkSize (Optional[int]): Chunk size for RAG pipelines.
+    chunkOverlap (Optional[int]): Chunk overlap for RAG pipelines.</p>
 
 
 
@@ -1858,26 +2606,34 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/collection_manager.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span>
-<span class="normal">96</span>
-<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1PipelineResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">V1PipelineResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a response containing pipeline information.</span>
 <span class="sd">    This model contains fields to represent the pipeline name, type, model, custom function,</span>
 <span class="sd">    event filter criteria, and schema associated with the pipeline.</span>
@@ -1887,20 +2643,29 @@ Attributes:
 <span class="sd">        model (Optional[str]): Optional model associated with the pipeline.</span>
 <span class="sd">        customFunction (Optional[str]): Optional custom function for the pipeline.</span>
 <span class="sd">        eventFilter (Dict[str, Any]): Event filter criteria for the pipeline.</span>
-<span class="sd">        schema (str): Schema associated with the pipeline.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        schema_name (str): Schema associated with the pipeline (serialized as 'schema').</span>
+<span class="sd">        prompt (Optional[str]): Prompt for transcribe pipelines.</span>
+<span class="sd">        chunkSize (Optional[int]): Chunk size for RAG pipelines.</span>
+<span class="sd">        chunkOverlap (Optional[int]): Chunk overlap for RAG pipelines.</span>
+<span class="sd">    """</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">populate_by_name</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
-    <span class="n">customFunction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">customFunction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">eventFilter</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
-    <span class="n">schema</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">schema_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">validation_alias</span><span class="o">=</span><span class="s2">"schema"</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s2">"schema"</span><span class="p">)</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Prompt for transcribe pipelines"</span><span class="p">)</span>
+    <span class="n">chunkSize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Chunk size for RAG pipelines"</span><span class="p">)</span>
+    <span class="n">chunkOverlap</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Chunk overlap for RAG pipelines"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1915,6 +2680,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -1934,6 +2700,7 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Represents a summary of a collection item.
 Attributes:
     id (Optional[str]): Unique identifier for the collection item.
@@ -1947,29 +2714,30 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/collection_manager.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ListCollectionItem</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ListCollectionItem</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a summary of a collection item.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        id (Optional[str]): Unique identifier for the collection item.</span>
 <span class="sd">        name (Optional[str]): Name of the collection item.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;collection id&quot;</span><span class="p">)</span>
-    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;collection name&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"collection id"</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"collection name"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1984,6 +2752,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -2003,6 +2772,7 @@ Attributes:
               Bases: <code><span title="pydantic.RootModel">RootModel</span>[<span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="ListCollectionItem (pydi_client.data.collection_manager.ListCollectionItem)" href="#pydi_client.data.collection_manager.ListCollectionItem">ListCollectionItem</a>]]</code></p>
 
 
+
         <p>Response model for listing available collections.
 This model contains a list of collection items.
 Attributes:
@@ -2016,29 +2786,29 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/collection_manager.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ListCollection</span><span class="p">(</span><span class="n">RootModel</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ListCollectionItem</span><span class="p">]]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ListCollection</span><span class="p">(</span><span class="n">RootModel</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ListCollectionItem</span><span class="p">]]):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Response model for listing available collections.</span>
 <span class="sd">    This model contains a list of collection items.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        root (List[ListCollectionItem]): List of collection items.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">root</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ListCollectionItem</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="o">...</span><span class="p">,</span>
         <span class="n">examples</span><span class="o">=</span><span class="p">[</span>
-            <span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;collection1&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;collection2&quot;</span><span class="p">}]</span>
+            <span class="p">[{</span><span class="s2">"id"</span><span class="p">:</span> <span class="s2">"1"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"collection1"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="s2">"2"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"collection2"</span><span class="p">}]</span>
         <span class="p">],</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2046,7 +2816,8 @@ Attributes:
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -2061,6 +2832,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -2080,6 +2852,7 @@ Attributes:
               Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
 
+
         <p>Represents a summary of a pipeline.
 Attributes:
     id (Optional[str]): Unique identifier for the pipeline.
@@ -2093,29 +2866,30 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/collection_manager.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ListPipeline</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ListPipeline</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a summary of a pipeline.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        id (Optional[str]): Unique identifier for the pipeline.</span>
 <span class="sd">        name (Optional[str]): Name of the pipeline.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;pipeline id&quot;</span><span class="p">)</span>
-    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;pipeline name&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"pipeline id"</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"pipeline name"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -2130,6 +2904,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
@@ -2149,6 +2924,7 @@ Attributes:
               Bases: <code><span title="pydantic.RootModel">RootModel</span>[<span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="ListPipeline (pydi_client.data.collection_manager.ListPipeline)" href="#pydi_client.data.collection_manager.ListPipeline">ListPipeline</a>]]</code></p>
 
 
+
         <p>Response model for listing available pipelines.
 This model contains a list of pipelines.
 Attributes:
@@ -2162,33 +2938,34 @@ Attributes:
 
               <details class="quote">
                 <summary>Source code in <code>pydi_client/data/collection_manager.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
-<span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ListPipelines</span><span class="p">(</span><span class="n">RootModel</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ListPipeline</span><span class="p">]]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ListPipelines</span><span class="p">(</span><span class="n">RootModel</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ListPipeline</span><span class="p">]]):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Response model for listing available pipelines.</span>
 <span class="sd">    This model contains a list of pipelines.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        root (List[ListPipeline]): List of pipelines.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">root</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ListPipeline</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="o">...</span><span class="p">,</span>
-        <span class="n">examples</span><span class="o">=</span><span class="p">[[{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;pipeline1&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;pipeline2&quot;</span><span class="p">}]],</span>
+        <span class="n">examples</span><span class="o">=</span><span class="p">[[{</span><span class="s2">"id"</span><span class="p">:</span> <span class="s2">"1"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"pipeline1"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="s2">"2"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"pipeline2"</span><span class="p">}]],</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -2203,6 +2980,7 @@ Attributes:
   </div>
 
     </div>
+
 
 </div>
 
