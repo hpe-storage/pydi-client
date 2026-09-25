@@ -1,9 +1,11 @@
 # Copyright Hewlett Packard Enterprise Development LP
 
 import pytest
-from httpx import Response as HTTPXResponse
+from httpx import Response as HTTPXResponse, ReadTimeout
 from http import HTTPStatus
+from pydi_client.api.collection import CollectionAPI
 from pydi_client.api.pipeline import PipelineAPI
+from pydi_client.api.schema import SchemaAPI
 from pydi_client.api.utils import execute_with_retry
 from pydi_client.data.pipeline import V1CreatePipelineResponse, V1DeletePipelineResponse
 from pydi_client.data.collection_manager import (
@@ -11,8 +13,10 @@ from pydi_client.data.collection_manager import (
     ListPipelines,
 )
 from pydi_client.errors import (
+    CollectionValidationError,
     HTTPUnauthorizedException,
     PipelineValidationError,
+    SchemaValidationError,
     UnexpectedStatus,
 )
 from pydi_client.di_client import DIAdminClient
@@ -285,7 +289,7 @@ def test_create_pipeline_unauthorized(mocker, mock_authsession, pipeline_api):
 
 @pytest.mark.parametrize(
     "status_code",
-    [HTTPStatus.NOT_FOUND, HTTPStatus.CONFLICT, HTTPStatus.INTERNAL_SERVER_ERROR],
+    [HTTPStatus.FORBIDDEN, HTTPStatus.INTERNAL_SERVER_ERROR],
 )
 def test_create_pipeline_unexpected_status(
     mocker, mock_session, pipeline_api, status_code
@@ -762,3 +766,366 @@ def test_get_video_transcribe_pipeline_success(mocker, mock_session, pipeline_ap
     assert result.prompt == "Transcribe the speech content into text."
     assert result.eventFilter["objectSuffix"] == ["*.mp4"]
     assert result.eventFilter["maxObjectSize"] == 524288000
+
+
+ADMIN_WRITE_CASES = [
+    pytest.param(
+        "create_pipeline",
+        PipelineValidationError,
+        dict(
+            name="test",
+            pipeline_type="metadata",
+            schema="schema",
+            event_filter_object_suffix=["*.txt"],
+        ),
+        id="create_pipeline",
+    ),
+    pytest.param(
+        "delete_pipeline",
+        PipelineValidationError,
+        dict(name="test"),
+        id="delete_pipeline",
+    ),
+    pytest.param(
+        "create_collection",
+        CollectionValidationError,
+        dict(name="test", pipeline="pipeline"),
+        id="create_collection",
+    ),
+    pytest.param(
+        "delete_collection",
+        CollectionValidationError,
+        dict(name="test"),
+        id="delete_collection",
+    ),
+    pytest.param(
+        "assign_buckets_to_collection",
+        CollectionValidationError,
+        dict(collection_name="test", buckets=["bucket"]),
+        id="assign_buckets",
+    ),
+    pytest.param(
+        "unassign_buckets_from_collection",
+        CollectionValidationError,
+        dict(collection_name="test", buckets=["bucket"]),
+        id="unassign_buckets",
+    ),
+    pytest.param(
+        "assign_sources_to_collection",
+        CollectionValidationError,
+        dict(collection_name="test", paths=["/file/fs1/docs"]),
+        id="assign_sources",
+    ),
+    pytest.param(
+        "unassign_sources_from_collection",
+        CollectionValidationError,
+        dict(collection_name="test", paths=["/file/fs1/docs"]),
+        id="unassign_sources",
+    ),
+    pytest.param(
+        "create_schema",
+        SchemaValidationError,
+        dict(
+            name="test",
+            schema_type="custom-function",
+            schema=[{"name": "id", "type": "varchar"}],
+        ),
+        id="create_schema",
+    ),
+    pytest.param(
+        "delete_schema", SchemaValidationError, dict(name="test"), id="delete_schema"
+    ),
+]
+
+
+@pytest.fixture
+def admin_write_client(mocker, mock_authsession):
+    mocker.patch("pydi_client.di_client.AuthAPI.login", return_value=mock_authsession)
+    return DIAdminClient(
+        uri="http://example.com", username="admin", password="password"
+    )
+
+
+@pytest.mark.parametrize("method_name,error_type,arguments", ADMIN_WRITE_CASES)
+@pytest.mark.parametrize("status_code", [*range(400, 500), 302, 399, 500, 503, 599])
+def test_admin_write_status_contract(
+    mocker,
+    mock_authsession,
+    admin_write_client,
+    method_name,
+    error_type,
+    arguments,
+    status_code,
+):
+    content = b'{"error":"Request rejected"}'
+    request = mock_authsession.get_httpx_client.return_value.request
+    request.return_value = HTTPXResponse(status_code=status_code, content=content)
+    refresh = mocker.patch("pydi_client.api.utils.AuthAPI.refresh")
+    is_validation = 400 <= status_code < 500 and status_code not in (401, 403)
+    expected_type = (
+        error_type
+        if is_validation
+        else (HTTPUnauthorizedException if status_code == 401 else UnexpectedStatus)
+    )
+
+    with pytest.raises(expected_type) as exception:
+        getattr(admin_write_client, method_name)(**arguments)
+
+    assert type(exception.value) is expected_type
+    if is_validation:
+        assert exception.value.source == "server"
+        assert exception.value.status_code == status_code
+        assert exception.value.raw_response == content
+        assert exception.value.errors == [
+            {"type": "server_validation_error", "loc": [], "msg": "Request rejected"}
+        ]
+    elif status_code != 401:
+        assert exception.value.status_code == status_code
+        assert exception.value.content == content
+    if status_code in (401, 403):
+        refresh.assert_called_once_with(session=mock_authsession)
+        assert request.call_count == 2
+    else:
+        refresh.assert_not_called()
+        request.assert_called_once()
+
+
+@pytest.mark.parametrize("method_name,error_type,arguments", ADMIN_WRITE_CASES)
+@pytest.mark.parametrize(
+    "content,expected_errors",
+    [
+        (
+            b'{"errors":[{"loc":["body","name"],"msg":"Invalid name","input":"private-value"},null]}',
+            [
+                {
+                    "loc": ["body", "name"],
+                    "msg": "Invalid name",
+                    "input": "private-value",
+                }
+            ],
+        ),
+        (
+            b'{"Status":"Invalid request","error":"Rejected"}',
+            [
+                {
+                    "type": "server_validation_error",
+                    "loc": [],
+                    "msg": "Rejected",
+                    "status": "Invalid request",
+                }
+            ],
+        ),
+        *[
+            (
+                ('{"%s":"Rejected"}' % key).encode(),
+                [{"type": "server_validation_error", "loc": [], "msg": "Rejected"}],
+            )
+            for key in ("Status", "status", "detail", "message")
+        ],
+        *[
+            (content, [])
+            for content in (
+                b"not json",
+                b"\xff",
+                b"",
+                b"null",
+                b"[]",
+                b'{"errors":[null,1]}',
+            )
+        ],
+    ],
+)
+def test_admin_write_error_payloads(
+    mock_authsession,
+    admin_write_client,
+    method_name,
+    error_type,
+    arguments,
+    content,
+    expected_errors,
+):
+    mock_authsession.get_httpx_client.return_value.request.return_value = HTTPXResponse(
+        status_code=422, content=content
+    )
+
+    with pytest.raises(error_type) as exception:
+        getattr(admin_write_client, method_name)(**arguments)
+
+    assert type(exception.value) is error_type
+    assert exception.value.errors == expected_errors
+    assert exception.value.raw_response == content
+    assert "private-value" not in str(exception.value)
+    assert str(exception.value).startswith(
+        f"{error_type.resource_name} validation failed (server):"
+    )
+    if not expected_errors:
+        assert str(exception.value).endswith("no error details")
+
+
+@pytest.mark.parametrize("method_name,error_type,arguments", ADMIN_WRITE_CASES)
+@pytest.mark.parametrize("auth_status", [401, 403])
+def test_admin_write_classifies_response_after_auth_refresh(
+    mocker,
+    mock_authsession,
+    admin_write_client,
+    method_name,
+    error_type,
+    arguments,
+    auth_status,
+):
+    content = b'{"error":"Too many requests"}'
+    request = mock_authsession.get_httpx_client.return_value.request
+    request.side_effect = [
+        HTTPXResponse(status_code=auth_status),
+        HTTPXResponse(status_code=429, content=content),
+    ]
+    refresh = mocker.patch("pydi_client.api.utils.AuthAPI.refresh")
+
+    with pytest.raises(error_type) as exception:
+        getattr(admin_write_client, method_name)(**arguments)
+
+    assert type(exception.value) is error_type
+    assert exception.value.status_code == 429
+    assert exception.value.raw_response == content
+    refresh.assert_called_once_with(session=mock_authsession)
+    assert request.call_count == 2
+
+
+@pytest.mark.parametrize("method_name,error_type,arguments", ADMIN_WRITE_CASES)
+def test_admin_write_preserves_transport_errors(
+    mocker, mock_authsession, admin_write_client, method_name, error_type, arguments
+):
+    timeout = ReadTimeout("Timed out")
+    mock_authsession.get_httpx_client.return_value.request.side_effect = timeout
+    refresh = mocker.patch("pydi_client.api.utils.AuthAPI.refresh")
+
+    with pytest.raises(ReadTimeout) as exception:
+        getattr(admin_write_client, method_name)(**arguments)
+
+    assert exception.value is timeout
+    refresh.assert_not_called()
+
+
+@pytest.mark.parametrize("method_name,error_type,arguments", ADMIN_WRITE_CASES)
+@pytest.mark.parametrize("auth_status", [401, 403])
+def test_admin_write_succeeds_with_refreshed_session(
+    mocker,
+    mock_authsession,
+    admin_write_client,
+    method_name,
+    error_type,
+    arguments,
+    auth_status,
+):
+    initial_request = mock_authsession.get_httpx_client.return_value.request
+    initial_request.return_value = HTTPXResponse(status_code=auth_status)
+    refreshed_client = mocker.MagicMock()
+    refreshed_client.request.return_value = HTTPXResponse(
+        status_code=200,
+        json={
+            "name": "test",
+            "pipeline": "pipeline",
+            "buckets": [],
+            "success": True,
+            "message": "Done",
+            "status": "Done",
+        },
+    )
+
+    def refresh_session(*, session):
+        session.get_httpx_client.return_value = refreshed_client
+
+    refresh = mocker.patch(
+        "pydi_client.api.utils.AuthAPI.refresh", side_effect=refresh_session
+    )
+
+    result = getattr(admin_write_client, method_name)(**arguments)
+
+    assert result is not None
+    if method_name == "create_collection":
+        assert result.name == "test"
+    else:
+        assert result.success is True
+    refresh.assert_called_once_with(session=mock_authsession)
+    initial_request.assert_called_once()
+    refreshed_client.request.assert_called_once_with(**initial_request.call_args.kwargs)
+
+
+@pytest.mark.parametrize(
+    "api_type,method_name,arguments",
+    [
+        (PipelineAPI, "get_pipeline", {"name": "test"}),
+        (PipelineAPI, "get_pipelines", {}),
+        (CollectionAPI, "get_collection", {"name": "test"}),
+        (CollectionAPI, "get_collections", {}),
+        (SchemaAPI, "get_schema", {"name": "test"}),
+        (SchemaAPI, "get_schemas", {}),
+    ],
+)
+@pytest.mark.parametrize("status_code", [400, 404, 422, 429, 499, 500])
+def test_resource_reads_keep_existing_http_errors(
+    mock_authsession, api_type, method_name, arguments, status_code
+):
+    content = b'{"error":"Request rejected"}'
+    mock_authsession.get_httpx_client.return_value.request.return_value = HTTPXResponse(
+        status_code=status_code, content=content
+    )
+
+    with pytest.raises(UnexpectedStatus) as exception:
+        getattr(api_type(session=mock_authsession), method_name)(**arguments)
+
+    assert type(exception.value) is UnexpectedStatus
+    assert exception.value.status_code == status_code
+    assert exception.value.content == content
+
+
+@pytest.mark.parametrize("method_name,error_type,arguments", ADMIN_WRITE_CASES)
+@pytest.mark.parametrize("interface", ["facade", "api"])
+@pytest.mark.parametrize("invalid_call", ["missing", "unexpected", "positional"])
+def test_admin_write_argument_binding_is_consistent(
+    mock_authsession,
+    admin_write_client,
+    method_name,
+    error_type,
+    arguments,
+    interface,
+    invalid_call,
+):
+    api_types = {
+        PipelineValidationError: PipelineAPI,
+        CollectionValidationError: CollectionAPI,
+        SchemaValidationError: SchemaAPI,
+    }
+    target = (
+        admin_write_client
+        if interface == "facade"
+        else api_types[error_type](session=mock_authsession)
+    )
+    method = getattr(target, method_name)
+    request = mock_authsession.get_httpx_client.return_value.request
+
+    missing_arguments = list(arguments) if invalid_call == "missing" else [None]
+    for missing_argument in missing_arguments:
+        kwargs = dict(arguments)
+        positional = []
+        if invalid_call == "missing":
+            kwargs.pop(missing_argument)
+        elif invalid_call == "unexpected":
+            kwargs["unknown_option"] = True
+        else:
+            positional = ["unexpected_positional"]
+
+        with pytest.raises(error_type) as exception:
+            method(*positional, **kwargs)
+
+        assert type(exception.value) is error_type
+        assert exception.value.source == "client"
+        assert exception.value.status_code is None
+        assert exception.value.raw_response is None
+        if invalid_call == "missing":
+            assert exception.value.errors == [
+                {"type": "missing", "loc": [missing_argument], "msg": "Field required"}
+            ]
+        else:
+            assert exception.value.errors[0]["type"] == "argument_binding_error"
+        request.assert_not_called()

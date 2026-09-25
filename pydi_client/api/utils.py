@@ -9,8 +9,10 @@ from pydi_client.sessions.authenticated_session import AuthenticatedSession
 from pydi_client.api.auth import AuthAPI
 from pydi_client.errors import (
     HTTPUnauthorizedException,
+    PipelineValidationError,
     UnexpectedResponse,
     UnexpectedStatus,
+    parse_server_validation_errors,
 )
 from pydi_client.data.collection_manager import ListCollection, ListPipelines
 
@@ -62,6 +64,19 @@ def execute_with_retry(
                 )
 
     return resp
+
+
+def raise_for_admin_error(
+    response: httpx.Response, error_type: type[PipelineValidationError]
+) -> None:
+    """Normalize non-authentication 4xx responses from admin write operations."""
+    if 400 <= response.status_code < 500 and response.status_code not in (401, 403):
+        raise error_type(
+            errors=parse_server_validation_errors(response.content),
+            source="server",
+            status_code=response.status_code,
+            raw_response=response.content,
+        )
 
 
 def build_response(*, response: httpx.Response, response_cls: Any) -> Any:

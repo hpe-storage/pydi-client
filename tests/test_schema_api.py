@@ -5,7 +5,8 @@ from httpx import Response as HTTPXResponse
 from http import HTTPStatus
 
 from pydi_client.sessions.authenticated_session import AuthenticatedSession
-from pydi_client.errors import HTTPUnauthorizedException, UnexpectedStatus
+from pydi_client.errors import HTTPUnauthorizedException, UnexpectedStatus, SchemaValidationError
+from pydi_client.di_client import DIAdminClient
 
 from pydi_client.sessions.session import Session
 
@@ -449,3 +450,75 @@ def test_delete_schema_unexpected_status(mocker, mock_authsession, schema_api):
         schema_api.delete_schema(name="yolo-detection-schema")
 
     mock_execute_with_retry.assert_called_once()
+
+
+def test_create_schema_missing_required_input_raises_client_validation_error(
+    mocker, mock_authsession, schema_api
+):
+    execute_request = mocker.patch("pydi_client.api.schema.execute_with_retry")
+
+    with pytest.raises(SchemaValidationError) as exception:
+        schema_api.create_schema(
+            name="test-schema", schema=[{"name": "id", "type": "varchar"}]
+        )
+
+    assert exception.value.source == "client"
+    assert exception.value.errors == [
+        {"type": "missing", "loc": ["schema_type"], "msg": "Field required"}
+    ]
+    execute_request.assert_not_called()
+
+
+def test_create_schema_invalid_input_raises_client_validation_error(
+    mocker, mock_authsession, schema_api
+):
+    execute_request = mocker.patch("pydi_client.api.schema.execute_with_retry")
+
+    with pytest.raises(SchemaValidationError) as exception:
+        schema_api.create_schema(
+            name="test-schema", schema_type="custom-function", schema="invalid"
+        )
+
+    assert exception.value.source == "client"
+    execute_request.assert_not_called()
+
+
+def test_create_schema_gateway_validation_error(mocker, mock_authsession, schema_api):
+    response_content = b'{"Status":"invalid schema","error":"field type is unsupported"}'
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.UNPROCESSABLE_ENTITY, content=response_content
+    )
+    mocker.patch("pydi_client.api.schema.execute_with_retry", return_value=mock_response)
+
+    with pytest.raises(SchemaValidationError) as exception:
+        schema_api.create_schema(
+            name="test-schema", schema_type="custom-function",
+            schema=[{"name": "id", "type": "varchar"}],
+        )
+
+    assert exception.value.source == "server"
+    assert exception.value.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert exception.value.errors == [
+        {
+            "type": "server_validation_error",
+            "loc": [],
+            "msg": "field type is unsupported",
+            "status": "invalid schema",
+        }
+    ]
+    assert exception.value.raw_response == response_content
+
+
+def test_admin_client_missing_schema_type_raises_client_validation_error(
+    mocker, mock_authsession
+):
+    mocker.patch("pydi_client.di_client.AuthAPI.login", return_value=mock_authsession)
+    execute_request = mocker.patch("pydi_client.api.schema.execute_with_retry")
+    client = DIAdminClient(uri="http://example.com", username="admin", password="password")
+
+    with pytest.raises(SchemaValidationError):
+        client.create_schema(
+            name="test-schema", schema=[{"name": "id", "type": "varchar"}]
+        )
+
+    execute_request.assert_not_called()

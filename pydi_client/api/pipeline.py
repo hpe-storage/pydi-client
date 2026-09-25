@@ -1,6 +1,5 @@
 # Copyright Hewlett Packard Enterprise Development LP
 
-import json
 from typing import Any, Dict, Union, List, Type, Optional
 
 from pydantic import ValidationError
@@ -17,7 +16,7 @@ from pydi_client.data.collection_manager import (
     V1PipelineResponse,
     ListPipelines,
 )
-from pydi_client.api.utils import execute_with_retry, build_response
+from pydi_client.api.utils import execute_with_retry, build_response, raise_for_admin_error
 from pydi_client.errors import (
     PipelineValidationError,
     normalize_pipeline_argument_errors,
@@ -136,36 +135,7 @@ class PipelineAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
-        if response.status_code == 422:
-            errors = []
-            try:
-                payload = json.loads(response.content)
-                if isinstance(payload, dict) and isinstance(
-                    payload.get("errors"), list
-                ):
-                    errors = [
-                        error for error in payload["errors"] if isinstance(error, dict)
-                    ]
-                elif isinstance(payload, dict) and isinstance(
-                    payload.get("error"), str
-                ):
-                    errors = [
-                        {
-                            "type": "server_validation_error",
-                            "loc": [],
-                            "msg": payload["error"],
-                            "status": payload.get("Status"),
-                        }
-                    ]
-            except (json.JSONDecodeError, UnicodeDecodeError):
-                pass
-
-            raise PipelineValidationError(
-                errors=errors,
-                source="server",
-                status_code=response.status_code,
-                raw_response=response.content,
-            )
+        raise_for_admin_error(response, PipelineValidationError)
         result = build_response(
             response=response, response_cls=DataModelFactory.create_pipeline()
         )
@@ -221,6 +191,7 @@ class PipelineAPI:
         logger.info("Fetched all pipelines successfully")
         return result
 
+    @normalize_pipeline_argument_errors
     def delete_pipeline(self, *, name: str) -> V1DeletePipelineResponse:
         """
         Delete a pipeline by name.
@@ -241,6 +212,7 @@ class PipelineAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
+        raise_for_admin_error(response, PipelineValidationError)
         result = build_response(
             response=response, response_cls=DataModelFactory.delete_pipeline()
         )
