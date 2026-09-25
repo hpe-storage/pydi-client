@@ -1,6 +1,7 @@
 # Copyright Hewlett Packard Enterprise Development LP
 
 from typing import Any, Dict, Optional, Union, List, Type
+from pydantic import ValidationError
 
 from pydi_client.sessions.authenticated_session import AuthenticatedSession
 from pydi_client.sessions.session import Session
@@ -12,6 +13,11 @@ from pydi_client.data.collection_manager import (
 )
 from pydi_client.data.pipeline import BucketUpdateResponse
 from pydi_client.api.utils import execute_with_retry, build_response
+from pydi_client.errors import (
+    CollectionValidationError,
+    normalize_collection_argument_errors,
+    parse_server_validation_errors,
+)
 from pydi_client.logger import get_logger  # Importing the logger utility
 
 # Initialize logger for this module
@@ -83,6 +89,7 @@ class CollectionAPI:
             "CollectionAPI initialized with session: %s", type(session).__name__
         )
 
+    @normalize_collection_argument_errors
     def create_collection(
         self,
         *,
@@ -93,13 +100,18 @@ class CollectionAPI:
         indexing_mode: Optional[str] = None,
     ) -> V1CollectionResponse:
         logger.info("Creating collection with name: %s, pipeline: %s", name, pipeline)
-        body = V1CreateCollection(
-            name=name,
-            pipeline=pipeline,
-            buckets=buckets,
-            outputStore=output_store,
-            indexingMode=indexing_mode,
-        )
+        try:
+            body = V1CreateCollection(
+                name=name,
+                pipeline=pipeline,
+                buckets=buckets,
+                outputStore=output_store,
+                indexingMode=indexing_mode,
+            )
+        except ValidationError as error:
+            raise CollectionValidationError(
+                errors=error.errors(), source="client"
+            ) from error
 
         kwargs: Dict[str, Any] = MethodFactory().create_collection()
         kwargs["json"] = body.model_dump(exclude_none=True)
@@ -110,6 +122,13 @@ class CollectionAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
+        if response.status_code in (400, 404, 409, 422):
+            raise CollectionValidationError(
+                errors=parse_server_validation_errors(response.content),
+                source="server",
+                status_code=response.status_code,
+                raw_response=response.content,
+            )
         result = build_response(
             response=response, response_cls=DataModelFactory.create_collection()
         )
@@ -150,6 +169,7 @@ class CollectionAPI:
         logger.info("Fetched collection successfully: %s", name)
         return result
 
+    @normalize_collection_argument_errors
     def delete_collection(self, *, name: str) -> V1DeleteCollectionResponse:
         logger.info("Deleting collection with name: %s", name)
         kwargs: Dict[str, Any] = MethodFactory().delete_collection(name=name)
@@ -160,12 +180,20 @@ class CollectionAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
+        if response.status_code in (400, 404, 409, 422):
+            raise CollectionValidationError(
+                errors=parse_server_validation_errors(response.content),
+                source="server",
+                status_code=response.status_code,
+                raw_response=response.content,
+            )
         result = build_response(
             response=response, response_cls=DataModelFactory.delete_collection()
         )
         logger.info("Deleted collection successfully: %s", name)
         return result
 
+    @normalize_collection_argument_errors
     def assign_buckets_to_collection(
         self, *, collection_name: str, buckets: List[str]
     ) -> BucketUpdateResponse:
@@ -179,12 +207,20 @@ class CollectionAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
+        if response.status_code in (400, 404, 409, 422):
+            raise CollectionValidationError(
+                errors=parse_server_validation_errors(response.content),
+                source="server",
+                status_code=response.status_code,
+                raw_response=response.content,
+            )
         result = build_response(
             response=response, response_cls=DataModelFactory.assign_buckets()
         )
         logger.info("Buckets assigned successfully to collection: %s", collection_name)
         return result
 
+    @normalize_collection_argument_errors
     def unassign_buckets_from_collection(
         self, *, collection_name: str, buckets: List[str]
     ) -> BucketUpdateResponse:
@@ -198,6 +234,13 @@ class CollectionAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
+        if response.status_code in (400, 404, 409, 422):
+            raise CollectionValidationError(
+                errors=parse_server_validation_errors(response.content),
+                source="server",
+                status_code=response.status_code,
+                raw_response=response.content,
+            )
         result = build_response(
             response=response, response_cls=DataModelFactory.unassign_buckets()
         )

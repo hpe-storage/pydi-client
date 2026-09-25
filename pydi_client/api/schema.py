@@ -15,9 +15,14 @@ from pydi_client.data.schema import (
 )
 
 from pydi_client.api.utils import execute_with_retry, build_response
+from pydi_client.errors import (
+    SchemaValidationError,
+    normalize_schema_argument_errors,
+    parse_server_validation_errors,
+)
 from pydi_client.logger import get_logger  # Importing the logger utility
 import httpx
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from typing import Optional as _Optional
 
 # Initialize logger for this module
@@ -107,6 +112,7 @@ class SchemaAPI:
             response=response, response_cls=DataModelFactory.get_schemas()
         )
 
+    @normalize_schema_argument_errors
     def create_schema(
         self,
         *,
@@ -125,7 +131,10 @@ class SchemaAPI:
 
         """
         logger.info("Creating schema with name: %s", name)
-        body = V1CreateSchemaRequest(name=name, type=schema_type, schema=schema)
+        try:
+            body = V1CreateSchemaRequest(name=name, type=schema_type, schema=schema)
+        except ValidationError as error:
+            raise SchemaValidationError(errors=error.errors(), source="client") from error
         kwargs: Dict[str, Any] = MethodFactory().create_schema()
         kwargs["json"] = body.model_dump(by_alias=True)
 
@@ -135,6 +144,13 @@ class SchemaAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
+        if response.status_code in (400, 404, 409, 422):
+            raise SchemaValidationError(
+                errors=parse_server_validation_errors(response.content),
+                source="server",
+                status_code=response.status_code,
+                raw_response=response.content,
+            )
         raw = build_response(response=response, response_cls=_ServerStatusResponse)
         result = V1CreateSchemaResponse(
             status=response.status_code,
@@ -145,6 +161,7 @@ class SchemaAPI:
         logger.info("Schema created successfully: %s", name)
         return result
 
+    @normalize_schema_argument_errors
     def delete_schema(self, *, name: str) -> V1DeleteSchemaResponse:
         """
         Delete schema by name
@@ -162,6 +179,13 @@ class SchemaAPI:
             request_func=self._session.get_httpx_client().request,
             **kwargs,
         )
+        if response.status_code in (400, 404, 409, 422):
+            raise SchemaValidationError(
+                errors=parse_server_validation_errors(response.content),
+                source="server",
+                status_code=response.status_code,
+                raw_response=response.content,
+            )
         raw = build_response(response=response, response_cls=_ServerStatusResponse)
         result = V1DeleteSchemaResponse(
             status=response.status_code,

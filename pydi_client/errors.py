@@ -1,5 +1,6 @@
 # Copyright Hewlett Packard Enterprise Development LP
 
+import json
 from functools import wraps
 from inspect import Parameter, signature
 from typing import Any, Callable, Dict, List, Literal, Optional, ParamSpec, TypeVar
@@ -11,6 +12,8 @@ T = TypeVar("T")
 
 class PipelineValidationError(ValueError):
     """Exception raised when pipeline creation input is invalid."""
+
+    resource_name = "Pipeline"
 
     def __init__(
         self,
@@ -34,7 +37,7 @@ class PipelineValidationError(ValueError):
             if rendered_error:
                 details.append(rendered_error)
 
-        prefix = f"Pipeline validation failed ({self.source})"
+        prefix = f"{self.resource_name} validation failed ({self.source})"
         return (
             f"{prefix}: {'; '.join(details)}"
             if details
@@ -58,8 +61,21 @@ class PipelineValidationError(ValueError):
         return message
 
 
+class CollectionValidationError(PipelineValidationError):
+    """Exception raised when collection creation input is invalid."""
+
+    resource_name = "Collection"
+
+
+class SchemaValidationError(PipelineValidationError):
+    """Exception raised when schema creation input is invalid."""
+
+    resource_name = "Schema"
+
+
 def normalize_pipeline_argument_errors(
     function: Callable[P, T],
+    error_type: type[PipelineValidationError] = PipelineValidationError,
 ) -> Callable[P, T]:
     """Convert pipeline method argument-binding failures to validation errors."""
     function_signature = signature(function)
@@ -86,11 +102,58 @@ def normalize_pipeline_argument_errors(
                 for name in missing_arguments
             ] or [{"type": "argument_binding_error", "loc": [], "msg": str(error)}]
 
-            raise PipelineValidationError(errors=errors, source="client") from error
+            raise error_type(errors=errors, source="client") from error
 
         return function(*args, **kwargs)
 
     return wrapper
+
+
+def normalize_collection_argument_errors(
+    function: Callable[P, T],
+) -> Callable[P, T]:
+    """Convert collection method argument-binding failures to validation errors."""
+    return normalize_pipeline_argument_errors(function, CollectionValidationError)
+
+
+def normalize_schema_argument_errors(
+    function: Callable[P, T],
+) -> Callable[P, T]:
+    """Convert schema method argument-binding failures to validation errors."""
+    return normalize_pipeline_argument_errors(function, SchemaValidationError)
+
+
+def parse_server_validation_errors(response_content: bytes) -> List[Dict[str, Any]]:
+    """Extract structured validation details from an HTTP 422 response."""
+    try:
+        payload = json.loads(response_content)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return []
+
+    if isinstance(payload, dict) and isinstance(payload.get("errors"), list):
+        return [error for error in payload["errors"] if isinstance(error, dict)]
+
+    if isinstance(payload, dict):
+        message = payload.get("error")
+        status = payload.get("Status")
+        if not isinstance(message, str):
+            message = next(
+                (
+                    payload[key]
+                    for key in ("Status", "status", "detail", "message")
+                    if isinstance(payload.get(key), str)
+                ),
+                None,
+            )
+            status = None
+
+        if isinstance(message, str):
+            error = {"type": "server_validation_error", "loc": [], "msg": message}
+            if isinstance(status, str):
+                error["status"] = status
+            return [error]
+
+    return []
 
 
 class NotImplementedException(Exception):
