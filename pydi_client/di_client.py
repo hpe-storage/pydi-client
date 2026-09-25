@@ -12,6 +12,8 @@ from pydi_client.data.model import ModelTags
 from pydi_client.errors import (
     UnexpectedResponse,
     UnexpectedStatus,
+    normalize_collection_argument_errors,
+    normalize_schema_argument_errors,
     normalize_pipeline_argument_errors,
 )
 from pydi_client.utils.utils import deprecated
@@ -384,6 +386,7 @@ class DIAdminClient(DIClient):
         """
         return self._authenticated_session
 
+    @normalize_collection_argument_errors
     def create_collection(
         self,
         *,
@@ -439,6 +442,7 @@ class DIAdminClient(DIClient):
             indexing_mode=indexing_mode,
         )
 
+    @normalize_collection_argument_errors
     def delete_collection(self, *, name: str) -> V1DeleteCollectionResponse:
         """
         Deletes a collection by its name.
@@ -465,6 +469,7 @@ class DIAdminClient(DIClient):
             name=name
         )
 
+    @normalize_collection_argument_errors
     def assign_buckets_to_collection(
         self, *, collection_name: str, buckets: List[str]
     ) -> BucketUpdateResponse:
@@ -509,6 +514,7 @@ class DIAdminClient(DIClient):
             session=self.authenticated_session
         ).assign_buckets_to_collection(collection_name=collection_name, buckets=buckets)
 
+    @normalize_collection_argument_errors
     def unassign_buckets_from_collection(
         self, *, collection_name: str, buckets: List[str]
     ) -> BucketUpdateResponse:
@@ -772,6 +778,7 @@ class DIAdminClient(DIClient):
 
         return V1ListModelsResponse(models=embedding_models_list)
 
+    @normalize_schema_argument_errors
     def create_schema(
         self,
         *,
@@ -815,6 +822,7 @@ class DIAdminClient(DIClient):
             schema=schema,
         )
 
+    @normalize_schema_argument_errors
     def delete_schema(self, *, name: str) -> V1DeleteSchemaResponse:
         """
         Deletes a schema with the specified name.

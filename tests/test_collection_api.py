@@ -12,7 +12,8 @@ from pydi_client.data.collection_manager import (
 )
 from pydi_client.data.pipeline import BucketUpdateResponse
 from pydi_client.sessions.authenticated_session import AuthenticatedSession
-from pydi_client.errors import HTTPUnauthorizedException, UnexpectedStatus
+from pydi_client.errors import HTTPUnauthorizedException, UnexpectedStatus, CollectionValidationError
+from pydi_client.di_client import DIAdminClient
 
 from pydi_client.sessions.session import Session
 
@@ -423,3 +424,63 @@ def test_unassign_buckets_from_collection_unexpected_status(
         collection_api.unassign_buckets_from_collection(
             collection_name="Test Collection", buckets=["bucket1", "bucket2"]
         )
+
+
+def test_create_collection_missing_required_input_raises_client_validation_error(
+    mocker, mock_session, collection_api
+):
+    execute_request = mocker.patch("pydi_client.api.collection.execute_with_retry")
+
+    with pytest.raises(CollectionValidationError) as exception:
+        collection_api.create_collection(name="Test Collection")
+
+    assert exception.value.source == "client"
+    assert exception.value.errors == [
+        {"type": "missing", "loc": ["pipeline"], "msg": "Field required"}
+    ]
+    execute_request.assert_not_called()
+
+
+def test_create_collection_invalid_input_raises_client_validation_error(
+    mocker, mock_session, collection_api
+):
+    execute_request = mocker.patch("pydi_client.api.collection.execute_with_retry")
+
+    with pytest.raises(CollectionValidationError) as exception:
+        collection_api.create_collection(
+            name="Test Collection", pipeline="default", buckets="bucket"
+        )
+
+    assert exception.value.source == "client"
+    execute_request.assert_not_called()
+
+
+def test_create_collection_gateway_validation_error(mocker, mock_session, collection_api):
+    response_content = b'{"errors":[{"type":"missing","loc":["body","pipeline"],"msg":"Field required"}]}'
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.UNPROCESSABLE_ENTITY, content=response_content
+    )
+    mocker.patch(
+        "pydi_client.api.collection.execute_with_retry", return_value=mock_response
+    )
+
+    with pytest.raises(CollectionValidationError) as exception:
+        collection_api.create_collection(name="Test Collection", pipeline="default")
+
+    assert exception.value.source == "server"
+    assert exception.value.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert exception.value.errors[0]["loc"] == ["body", "pipeline"]
+    assert exception.value.raw_response == response_content
+
+
+def test_admin_client_missing_collection_pipeline_raises_client_validation_error(
+    mocker, mock_session
+):
+    mocker.patch("pydi_client.di_client.AuthAPI.login", return_value=mock_session)
+    execute_request = mocker.patch("pydi_client.api.collection.execute_with_retry")
+    client = DIAdminClient(uri="http://example.com", username="admin", password="password")
+
+    with pytest.raises(CollectionValidationError):
+        client.create_collection(name="Test Collection")
+
+    execute_request.assert_not_called()
