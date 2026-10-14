@@ -10,7 +10,7 @@ from pydi_client.data.collection_manager import (
     ListCollection,
     ListPipelines,
 )
-from pydi_client.data.pipeline import BucketUpdateResponse
+from pydi_client.data.pipeline import BucketUpdateResponse, SourceUpdateResponse
 from pydi_client.sessions.authenticated_session import AuthenticatedSession
 from pydi_client.errors import HTTPUnauthorizedException, UnexpectedStatus
 
@@ -423,3 +423,177 @@ def test_unassign_buckets_from_collection_unexpected_status(
         collection_api.unassign_buckets_from_collection(
             collection_name="Test Collection", buckets=["bucket1", "bucket2"]
         )
+
+
+def test_create_collection_with_paths(mocker, mock_session, collection_api):
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.CREATED,
+        json={
+            "name": "fs_collection",
+            "pipeline": "default_pipeline",
+            "buckets": [],
+            "paths": ["/file/fs1/docs"],
+        },
+    )
+    mock_execute = mocker.patch(
+        "pydi_client.api.collection.execute_with_retry", return_value=mock_response
+    )
+
+    result = collection_api.create_collection(
+        name="fs_collection",
+        pipeline="default_pipeline",
+        buckets=None,
+        paths=["/file/fs1/docs"],
+    )
+
+    sent = mock_execute.call_args.kwargs
+    assert sent["method"] == "post"
+    assert sent["url"] == "/api/v1/collections"
+    assert sent["json"] == {
+        "name": "fs_collection",
+        "pipeline": "default_pipeline",
+        "paths": ["/file/fs1/docs"],
+    }
+    assert isinstance(result, V1CollectionResponse)
+    assert result.paths == ["/file/fs1/docs"]
+
+
+def test_create_collection_without_paths_omits_paths(
+    mocker, mock_session, collection_api
+):
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.CREATED,
+        json={"name": "c1", "pipeline": "p1", "buckets": ["bucket1"]},
+    )
+    mock_execute = mocker.patch(
+        "pydi_client.api.collection.execute_with_retry", return_value=mock_response
+    )
+
+    result = collection_api.create_collection(
+        name="c1", pipeline="p1", buckets=["bucket1"]
+    )
+
+    assert "paths" not in mock_execute.call_args.kwargs["json"]
+    assert result.paths is None
+
+
+def test_admin_create_collection_with_paths_omits_buckets(mocker):
+    from pydi_client import DIAdminClient
+
+    mocker.patch("pydi_client.api.auth.AuthAPI.login", return_value=mocker.MagicMock())
+    admin = DIAdminClient(uri="https://di.example.com", username="admin", password="pass")
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.CREATED,
+        json={"name": "fs_collection", "pipeline": "p1", "paths": ["/file/fs1/docs"]},
+    )
+    mock_execute = mocker.patch(
+        "pydi_client.api.collection.execute_with_retry", return_value=mock_response
+    )
+
+    admin.create_collection(
+        name="fs_collection", pipeline="p1", paths=["/file/fs1/docs"]
+    )
+
+    sent_json = mock_execute.call_args.kwargs["json"]
+    assert "buckets" not in sent_json
+    assert sent_json["paths"] == ["/file/fs1/docs"]
+
+
+def test_admin_create_collection_without_sources_sends_empty_buckets(mocker):
+    from pydi_client import DIAdminClient
+
+    mocker.patch("pydi_client.api.auth.AuthAPI.login", return_value=mocker.MagicMock())
+    admin = DIAdminClient(uri="https://di.example.com", username="admin", password="pass")
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.CREATED,
+        json={"name": "c1", "pipeline": "p1", "buckets": []},
+    )
+    mock_execute = mocker.patch(
+        "pydi_client.api.collection.execute_with_retry", return_value=mock_response
+    )
+
+    admin.create_collection(name="c1", pipeline="p1")
+
+    sent_json = mock_execute.call_args.kwargs["json"]
+    assert sent_json["buckets"] == []
+    assert "paths" not in sent_json
+
+
+@pytest.mark.parametrize(
+    "method_name, endpoint",
+    [
+        ("assign_sources_to_collection", "assignSources"),
+        ("unassign_sources_from_collection", "unassignSources"),
+    ],
+)
+def test_sources_to_collection_success(
+    mocker, mock_session, collection_api, method_name, endpoint
+):
+    mock_response = HTTPXResponse(
+        status_code=HTTPStatus.OK,
+        json={"success": True, "message": "Sources updated successfully"},
+    )
+    mock_execute = mocker.patch(
+        "pydi_client.api.collection.execute_with_retry", return_value=mock_response
+    )
+
+    result = getattr(collection_api, method_name)(
+        collection_name="my_collection", paths=["/file/fs1/docs"]
+    )
+
+    sent = mock_execute.call_args.kwargs
+    assert sent["method"] == "post"
+    assert sent["url"] == f"/api/v1/collections/my_collection/{endpoint}"
+    assert sent["json"] == {"paths": ["/file/fs1/docs"]}
+    assert isinstance(result, SourceUpdateResponse)
+    assert result.success
+    assert result.message == "Sources updated successfully"
+
+
+@pytest.mark.parametrize(
+    "method_name", ["assign_sources_to_collection", "unassign_sources_from_collection"]
+)
+def test_sources_to_collection_unauthorized(
+    mocker, mock_session, collection_api, method_name
+):
+    mock_response = HTTPXResponse(status_code=HTTPStatus.UNAUTHORIZED)
+    mocker.patch(
+        "pydi_client.api.collection.execute_with_retry", return_value=mock_response
+    )
+
+    with pytest.raises(HTTPUnauthorizedException):
+        getattr(collection_api, method_name)(
+            collection_name="my_collection", paths=["/file/fs1/docs"]
+        )
+
+
+@pytest.mark.parametrize(
+    "method_name", ["assign_sources_to_collection", "unassign_sources_from_collection"]
+)
+@pytest.mark.parametrize(
+    "status", [HTTPStatus.CONFLICT, HTTPStatus.INTERNAL_SERVER_ERROR]
+)
+def test_sources_to_collection_unexpected_status(
+    mocker, mock_session, collection_api, method_name, status
+):
+    mock_response = HTTPXResponse(status_code=status)
+    mocker.patch(
+        "pydi_client.api.collection.execute_with_retry", return_value=mock_response
+    )
+
+    with pytest.raises(UnexpectedStatus):
+        getattr(collection_api, method_name)(
+            collection_name="my_collection", paths=["/file/fs1/docs"]
+        )
+
+
+@pytest.mark.parametrize(
+    "method_name", ["assign_sources_to_collection", "unassign_sources_from_collection"]
+)
+def test_admin_client_sources_signature(method_name):
+    import inspect
+    from pydi_client import DIAdminClient
+
+    sig = inspect.signature(getattr(DIAdminClient, method_name))
+    for param in ("collection_name", "paths"):
+        assert sig.parameters[param].kind == inspect.Parameter.KEYWORD_ONLY

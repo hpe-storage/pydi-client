@@ -272,6 +272,18 @@ collection_response = admin_client.create_collection(
 )
 ```
 
+To back a collection with a filesystem source instead of S3 buckets, pass `paths` with a single
+path of the form `/file/<filesystem-name>/...`. A collection can use either buckets or a filesystem path, not both.
+Filesystem paths are supported only for collections that use a metadata pipeline.
+
+```python
+collection_response = admin_client.create_collection(
+    name="example-fs-collection",
+    pipeline="example-metadata-pipeline",
+    paths=["/file/fs1/docs"],
+)
+```
+
 ---
 
 ## 7. Assigning S3 Buckets to a Collection (Admin)
@@ -293,6 +305,22 @@ print(bucket_update_response)
 ```
 
 **Note:** You can also unassign buckets using `unassign_buckets_from_collection`.
+
+### Assigning a Filesystem Source to a Collection (Admin)
+
+A metadata-pipeline collection without bucket sources can instead be assigned one filesystem path.
+
+```python
+source_update_response = admin_client.assign_sources_to_collection(
+    collection_name="example-fs-collection",
+    paths=["/file/fs1/docs"]
+)
+
+print(source_update_response)
+# Output: SourceUpdateResponse(success=True, message="...")
+```
+
+**Note:** Use `unassign_sources_from_collection` with the same path to remove it.
 
 ---
 

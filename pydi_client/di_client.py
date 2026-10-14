@@ -25,6 +25,7 @@ from pydi_client.data.collection_manager import (
 )
 from pydi_client.data.pipeline import (
     BucketUpdateResponse,
+    SourceUpdateResponse,
     V1CreatePipelineResponse,
     V1DeletePipelineResponse,
 )
@@ -352,6 +353,8 @@ class DIAdminClient(DIClient):
 
         - Assigning or unassigning buckets to/from collections.
 
+        - Assigning or unassigning filesystem sources to/from collections.
+
         - Creating or deleting pipelines.
 
         - Creating or deleting schemas.
@@ -392,6 +395,7 @@ class DIAdminClient(DIClient):
         buckets: Optional[List[str]] = None,
         output_store: Optional[str] = None,
         indexing_mode: Optional[str] = None,
+        paths: Optional[List[str]] = None,
     ) -> V1CollectionResponse:
         """
         Creates a new collection using the specified pipeline.
@@ -404,6 +408,9 @@ class DIAdminClient(DIClient):
             buckets (Optional[List[str]], optional): A list of bucket names. Defaults to None.
             output_store (Optional[str], optional): Output bucket for transcription results. Defaults to None.
             indexing_mode (Optional[str], optional): Indexing mode for RAG collections (supported values: 'HNSW', 'GPU_CAGRA'). Auto-detected if omitted. Defaults to None.
+            paths (Optional[List[str]], optional): A filesystem source path (e.g. ['/file/fs1/docs']).
+                Only one path is supported, it cannot be combined with buckets, and it is supported
+                only for metadata pipelines. Defaults to None.
 
         Returns:
             V1CollectionResponse: The created collection object.
@@ -426,9 +433,17 @@ class DIAdminClient(DIClient):
             #     buckets=["bucket1", "bucket2"],
             #     outputStore="output-bucket"
             # )
+
+            # Create a metadata collection backed by a filesystem source
+            collection = client.create_collection(
+                name="fs-collection",
+                pipeline="metadata-pipeline",
+                paths=["/file/fs1/docs"]
+            )
             ```
         """
-        if buckets is None:
+        # The server rejects requests that carry both buckets and paths.
+        if buckets is None and paths is None:
             buckets = []
 
         return CollectionAPI(session=self.authenticated_session).create_collection(
@@ -437,6 +452,7 @@ class DIAdminClient(DIClient):
             pipeline=pipeline,
             output_store=output_store,
             indexing_mode=indexing_mode,
+            paths=paths,
         )
 
     def delete_collection(self, *, name: str) -> V1DeleteCollectionResponse:
@@ -545,6 +561,80 @@ class DIAdminClient(DIClient):
             session=self.authenticated_session
         ).unassign_buckets_from_collection(
             collection_name=collection_name, buckets=buckets
+        )
+
+    def assign_sources_to_collection(
+        self, *, collection_name: str, paths: List[str]
+    ) -> SourceUpdateResponse:
+        """
+        Assigns a filesystem source to a specified collection.
+        This enables inline embedding generation for files under the specified path.
+
+        Args:
+            collection_name (str): The name of the collection to which the source will be assigned.
+            paths (List[str]): The filesystem path to assign, in the form
+                '/file/<filesystem-name>/...'. Only one path is supported per collection.
+
+        Returns:
+            SourceUpdateResponse: The response object indicating the result of the assignment.
+
+        Example Usage:
+            ```python
+            client = DIAdminClient(uri="http://example.com", username="admin", password="password")
+            response = client.assign_sources_to_collection(
+                collection_name="my_collection",
+                paths=["/file/fs1/docs"]
+            )
+            print(response)
+            # Output:
+            # SourceUpdateResponse(
+            #     success=True,
+            #     message="..."
+            # )
+            ```
+        Notes:
+            - A collection can have either bucket sources or a filesystem source, not both.
+            - Filesystem sources are supported only for collections that use a metadata pipeline.
+        """
+        return CollectionAPI(
+            session=self.authenticated_session
+        ).assign_sources_to_collection(
+            collection_name=collection_name, paths=paths
+        )
+
+    def unassign_sources_from_collection(
+        self, *, collection_name: str, paths: List[str]
+    ) -> SourceUpdateResponse:
+        """
+        Unassigns the filesystem source from a specified collection.
+
+        Args:
+            collection_name (str): The name of the collection from which the source will be unassigned.
+            paths (List[str]): The filesystem path to unassign. It must match the path
+                currently assigned to the collection.
+
+        Returns:
+            SourceUpdateResponse: The response object indicating the result of the unassignment.
+
+        Example Usage:
+            ```python
+            client = DIAdminClient(uri="http://example.com", username="admin", password="password")
+            response = client.unassign_sources_from_collection(
+                collection_name="my_collection",
+                paths=["/file/fs1/docs"]
+            )
+            print(response)
+            # Output:
+            # SourceUpdateResponse(
+            #     success=True,
+            #     message="..."
+            # )
+            ```
+        """
+        return CollectionAPI(
+            session=self.authenticated_session
+        ).unassign_sources_from_collection(
+            collection_name=collection_name, paths=paths
         )
 
     @normalize_pipeline_argument_errors
