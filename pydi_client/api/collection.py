@@ -10,7 +10,7 @@ from pydi_client.data.collection_manager import (
     V1DeleteCollectionResponse,
     ListCollection,
 )
-from pydi_client.data.pipeline import BucketUpdateResponse
+from pydi_client.data.pipeline import BucketUpdateResponse, SourceUpdateResponse
 from pydi_client.api.utils import execute_with_retry, build_response
 from pydi_client.logger import get_logger  # Importing the logger utility
 
@@ -39,6 +39,12 @@ class MethodFactory:
     def unassign_buckets(self, name):
         return self._build("post", f"{self.BASE_URL}/{name}/unassignBuckets")
 
+    def assign_sources(self, name):
+        return self._build("post", f"{self.BASE_URL}/{name}/assignSources")
+
+    def unassign_sources(self, name):
+        return self._build("post", f"{self.BASE_URL}/{name}/unassignSources")
+
     def _build(self, method, endpoint):
         return {"method": method, "url": endpoint}
 
@@ -66,6 +72,14 @@ class DataModelFactory:
         return BucketUpdateResponse
 
     @staticmethod
+    def assign_sources() -> Type[SourceUpdateResponse]:
+        return SourceUpdateResponse
+
+    @staticmethod
+    def unassign_sources() -> Type[SourceUpdateResponse]:
+        return SourceUpdateResponse
+
+    @staticmethod
     def delete_collection() -> Type[V1DeleteCollectionResponse]:
         return V1DeleteCollectionResponse
 
@@ -91,6 +105,7 @@ class CollectionAPI:
         buckets: Optional[Union[Any, List[str]]] = [],
         output_store: Optional[str] = None,
         indexing_mode: Optional[str] = None,
+        paths: Optional[List[str]] = None,
     ) -> V1CollectionResponse:
         logger.info("Creating collection with name: %s, pipeline: %s", name, pipeline)
         body = V1CreateCollection(
@@ -99,6 +114,7 @@ class CollectionAPI:
             buckets=buckets,
             outputStore=output_store,
             indexingMode=indexing_mode,
+            paths=paths,
         )
 
         kwargs: Dict[str, Any] = MethodFactory().create_collection()
@@ -203,5 +219,45 @@ class CollectionAPI:
         )
         logger.info(
             "Buckets unassigned successfully from collection: %s", collection_name
+        )
+        return result
+
+    def assign_sources_to_collection(
+        self, *, collection_name: str, paths: List[str]
+    ) -> SourceUpdateResponse:
+        logger.info("Assigning sources to collection: %s", collection_name)
+        kwargs: Dict[str, Any] = MethodFactory().assign_sources(name=collection_name)
+        kwargs["json"] = {"paths": paths}
+
+        logger.debug("Request payload for assign_sources_to_collection: %s", kwargs)
+        response = execute_with_retry(
+            session=self._session,
+            request_func=self._session.get_httpx_client().request,
+            **kwargs,
+        )
+        result = build_response(
+            response=response, response_cls=DataModelFactory.assign_sources()
+        )
+        logger.info("Sources assigned successfully to collection: %s", collection_name)
+        return result
+
+    def unassign_sources_from_collection(
+        self, *, collection_name: str, paths: List[str]
+    ) -> SourceUpdateResponse:
+        logger.info("Unassigning sources from collection: %s", collection_name)
+        kwargs: Dict[str, Any] = MethodFactory().unassign_sources(name=collection_name)
+        kwargs["json"] = {"paths": paths}
+
+        logger.debug("Request payload for unassign_sources_from_collection: %s", kwargs)
+        response = execute_with_retry(
+            session=self._session,
+            request_func=self._session.get_httpx_client().request,
+            **kwargs,
+        )
+        result = build_response(
+            response=response, response_cls=DataModelFactory.unassign_sources()
+        )
+        logger.info(
+            "Sources unassigned successfully from collection: %s", collection_name
         )
         return result

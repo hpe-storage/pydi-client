@@ -43,6 +43,7 @@ class V1CreateCollection(BaseModel):
         buckets (Optional[List[str]]): Optional list of buckets associated with the collection.
         outputStore (Optional[str]): Output bucket for transcription results (transcribe usecase).
         indexingMode (Optional[str]): Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA). Auto-detected if omitted.
+        paths (Optional[List[str]]): Optional filesystem source path (e.g., /file/fs1/docs). Only one filesystem path is allowed per collection. Mutually exclusive with buckets.
     """
     name: str
     pipeline: str
@@ -54,6 +55,10 @@ class V1CreateCollection(BaseModel):
     indexingMode: Optional[str] = Field(
         default=None,
         description="Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA). Auto-detected if omitted.",
+    )
+    paths: Optional[List[str]] = Field(
+        default=None,
+        description="Filesystem source path (e.g., /file/fs1/docs). Only one filesystem path is allowed per collection. Mutually exclusive with buckets.",
     )
 
 
@@ -68,6 +73,7 @@ class V1CollectionResponse(BaseModel):
         buckets (Optional[List[str]]): Optional list of buckets associated with the collection.
         outputStore (Optional[str]): Output bucket for transcription results (transcribe usecase).
         indexingMode (Optional[str]): Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA).
+        paths (Optional[List[str]]): Filesystem source path associated with the collection, if any. A collection has at most one filesystem path.
     """
     name: str
     pipeline: str
@@ -82,6 +88,10 @@ class V1CollectionResponse(BaseModel):
     indexingMode: Optional[str] = Field(
         default=None,
         description="Indexing mode for RAG collections (e.g., HNSW, GPU_CAGRA)",
+    )
+    paths: Optional[List[str]] = Field(
+        default=None,
+        description="Filesystem source path associated with the collection (at most one per collection)",
     )
 
 

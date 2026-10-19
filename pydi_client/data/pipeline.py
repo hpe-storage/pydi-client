@@ -110,6 +110,17 @@ class BucketUpdateResponse(BaseModel):
     message: str
 
 
+class SourceUpdateResponse(BaseModel):
+    """
+    Response model for assigning or unassigning filesystem sources of a collection.
+    Attributes:
+        success (bool): Indicates if the source update was successful.
+        message (str): Message providing additional information about the operation.
+    """
+    success: bool
+    message: str
+
+
 class NodeWithScore(BaseModel):
     """
     Represents a node with its associated score and metadata.
