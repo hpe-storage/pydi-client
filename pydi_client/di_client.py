@@ -409,8 +409,7 @@ class DIAdminClient(DIClient):
             output_store (Optional[str], optional): Output bucket for transcription results. Defaults to None.
             indexing_mode (Optional[str], optional): Indexing mode for RAG collections (supported values: 'HNSW', 'GPU_CAGRA'). Auto-detected if omitted. Defaults to None.
             paths (Optional[List[str]], optional): A filesystem source path (e.g. ['/file/fs1/docs']).
-                Only one path is supported, it cannot be combined with buckets, and it is supported
-                only for metadata pipelines. Defaults to None.
+                Only one filesystem path is allowed per collection, and it cannot be combined with buckets. Defaults to None.
 
         Returns:
             V1CollectionResponse: The created collection object.
