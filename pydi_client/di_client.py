@@ -12,6 +12,8 @@ from pydi_client.data.model import ModelTags
 from pydi_client.errors import (
     UnexpectedResponse,
     UnexpectedStatus,
+    normalize_collection_argument_errors,
+    normalize_schema_argument_errors,
     normalize_pipeline_argument_errors,
 )
 from pydi_client.utils.utils import deprecated
@@ -387,6 +389,7 @@ class DIAdminClient(DIClient):
         """
         return self._authenticated_session
 
+    @normalize_collection_argument_errors
     def create_collection(
         self,
         *,
@@ -454,6 +457,7 @@ class DIAdminClient(DIClient):
             paths=paths,
         )
 
+    @normalize_collection_argument_errors
     def delete_collection(self, *, name: str) -> V1DeleteCollectionResponse:
         """
         Deletes a collection by its name.
@@ -480,6 +484,7 @@ class DIAdminClient(DIClient):
             name=name
         )
 
+    @normalize_collection_argument_errors
     def assign_buckets_to_collection(
         self, *, collection_name: str, buckets: List[str]
     ) -> BucketUpdateResponse:
@@ -524,6 +529,7 @@ class DIAdminClient(DIClient):
             session=self.authenticated_session
         ).assign_buckets_to_collection(collection_name=collection_name, buckets=buckets)
 
+    @normalize_collection_argument_errors
     def unassign_buckets_from_collection(
         self, *, collection_name: str, buckets: List[str]
     ) -> BucketUpdateResponse:
@@ -562,6 +568,7 @@ class DIAdminClient(DIClient):
             collection_name=collection_name, buckets=buckets
         )
 
+    @normalize_collection_argument_errors
     def assign_sources_to_collection(
         self, *, collection_name: str, paths: List[str]
     ) -> SourceUpdateResponse:
@@ -601,6 +608,7 @@ class DIAdminClient(DIClient):
             collection_name=collection_name, paths=paths
         )
 
+    @normalize_collection_argument_errors
     def unassign_sources_from_collection(
         self, *, collection_name: str, paths: List[str]
     ) -> SourceUpdateResponse:
@@ -671,7 +679,7 @@ class DIAdminClient(DIClient):
 
         Raises:
             PipelineValidationError: If the arguments are invalid or incomplete, or if the server rejects
-                the request with an HTTP 422 validation error.
+                the request with an HTTP 4xx error other than 401 or 403.
 
         Example usage:
             ```python
@@ -709,6 +717,7 @@ class DIAdminClient(DIClient):
             chunk_overlap=chunk_overlap,
         )
 
+    @normalize_pipeline_argument_errors
     def delete_pipeline(self, *, name: str) -> V1DeletePipelineResponse:
         """
         Deletes a pipeline with the specified name.
@@ -861,6 +870,7 @@ class DIAdminClient(DIClient):
 
         return V1ListModelsResponse(models=embedding_models_list)
 
+    @normalize_schema_argument_errors
     def create_schema(
         self,
         *,
@@ -904,6 +914,7 @@ class DIAdminClient(DIClient):
             schema=schema,
         )
 
+    @normalize_schema_argument_errors
     def delete_schema(self, *, name: str) -> V1DeleteSchemaResponse:
         """
         Deletes a schema with the specified name.
