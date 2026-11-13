@@ -208,11 +208,13 @@ class DIClient:
     def similarity_search(
         self,
         *,
-        access_key: str,
-        secret_key: str,
         collection_name: str,
         query: str,
         top_k: int,
+        access_key: Optional[str] = None,
+        secret_key: Optional[str] = None,
+        file_username: Optional[str] = None,
+        file_password: Optional[str] = None,
         search_parameters: Union[Any, Dict[str, Any]] = None,
     ) -> Union[Any, List[Dict[str, Any]]]:
         """
@@ -221,17 +223,25 @@ class DIClient:
         results from a collection based on the given query. The results are ranked by
         similarity, and the top `k` results are returned.
 
+        Use S3 credentials for a bucket collection, or file user credentials for a
+        filesystem collection. Exactly one of the two must be given.
+
         Args:
             query (str): The search query string used to find similar items in the collection.
             collection_name (str): The name of the collection to search within.
             top_k (int): The number of top similar results to retrieve.
-            access_key (str): The access key for authentication with the API.
-            secret_key (str): The secret key for authentication with the API.
+            access_key (Optional[str]): The S3 access key (bucket collections).
+            secret_key (Optional[str]): The S3 secret key (bucket collections).
+            file_username (Optional[str]): The file user name (filesystem collections).
+            file_password (Optional[str]): The file user password (filesystem collections).
             search_parameters (Optional[Union[Any, Dict[str, Any]]]): Additional search parameters
                 that can be passed to the API for fine-tuning the search behavior.
 
         Returns:
             Union[Any, List[Dict[str, Any]]]: A list of dictionaries containing the top `k` similar results, or another data type depending on the API's response.
+
+        Raises:
+            ValueError: If neither or both credential sets are given, or a set is incomplete.
 
         Example usage:
             ```python
@@ -260,6 +270,17 @@ class DIClient:
             #         }
             #     }
             # ]
+
+            # Filesystem collection: pass the file user instead of S3 keys
+            results = client.similarity_search(
+                query="quarterly plan",
+                collection_name="eng-docs",
+                top_k=5,
+                file_username="bob",
+                file_password="your_password",
+            )
+            # [{"dataChunk": "...", "score": 0.8,
+            #   "chunkMetadata": {"sourceType": "FILE", "filePath": "/file/fs1/projects/q3-plan.docx", ...}}]
             ```
         """
         return SimilaritySearchAPI(self.session).search(
@@ -268,6 +289,8 @@ class DIClient:
             top_k=top_k,
             access_key=access_key,
             secret_key=secret_key,
+            file_username=file_username,
+            file_password=file_password,
             search_parameters=search_parameters,
         )
 

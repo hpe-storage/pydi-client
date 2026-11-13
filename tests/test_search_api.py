@@ -129,3 +129,97 @@ def test_search_no_results(mocker, similarity_search_api):
 
     # Assert that the result is an empty list
     assert result == []
+
+
+def _ok_response(mocker, results):
+    mock_response = mocker.MagicMock()
+    mock_response.status_code = HTTPStatus.OK
+    mock_response.json.return_value = {
+        "success": True,
+        "message": "ok",
+        "results": results,
+    }
+    return mocker.patch(
+        "pydi_client.api.search.execute_with_retry", return_value=mock_response
+    )
+
+
+def test_search_file_credentials_body_and_file_metadata(mocker, similarity_search_api):
+    file_chunk = {
+        "score": 0.8,
+        "dataChunk": "q3 plan",
+        "chunkMetadata": {
+            "sourceType": "FILE",
+            "filePath": "/file/fs1/projects/q3-plan.docx",
+            "startCharIdx": 0,
+            "endCharIdx": 7,
+            "pageLabel": "1",
+        },
+    }
+    execute = _ok_response(mocker, [file_chunk])
+
+    result = similarity_search_api.search(
+        collection_name="eng-docs",
+        query="q",
+        top_k=3,
+        file_username="bob",
+        file_password="pw",
+    )
+
+    body = execute.call_args.kwargs["json"]
+    assert body["fileCredentials"] == {"username": "bob", "password": "pw"}
+    assert "credentials" not in body
+    assert result == [file_chunk]
+
+
+def test_search_s3_credentials_body(mocker, similarity_search_api):
+    execute = _ok_response(mocker, [])
+
+    similarity_search_api.search(
+        collection_name="c", query="q", top_k=1, access_key="ak", secret_key="sk"
+    )
+
+    body = execute.call_args.kwargs["json"]
+    assert body["credentials"] == {"accessKey": "ak", "secretKey": "sk"}
+    assert "fileCredentials" not in body
+
+
+@pytest.mark.parametrize(
+    "creds",
+    [
+        {},
+        {
+            "access_key": "ak",
+            "secret_key": "sk",
+            "file_username": "bob",
+            "file_password": "pw",
+        },
+        {"access_key": "ak"},
+        {"file_username": "bob"},
+        {"file_username": "bob", "file_password": ""},
+    ],
+)
+def test_search_invalid_credentials_raise_before_request(
+    mocker, similarity_search_api, creds
+):
+    execute = _ok_response(mocker, [])
+
+    with pytest.raises(ValueError):
+        similarity_search_api.search(collection_name="c", query="q", top_k=1, **creds)
+
+    execute.assert_not_called()
+
+
+def test_search_does_not_log_credentials(mocker, similarity_search_api):
+    _ok_response(mocker, [])
+    debug = mocker.patch("pydi_client.api.search.logger.debug")
+
+    similarity_search_api.search(
+        collection_name="c",
+        query="q",
+        top_k=1,
+        file_username="bob",
+        file_password="s3cret",
+    )
+
+    assert "s3cret" not in str(debug.call_args_list)
