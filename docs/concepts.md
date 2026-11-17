@@ -46,4 +46,4 @@ A query that provides an input in the form of natural language text, and expects
 
 - Structured Query that returns the search results from an exact match query on a structured table. The data type for a "result object" will be a record containing one or more fields derived from the table schema. (Note: Currently limit support is available for Structure Query)
 
-A Query must be associated with a Collection, and executed in the context of a User (e.g. by providing S3 access key + secret key pair). The credentials provided in the context will be used to authenticate the User and authorize the results from the Query.
+A Query must be associated with a Collection, and executed in the context of a User (e.g. by providing S3 access key + secret key pair for a Collection with bucket sources, or the user name and password of a file user for a Collection with a filesystem source). The credentials provided in the context will be used to authenticate the User and authorize the results from the Query.

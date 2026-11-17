@@ -208,11 +208,13 @@ class DIClient:
     def similarity_search(
         self,
         *,
-        access_key: str,
-        secret_key: str,
         collection_name: str,
         query: str,
         top_k: int,
+        access_key: Optional[str] = None,
+        secret_key: Optional[str] = None,
+        file_username: Optional[str] = None,
+        file_password: Optional[str] = None,
         search_parameters: Union[Any, Dict[str, Any]] = None,
     ) -> Union[Any, List[Dict[str, Any]]]:
         """
@@ -221,17 +223,44 @@ class DIClient:
         results from a collection based on the given query. The results are ranked by
         similarity, and the top `k` results are returned.
 
+        The credentials to supply depend on the collection's source:
+
+        - Collections with S3 bucket sources: `access_key` and `secret_key`. Only data the
+          S3 credentials are authorized for is returned.
+        - Collections with a filesystem source: `file_username` and `file_password` of a file
+          user created by the administrator with `dictl fileusers`. Only chunks from files that
+          user can open on the filesystem are returned, so fewer than `top_k` results may come
+          back.
+
+        Both pairs may be supplied; the server uses the one that matches the collection.
+        Credentials are checked on every request. No login is needed, so this method is
+        available on `DIClient`.
+
         Args:
             query (str): The search query string used to find similar items in the collection.
             collection_name (str): The name of the collection to search within.
             top_k (int): The number of top similar results to retrieve.
-            access_key (str): The access key for authentication with the API.
-            secret_key (str): The secret key for authentication with the API.
+            access_key (Optional[str]): S3 access key, for collections with bucket sources.
+            secret_key (Optional[str]): S3 secret key, for collections with bucket sources.
+            file_username (Optional[str]): File user name, for collections with a filesystem source.
+            file_password (Optional[str]): File user password, for collections with a filesystem source.
             search_parameters (Optional[Union[Any, Dict[str, Any]]]): Additional search parameters
                 that can be passed to the API for fine-tuning the search behavior.
 
         Returns:
             Union[Any, List[Dict[str, Any]]]: A list of dictionaries containing the top `k` similar results, or another data type depending on the API's response.
+                `chunkMetadata["sourceType"]` is `"S3"` for bucket sources (with `bucketName`,
+                `objectKey` and `versionId`) or `"FILE"` for filesystem sources (with `filePath`).
+
+        Raises:
+            ValueError: If a credential pair is incomplete or no credentials are given.
+            FileUserAuthenticationError: If the file user credentials are missing, unknown or wrong.
+                The request is not retried, because every rejected attempt counts toward the
+                server's lockout.
+            FileUserLockoutError: If file user credential checks are temporarily locked after
+                repeated failures. `retry_after` gives the seconds to wait, when known.
+            SimilaritySearchFailureException: If the search failed for any other reason. The two
+                file user errors above are subclasses of it.
 
         Example usage:
             ```python
@@ -251,12 +280,37 @@ class DIClient:
             #         "dataChunk": "chunk1",
             #         "score": 0.9,
             #         "chunkMetadata": {
+            #             "sourceType": "S3",
             #             "objectKey": "value",
-            #             "startCharIndex": 1,
-            #             "endCharIndex": 2,
+            #             "startCharIdx": 1,
+            #             "endCharIdx": 2,
             #             "bucketName": "string",
             #             "pageLabel": "string",
             #             "versionId": "string",
+            #         }
+            #     }
+            # ]
+
+            # Collection with a filesystem source
+            results = client.similarity_search(
+                query="quarterly plan",
+                collection_name="fs_collection",
+                top_k=5,
+                file_username="alice",
+                file_password="alice_password",
+            )
+            print(results)
+            # Output:
+            # [
+            #     {
+            #         "dataChunk": "chunk1",
+            #         "score": 0.9,
+            #         "chunkMetadata": {
+            #             "sourceType": "FILE",
+            #             "filePath": "/file/fs1/projects/q3-plan.docx",
+            #             "startCharIdx": 0,
+            #             "endCharIdx": 512,
+            #             "pageLabel": 1,
             #         }
             #     }
             # ]
@@ -268,6 +322,8 @@ class DIClient:
             top_k=top_k,
             access_key=access_key,
             secret_key=secret_key,
+            file_username=file_username,
+            file_password=file_password,
             search_parameters=search_parameters,
         )
 
