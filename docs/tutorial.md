@@ -396,12 +396,10 @@ print(results)
 ```
 
 If the file user credentials are missing, unknown or wrong, `FileUserAuthenticationError` is raised and the
-request is not retried. Repeated failures temporarily lock the file user (and the client address) on the
-server; further searches then raise `FileUserLockoutError`, whose `retry_after` attribute gives the seconds
-to wait. Both are subclasses of `SimilaritySearchFailureException`.
+request is not retried. It is a subclass of `SimilaritySearchFailureException`.
 
 ```python
-from pydi_client.errors import FileUserAuthenticationError, FileUserLockoutError
+from pydi_client.errors import FileUserAuthenticationError
 
 try:
     results = client.similarity_search(
@@ -413,8 +411,6 @@ try:
     )
 except FileUserAuthenticationError:
     print("Check the file user name and password")
-except FileUserLockoutError as error:
-    print(f"Locked out; retry after {error.retry_after} seconds")
 ```
 
 ## 9. Create schema (Admin)

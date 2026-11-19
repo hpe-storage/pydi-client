@@ -184,8 +184,8 @@ class FileUserAuthenticationError(SimilaritySearchFailureException):
     """Raised when a similarity search on a filesystem-sourced collection is rejected
     because the file user credentials are missing, unknown or wrong (HTTP 401).
 
-    The server gives the same answer for all three cases. Every rejected attempt counts
-    toward the server's lockout, so the request is not retried.
+    The server gives the same answer for all three cases. Re-sending the same
+    credentials cannot succeed, so the request is not retried.
     """
 
     status_code = 401
@@ -199,27 +199,6 @@ class FileUserAuthenticationError(SimilaritySearchFailureException):
         ),
     ):
         super().__init__(message)
-
-
-class FileUserLockoutError(SimilaritySearchFailureException):
-    """Raised when file user credential checks are temporarily locked after repeated
-    failures (HTTP 429).
-
-    Attributes:
-        retry_after (Optional[int]): Seconds to wait before retrying, from the
-            server's ``Retry-After`` header, or ``None`` if it was not provided.
-    """
-
-    status_code = 429
-
-    def __init__(self, retry_after: Optional[int] = None):
-        self.retry_after = retry_after
-        wait = (
-            f"retry after {retry_after} seconds"
-            if retry_after is not None
-            else "try again later"
-        )
-        super().__init__(f"Too many failed file user credential checks; {wait}.")
 
 
 class UnexpectedStatus(Exception):

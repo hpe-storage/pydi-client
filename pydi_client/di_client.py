@@ -255,12 +255,9 @@ class DIClient:
         Raises:
             ValueError: If a credential pair is incomplete or no credentials are given.
             FileUserAuthenticationError: If the file user credentials are missing, unknown or wrong.
-                The request is not retried, because every rejected attempt counts toward the
-                server's lockout.
-            FileUserLockoutError: If file user credential checks are temporarily locked after
-                repeated failures. `retry_after` gives the seconds to wait, when known.
-            SimilaritySearchFailureException: If the search failed for any other reason. The two
-                file user errors above are subclasses of it.
+                The request is not retried.
+            SimilaritySearchFailureException: If the search failed for any other reason.
+                `FileUserAuthenticationError` is a subclass of it.
 
         Example usage:
             ```python

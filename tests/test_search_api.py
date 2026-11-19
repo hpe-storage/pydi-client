@@ -10,7 +10,6 @@ from pydi_client.api.utils import execute_with_retry, is_file_user_auth_failure
 from pydi_client.di_client import DIClient
 from pydi_client.errors import (
     FileUserAuthenticationError,
-    FileUserLockoutError,
     HTTPUnauthorizedException,
     SimilaritySearchFailureException,
 )
@@ -242,39 +241,6 @@ def test_search_rejects_missing_or_incomplete_credentials(
         )
 
     execute.assert_not_called()
-
-
-@pytest.mark.parametrize(
-    "headers, retry_after",
-    [({"Retry-After": "120"}, 120), ({}, None), ({"Retry-After": "soon"}, None)],
-)
-def test_search_lockout_raises_file_user_lockout_error(
-    mocker, similarity_search_api, headers, retry_after
-):
-    mocker.patch(
-        "pydi_client.api.search.execute_with_retry",
-        return_value=HTTPXResponse(
-            HTTPStatus.TOO_MANY_REQUESTS,
-            headers=headers,
-            json={
-                "status": "Too Many Requests",
-                "error": "Too many failed attempts; try again later",
-            },
-        ),
-    )
-
-    with pytest.raises(FileUserLockoutError) as exc_info:
-        similarity_search_api.search(
-            collection_name="fs",
-            query="q",
-            top_k=3,
-            file_username="alice",
-            file_password="wrong",
-        )
-
-    assert exc_info.value.retry_after == retry_after
-    assert exc_info.value.status_code == 429
-    assert isinstance(exc_info.value, SimilaritySearchFailureException)
 
 
 @pytest.mark.parametrize("session_cls", [Session, AuthenticatedSession])

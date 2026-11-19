@@ -70,8 +70,8 @@ def execute_with_retry(
         )
 
         if resp.status_code == 401 or resp.status_code == 403:
-            # Re-sending rejected file user credentials cannot succeed and would
-            # count twice toward the server's credential lockout.
+            # Re-sending rejected file user credentials cannot succeed, and refreshing
+            # the session does not change them.
             if is_file_user_auth_failure(resp):
                 logger.error(
                     "File user credentials were rejected; not refreshing the session or retrying."

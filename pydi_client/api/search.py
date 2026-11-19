@@ -3,11 +3,9 @@
 from http import HTTPStatus
 from typing import Any, Dict, Optional, Union
 
-from httpx import Response
-
 from pydi_client.sessions.authenticated_session import AuthenticatedSession
 from pydi_client.sessions.session import Session
-from pydi_client.errors import FileUserLockoutError, SimilaritySearchFailureException
+from pydi_client.errors import SimilaritySearchFailureException
 from pydi_client.api.utils import execute_with_retry, build_response
 from pydi_client.data.pipeline import V1SimilaritySearchResponse
 from pydi_client.logger import get_logger  # Importing the logger utility
@@ -25,13 +23,6 @@ def _redact_request(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     if "fileCredentials" in body:
         body["fileCredentials"] = {**body["fileCredentials"], "password": _REDACTED}
     return {**kwargs, "json": body}
-
-
-def _retry_after(response: Response) -> Optional[int]:
-    try:
-        return int(response.headers.get("Retry-After"))
-    except (TypeError, ValueError):
-        return None
 
 
 class SimilaritySearchAPI:
@@ -103,7 +94,6 @@ class SimilaritySearchAPI:
         Raises:
             ValueError: If a credential pair is incomplete or no credentials are given.
             FileUserAuthenticationError: If the file user credentials were rejected.
-            FileUserLockoutError: If file user credential checks are temporarily locked.
             SimilaritySearchFailureException: If the search failed for any other reason.
         """
         has_s3_credentials = access_key is not None or secret_key is not None
@@ -170,15 +160,6 @@ class SimilaritySearchAPI:
                 response=response, response_cls=V1SimilaritySearchResponse
             )
             return resp.model_dump().get("results", [])
-
-        if response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
-            retry_after = _retry_after(response)
-            logger.error(
-                "Similarity search for collection: %s rejected: file user credential checks are locked (retry after: %s)",
-                collection_name,
-                retry_after,
-            )
-            raise FileUserLockoutError(retry_after=retry_after)
 
         else:
             logger.error(
