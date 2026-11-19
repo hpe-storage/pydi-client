@@ -326,7 +326,11 @@ print(source_update_response)
 
 ## 8. Performing Similarity Search (User)
 
-Once data is ingested, users can perform similarity searches using the `DIClient`. This operation requires S3 access and S3 secret keys for authorization of data from X10K buckets. Only the authozided data can be retrieved using similarity search.
+Once data is ingested, users can perform similarity searches using the `DIClient`; no login is needed. The credentials to pass depend on the collection's source, and they are checked on every request.
+
+### Collections with S3 bucket sources
+
+This operation requires S3 access and S3 secret keys for authorization of data from X10K buckets. Only the authorized data can be retrieved using similarity search.
 
 ```python
 # Perform a similarity search in a collection
@@ -345,9 +349,10 @@ print(results)
 #         "dataChunk": "chunk1",
 #         "score": 0.9,
 #         "chunkMetadata": {
+#             "sourceType": "S3",
 #             "objectKey": "value",
-#             "startCharIndex": 1,
-#             "endCharIndex": 2,
+#             "startCharIdx": 1,
+#             "endCharIdx": 2,
 #             "bucketName": "string",
 #             "pageLabel": "string",
 #             "versionId": "string",
@@ -356,6 +361,58 @@ print(results)
 #     ...
 # ]
 ```
+
+### Collections with a filesystem source
+
+Pass the credentials of a file user instead of S3 keys. File users are created by the DI administrator
+with `dictl fileusers` and map to a filesystem uid, gid and groups. Results are limited to files that the
+file user can open on the filesystem, so a search can return fewer than `top_k` results. Files changed
+since they were indexed are left out until they are re-ingested.
+
+```python
+results = client.similarity_search(
+    query="quarterly plan",
+    collection_name="example-fs-collection",
+    top_k=5,
+    file_username="alice",
+    file_password="alice_password",
+)
+
+print(results)
+# [
+#     {
+#         "dataChunk": "chunk1",
+#         "score": 0.9,
+#         "chunkMetadata": {
+#             "sourceType": "FILE",
+#             "filePath": "/file/fs1/projects/q3-plan.docx",
+#             "startCharIdx": 0,
+#             "endCharIdx": 512,
+#             "pageLabel": 1,
+#         }
+#     },
+#     ...
+# ]
+```
+
+If the file user credentials are missing, unknown or wrong, `FileUserAuthenticationError` is raised and the
+request is not retried. It is a subclass of `SimilaritySearchFailureException`.
+
+```python
+from pydi_client.errors import FileUserAuthenticationError
+
+try:
+    results = client.similarity_search(
+        query="quarterly plan",
+        collection_name="example-fs-collection",
+        top_k=5,
+        file_username="alice",
+        file_password="alice_password",
+    )
+except FileUserAuthenticationError:
+    print("Check the file user name and password")
+```
+
 ## 9. Create schema (Admin)
 
 ```python

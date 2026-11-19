@@ -180,6 +180,27 @@ class SimilaritySearchFailureException(Exception):
         super().__init__(message)
 
 
+class FileUserAuthenticationError(SimilaritySearchFailureException):
+    """Raised when a similarity search on a filesystem-sourced collection is rejected
+    because the file user credentials are missing, unknown or wrong (HTTP 401).
+
+    The server gives the same answer for all three cases. Re-sending the same
+    credentials cannot succeed, so the request is not retried.
+    """
+
+    status_code = 401
+
+    def __init__(
+        self,
+        message=(
+            "Similarity search rejected: missing or invalid file user credentials. "
+            "Check file_username and file_password (file users are created with "
+            "'dictl fileusers')."
+        ),
+    ):
+        super().__init__(message)
+
+
 class UnexpectedStatus(Exception):
     """Raised by api functions when the response status an unexpected status"""
 

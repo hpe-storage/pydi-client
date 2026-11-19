@@ -78,6 +78,17 @@ result = client.similarity_search(query="Which Hercule Poirot book is the best",
 print(result)
 ```
 
+#### Example: similarity search on a collection with a filesystem source
+
+```python
+result = client.similarity_search(query="quarterly plan",
+                                collection_name="projects_fs_collection",
+                                top_k=10,
+                                file_username="alice",
+                                file_password="password***")
+print(result)
+```
+
 ## Community
 
 Please file any issues, questions or feature requests you may have [here](https://hpe-storage.github.io/pydi-client/) (do not use this facility for support inquiries of your HPE storage product)
